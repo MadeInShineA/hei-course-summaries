@@ -2,7 +2,7 @@
 
 ## Overview
 
-This repository contains comprehensive summaries, notes, and materials for the HEI Bachelor of Applied Science (BA5) program courses. It serves as a centralized resource for course content, assignments, and study materials to support academic learning and knowledge retention.
+This repository contains comprehensive summaries, notes, and materials for the HEI-VS Bachelor of Computer Science and Communication Systems. It serves as a centralized resource for course content, assignments, and study materials to support academic learning and knowledge retention.
 
 ## Repository Structure
 
