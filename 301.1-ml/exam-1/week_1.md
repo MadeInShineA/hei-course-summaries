@@ -1,12 +1,23 @@
 # Machine Learning Course Summary
 
-This comprehensive summary covers the fundamental concepts, mathematical foundations, and practical applications of machine learning as taught in the course.
+### **ML = Model space + Loss function (+ regularization) + optimization**
+
+At its core, ML can be mathematically represented as:
+$\text{ML} = \mathcal{M} + L + R + \text{Opt}$
+
+Where:
+
+- $\mathcal{M}$ is the model space
+- $L$ is the loss function
+- $R$ is the regularization term
+- $\text{Opt}$ represents the optimization algorithm
+
+This comprehensive summary covers the fundamental concepts and practical applications of machine learning as taught in the course.
 
 ## Table of Contents
 
 1. [Introduction to Machine Learning](#introduction-to-machine-learning)
-2. [Mathematical Foundations](#mathematical-foundations)
-3. [Model Evaluation](#model-evaluation)
+2. [Model Evaluation](#model-evaluation)
 4. [Laboratory Projects](#laboratory-projects)
 5. [Key Takeaways](#key-takeaways)
 
@@ -16,6 +27,7 @@ This comprehensive summary covers the fundamental concepts, mathematical foundat
 
 ### What is Machine Learning?
 
+---
 Machine Learning is a field of study that gives computers the ability to learn without being explicitly programmed (A. Samuel). At its core:
 
 - **Learning** means getting better at some given task
@@ -57,81 +69,6 @@ And we want to find a model $f$ that, given an unseen data pair $(x, y)$, perfor
 $f(x) \approx y$
 
 ---
-
-### Model Space and Parameters
-
-To solve the problem of finding the best model and make the model search tractable, we restrict our search to a given model space $\mathcal{M}$. The learning task is then to find the best $f$ in $\mathcal{M}$.
-
-In most cases, our models are parametrized by a finite set of parameters:
-$\boldsymbol{\theta} = (\theta_1, \ldots, \theta_p) \in \Theta$
-that belong to a parameter space $\Theta$.
-
-### Examples of Model Spaces
-
-| Model Type | Mathematical Form | Parameters | Model space | Parameter space |
-|------------|-------------------|------------|-------------|-----------------|
-| **Linear Regression** | $f(x) = a \cdot x + b$ | $(a, b) \in \mathbb{R}^2$ | $\mathcal{M}= \left\{ f\left( x \right ) = a \cdot x + b \mid a, b \in \mathbb{R} \right\}$ | $\left (a, b \right)=: \theta \in \Theta := \mathbb{R}^2$ |
-| **Polynomial Regression (degree $d$)** | $f(x) = a_1 \cdot x + a_2 \cdot x^2 + \ldots + a_d \cdot x^d + b$ | $(b, a_1, \ldots, a_d) \in \mathbb{R}^{d+1}$ | $\mathcal{M} = \left\{ f(x) = a_1 \cdot x + a_2 \cdot x^2 + \ldots + a_d \cdot x^d + b \vert a_1, a_2, \ldots, a_d, b \in \mathbb{R} \right\}$ | $\left (a, b \right)=: \theta \in \Theta := \mathbb{R}^{d+1}$ |
-
-### The Bias-Variance Trade-off
-
-Understanding the trade-off between model simplicity and complexity is crucial:
-
-| Type | Characteristic | Impact |
-|------|----------------|---------|
-| **Simple models** | High bias, low variance | Difficulty fitting the data, low sensitivity to noise |
-| **Complex models** | Low bias, high variance | Can fit any data, too sensitive to noise |
-
-### Loss Functions
-
-Loss functions quantify how "wrong" our predictions are. For each example $(\mathbf{x}, y)$ in the training dataset, we want to know how good our prediction $\hat{y} = f(x)$ is.
-
-| Loss Function | Formula | Properties |
-|---------------|---------|------------|
-| **L2 Loss (Mean Squared Error)** | $L(y, \hat{y}) = (y - \hat{y})^2$ | Penalizes large errors more than small ones, influenced by outliers |
-| **L1 Loss (Mean Absolute Error)** | $L(y, \hat{y}) = \lvert y - \hat{y} \rvert$ | More robust to outliers, less statistically well-behaved |
-
-### Empirical Risk Minimization
-
-The central idea is to sum all losses $L(y^{(i)}, \hat{y}^{(i)})$ over the training dataset for each possible value of the parameter $\boldsymbol{\theta}$:
-
-$J(\boldsymbol{\theta}) = \sum_{i=1}^{n} L(y^{(i)}, f_{\boldsymbol{\theta}}(\mathbf{x}^{(i)}))$
-
-This tells us how well the model $f_{\boldsymbol{\theta}}$ fits the data for a given $\boldsymbol{\theta}$.
-
-The best model is the one with the smallest loss (smallest risk):
-$\boldsymbol{\theta}^* = \arg\min_{\boldsymbol{\theta} \in \Theta} J(\boldsymbol{\theta})$
-
-### Optimization Methods
-
-- **Analytical solutions**: Some models have closed-form solutions (e.g., linear regression with MSE)
-- **Iterative methods**: For complex models, use gradient descent and similar algorithms
-- **Optimization libraries**: Tools like Scipy provide general-purpose optimization routines
-
----
-
-## <a name="mathematical-foundations"></a>Mathematical Foundations
-
-Machine learning can be broken down into three core components:
-
-### **ML = Model space + Loss function (+ regularization) + optimization**
-
-At its core, ML can be mathematically represented as:
-$ \text{ML} = \mathcal{M} + L + R + \text{Opt} $
-Where:
-
-- $\mathcal{M}$ is the model space
-- $L$ is the loss function
-- $R$ is the regularization term
-- $\text{Opt}$ represents the optimization algorithm
-
-### Supervised Learning Setup
-
-We have a (labeled) dataset of input-output examples:
-$\mathcal{D} = \{(\mathbf{x}^{(i)}, y^{(i)}) | i = 1, \ldots, n\}$
-
-And we want to find a model $f$ that, given an unseen data pair $(x, y)$, performs well at predicting $y$:
-$f(x) \\approx y$
 
 ### Model Space and Parameters
 
