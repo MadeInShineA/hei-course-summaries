@@ -68,10 +68,10 @@ that belong to a parameter space $\Theta$.
 
 ### Examples of Model Spaces
 
-| Model Type | Mathematical Form | Parameters |
-|------------|-------------------|------------|
-| **Linear Regression** | $f(x) = a \cdot x + b$ | $(a, b) \in \mathbb{R}^2$ |
-| **Polynomial Regression (degree $d$)** | $f(x) = a_1 \cdot x + a_2 \cdot x^2 + \ldots + a_d \cdot x^d + b$ | $(b, a_1, \ldots, a_d) \in \mathbb{R}^{d+1}$ |
+| Model Type | Mathematical Form | Parameters | Model space | Parameter space |
+|------------|-------------------|------------|-------------|-----------------|
+| **Linear Regression** | $f(x) = a \cdot x + b$ | $(a, b) \in \mathbb{R}^2$ | $\mathcal{M}= \left\{ f\left( x \right ) = a \cdot x + b \mid a, b \in \mathbb{R} \right\}$ | $\left (a, b \right)=: \theta \in \Theta := \mathbb{R}^2$ |
+| **Polynomial Regression (degree $d$)** | $f(x) = a_1 \cdot x + a_2 \cdot x^2 + \ldots + a_d \cdot x^d + b$ | $(b, a_1, \ldots, a_d) \in \mathbb{R}^{d+1}$ | $\mathcal{M} = \left\{ f(x) = a_1 \cdot x + a_2 \cdot x^2 + \ldots + a_d \cdot x^d + b \vert a_1, a_2, \ldots, a_d, b \in \mathbb{R} \right\}$ | $\left (a, b \right)=: \theta \in \Theta := \mathbb{R}^{d+1}$ |
 
 ### The Bias-Variance Trade-off
 
@@ -116,13 +116,22 @@ Machine learning can be broken down into three core components:
 
 ### **ML = Model space + Loss function (+ regularization) + optimization**
 
+At its core, ML can be mathematically represented as:
+$ \text{ML} = \mathcal{M} + L + R + \text{Opt} $
+Where:
+
+- $\mathcal{M}$ is the model space
+- $L$ is the loss function
+- $R$ is the regularization term
+- $\text{Opt}$ represents the optimization algorithm
+
 ### Supervised Learning Setup
 
 We have a (labeled) dataset of input-output examples:
 $\mathcal{D} = \{(\mathbf{x}^{(i)}, y^{(i)}) | i = 1, \ldots, n\}$
 
 And we want to find a model $f$ that, given an unseen data pair $(x, y)$, performs well at predicting $y$:
-$f(x) \approx y$
+$f(x) \\approx y$
 
 ### Model Space and Parameters
 
@@ -134,10 +143,10 @@ that belong to a parameter space $\Theta$.
 
 ### Examples of Model Spaces
 
-| Model Type | Mathematical Form | Parameters |
-|------------|-------------------|------------|
-| **Linear Regression** | $f(x) = a \cdot x + b$ | $(a, b) \in \mathbb{R}^2$ |
-| **Polynomial Regression (degree $d$)** | $f(x) = a_1 \cdot x + a_2 \cdot x^2 + \ldots + a_d \cdot x^d + b$ | $(b, a_1, \ldots, a_d) \in \mathbb{R}^{d+1}$ |
+| Model Type | Mathematical Form | Parameters | Model space | Parameter space |
+|------------|-------------------|------------|-------------|-----------------|
+| **Linear Regression** | $f(x) = a \cdot x + b$ | $(a, b) \in \mathbb{R}^2$ | $\mathcal{M}= \left\{ f\left( x \right ) = a \cdot x + b \mid a, b \in \mathbb{R} \right\}$ | $\left (a, b \right)=: \theta \in \Theta := \mathbb{R}^2$ |
+| **Polynomial Regression (degree $d$)** | $f(x) = a_1 \cdot x + a_2 \cdot x^2 + \ldots + a_d \cdot x^d + b$ | $(b, a_1, \ldots, a_d) \in \mathbb{R}^{d+1}$ | $\mathcal{M} = \left\{ f(x) = a_1 \cdot x + a_2 \cdot x^2 + \ldots + a_d \cdot x^d + b \vert a_1, a_2, \ldots, a_d, b \in \mathbb{R} \right\}$ | $\left (a, b \right)=: \theta \in \Theta := \mathbb{R}^{d+1}$ |
 
 ### The Bias-Variance Trade-off
 
@@ -252,6 +261,7 @@ Where:
 |-----------|---------|---------|
 | **L2 (Ridge)** | $J_{\text{Ridge}} = \frac{1}{n} \sum (y_i - \hat{y}_i)^2 + \lambda \sum \theta_j^2$ | Shrinks coefficients toward zero |
 | **L1 (Lasso)** | $J_{\text{Lasso}} = \frac{1}{n} \sum (y_i - \hat{y}_i)^2 + \lambda \sum \lvert \theta_j \rvert$ | Can zero out coefficients (feature selection) |
+| **Elastic Net** | $J_{\text{Elastic Net}} = \sum_{i=1}^{n} \left(y_i - \hat{y_i}\right)^2 + \lambda_1 \sum_{j=1}^{p} |\beta_j| + \lambda_2 \sum_{j=1}^{p} \beta_j^2$ | Combines the benefits of L1 and L2; it both shrinks coefficients (like Ridge) and can set some to exactly zero (like Lasso) |
 
 ### Residuals Analysis 🔍
 
@@ -420,4 +430,3 @@ graph TD
 - **Beware of curse**: High-dimensional spaces create challenges
 
 This comprehensive approach to machine learning ensures systematic model development with proper evaluation and validation, leading to more reliable and generalizable results. 🚀
-
