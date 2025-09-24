@@ -297,7 +297,7 @@ This project implemented key ML procedures for building a predictive model.
 | **Performance Evaluation** | R² (coefficient of determination) | Quantify model performance |
 | **Model Extension** | Multi-parameter model with categorical encoding | Improved prediction accuracy |
 
-$\text{CO2 emissions} = a \cdot \text{Combined (L/100 km)} + b \cdot \text{is_diesel} + c \cdot \text{is_essence}$
+$\text{CO2 emissions} = a \cdot \text{Combined (L/100 km)} + b \cdot \text{is diesel} + c \cdot \text{is essence}$
 
 #### Key ML Takeaways from this Lab
 
@@ -420,3 +420,4 @@ graph TD
 - **Beware of curse**: High-dimensional spaces create challenges
 
 This comprehensive approach to machine learning ensures systematic model development with proper evaluation and validation, leading to more reliable and generalizable results. 🚀
+
