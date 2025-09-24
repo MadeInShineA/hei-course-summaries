@@ -446,9 +446,10 @@ X_var[y_var == 1] += 0.5
 X_reg, y_reg = make_regression(n_samples=200, n_features=1, noise=15, random_state=42)
 
 # Define all SVM variants to compare - 2 classification and 2 regression
+# Using different parameters to make C-SVM and Nu-SVM more visually distinct
 variants = [
-    ('C-SVM (Classification)', SVC(kernel='rbf', C=1, gamma='scale'), X_var, y_var, 'classification'),  # Classification
-    ('Nu-SVM (Classification)', NuSVC(kernel='rbf', nu=0.1, gamma='scale'), X_var, y_var, 'classification'),  # Classification
+    ('C-SVM (Classification)', SVC(kernel='rbf', C=0.1, gamma='scale'), X_var, y_var, 'classification'),  # Soft margin C-SVM
+    ('Nu-SVM (Classification)', NuSVC(kernel='rbf', nu=0.9, gamma='scale', random_state=42), X_var, y_var, 'classification'),  # High nu Nu-SVM
     ('Epsilon-SVR (Regression)', SVR(kernel='rbf', C=1, gamma=0.1, epsilon=0.1), X_reg, y_reg, 'regression'),  # Regression
     ('Nu-SVR (Regression)', NuSVR(kernel='rbf', C=1, gamma=0.1, nu=0.1), X_reg, y_reg, 'regression')  # Regression
 ]
@@ -480,7 +481,7 @@ for i, (title, model, X_data, y_data, variant_type) in enumerate(variants):
         
         # Highlight support vectors for classification models
         if hasattr(model, 'support_vectors_'):
-            ax.scatter(
+            sv_plot = ax.scatter(
                 model.support_vectors_[:, 0],
                 model.support_vectors_[:, 1],
                 s=100,
@@ -489,6 +490,21 @@ for i, (title, model, X_data, y_data, variant_type) in enumerate(variants):
                 linewidths=2,
                 label='Support Vectors'
             )
+            
+            # Add text annotations to differentiate C-SVM and Nu-SVM
+            if 'C-SVM' in title:
+                # For C-SVM, add annotation about the C parameter
+                ax.text(0.02, 0.98, f'C={model.C:.1f}', 
+                       transform=ax.transAxes, 
+                       verticalalignment='top',
+                       bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+            elif 'Nu-SVM' in title:
+                # For Nu-SVM, add annotation about the nu parameter and estimated fraction of SVs
+                n_support_ratio = (model.n_support_ / len(y_data)).mean() if hasattr(model, 'n_support_') else 'N/A'
+                ax.text(0.02, 0.98, f'Nu={model.nu:.1f}\nSVs: ~{n_support_ratio:.1%}', 
+                       transform=ax.transAxes, 
+                       verticalalignment='top',
+                       bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.8))
     else:  # regression
         # For regression - plot the regression line
         X_plot = np.linspace(X_data.min(), X_data.max(), 300).reshape(-1, 1)
