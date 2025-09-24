@@ -157,13 +157,9 @@ Similar to Nu-SVM but for regression:
 - Uses $\nu$ to control the number of support vectors and training errors
 - Alternative to Epsilon-SVR
 
-### SVM Regression Visualization
+### SVM Variants Comparison Table
 
-The following plot shows an example of SVM regression:
-
-![SVM Regression Example](res/svm/svm_regression.png)
-
-### Key Differences Between Variants
+The following table summarizes the key differences between various SVM variants:
 
 | Variant | Purpose | Key Parameter | Behavior |
 |---------|---------|---------------|----------|
@@ -171,6 +167,12 @@ The following plot shows an example of SVM regression:
 | **Nu-SVM** | Classification | Nu | Directly controls fraction of support vectors |
 | **Epsilon-SVR** | Regression | Epsilon | Tolerance for errors in regression |
 | **Nu-SVR** | Regression | Nu | Directly controls fraction of support vectors in regression |
+
+### Visual Comparison of SVM Variants
+
+The following visualization compares different SVM variants to illustrate how parameter choices affect the decision boundary and the number of support vectors:
+
+![Comparison of Different SVM Variants](res/svm/svm_variants_comparison.png)
 
 ---
 
@@ -244,17 +246,80 @@ The following plot compares different SVM kernels on the same dataset:
 |-----------|-------------|---------|
 | **Gamma (RBF)** | Controls how far the influence of a single training example reaches | Higher Gamma: Model fits training data more closely (overfitting risk) <br/> Lower Gamma: Model considers points farther from decision boundary |
 
-### Gamma Parameter Visualization
+For the RBF (Radial Basis Function) kernel: $K(\mathbf{x_i}, \mathbf{x_j}) = \exp(-\gamma ||\mathbf{x_i} - \mathbf{x_j}||^2)$
+
+The gamma parameter controls how far the influence of a single training example reaches:
+
+- **Low gamma**: Creates a smoother decision boundary, considering points farther from the decision boundary
+- **High gamma**: Creates a more complex decision boundary, giving more influence to closer points
 
 The following plot illustrates the effect of different gamma values on the RBF kernel:
 
 ![Effect of Gamma Parameter on SVM Decision Boundary](res/svm/svm_gamma_parameter_effect.png)
+
+### Polynomial Kernel Degree Effect
+
+The polynomial kernel takes the form: $K(\mathbf{x_i}, \mathbf{x_j}) = (\gamma \mathbf{x_i} \cdot \mathbf{x_j} + r)^d$
+
+The degree parameter $d$ controls the flexibility of the decision boundary:
+
+- **Lower degrees**: Simpler, smoother decision boundaries
+- **Higher degrees**: More complex, flexible decision boundaries that can capture more intricate patterns but risk overfitting
+
+The following visualization demonstrates the effect of different polynomial degrees on the SVM decision boundary:
+
+![Effect of Polynomial Degree Parameter on SVM Decision Boundary](res/svm/svm_polynomial_degree_effect.png)
 
 ### Degree Parameter (Polynomial Kernel)
 
 | Parameter | Description | Impact |
 |-----------|-------------|---------|
 | **Degree (Polynomial)** | Degree of the polynomial kernel function | Higher degree: More complex decision boundary <br/> Lower degree: Simpler decision boundary |
+
+### Parameter Interactions
+
+The performance of SVMs depends not only on individual parameters but also on their interactions.
+The combination of C and gamma parameters significantly affects model complexity:
+
+- **Low C and low gamma**: Creates a very simple model, potentially leading to underfitting
+- **High C and high gamma**: Creates a very complex model, potentially leading to overfitting
+- **Balanced values**: Typically results in good generalization performance
+
+Understanding these interactions is crucial for effective hyperparameter tuning:
+
+- **Low C, High gamma**: Model prioritizes smooth decision boundary over accurate classification of individual points, with high sensitivity to individual points
+- **High C, Low gamma**: Model strongly prioritizes accurate classification of individual points, but with lower sensitivity to each point
+- **High C, High gamma**: Model highly prioritizes accurately classifying individual points and is highly sensitive to each point, often leading to overfitting
+- **Low C, Low gamma**: Model allows more misclassification in favor of a smoother decision boundary and broader generalization
+
+The following visualization demonstrates how different combinations of C and gamma parameters affect model complexity:
+
+![Effect of C and Gamma Parameters on SVM Decision Boundary](res/svm/svm_c_and_gamma_parameter_effect.png)
+
+#### Parameter Relationships
+
+The following diagram shows how different SVM parameters interact:
+
+```mermaid
+graph LR
+    A[C Parameter<br/>Regularization] --> D[Model Complexity]
+    B[Gamma Parameter<br/>RBF Kernel] --> D
+    C[Kernel Type] --> D
+    D --> E[Overfitting Risk]
+    D --> F[Underfitting Risk]
+    E --> G[Generalization Error]
+    F --> G
+    G --> H[Cross-Validation Score]
+    
+    style A fill:#3498db,stroke:#2980b9,stroke-width:2px
+    style B fill:#e74c3c,stroke:#c0392b,stroke-width:2px
+    style C fill:#2ecc71,stroke:#27ae60,stroke-width:2px
+    style D fill:#f39c12,stroke:#e67e22,stroke-width:2px
+    style E fill:#e74c3c,stroke:#c0392b,stroke-width:2px
+    style F fill:#3498db,stroke:#2980b9,stroke-width:2px
+    style G fill:#9b59b6,stroke:#8e44ad,stroke-width:2px
+    style H fill:#16a34a,stroke:#2ecc71,stroke-width:2px
+```
 
 ### Parameter Tuning Strategies
 
@@ -288,38 +353,25 @@ flowchart TD
     style G fill:#0ea5e920,stroke:#0ea5e9,stroke-width:2px
 ```
 
-#### Parameter Relationships
+### Epsilon Parameter in SVM Regression
 
-The following diagram shows how different SVM parameters interact:
+The epsilon parameter (ε) defines the width of the epsilon-tube within which no penalty is associated with points predicted within the tube:
 
-```mermaid
-graph LR
-    A[C Parameter<br/>Regularization] --> D[Model Complexity]
-    B[Gamma Parameter<br/>RBF Kernel] --> D
-    C[Kernel Type] --> D
-    D --> E[Overfitting Risk]
-    D --> F[Underfitting Risk]
-    E --> G[Generalization Error]
-    F --> G
-    G --> H[Cross-Validation Score]
-    
-    style A fill:#3498db,stroke:#2980b9,stroke-width:2px
-    style B fill:#e74c3c,stroke:#c0392b,stroke-width:2px
-    style C fill:#2ecc71,stroke:#27ae60,stroke-width:2px
-    style D fill:#f39c12,stroke:#e67e22,stroke-width:2px
-    style E fill:#e74c3c,stroke:#c0392b,stroke-width:2px
-    style F fill:#3498db,stroke:#2980b9,stroke-width:2px
-    style G fill:#9b59b6,stroke:#8e44ad,stroke-width:2px
-    style H fill:#16a34a,stroke:#2ecc71,stroke-width:2px
-```
+- **Larger ε**: More training points ignored, simpler model
+- **Smaller ε**: Fewer training points ignored, more complex model
+
+The following visualization shows how different epsilon values affect the regression model:
+
+![Effect of Epsilon Parameter on SVM Regression](res/svm/svm_epsilon_parameter_effect.png)
 
 ### Common Parameter Ranges
 
 For grid search, commonly tested parameter ranges include:
 
 - **C**: 0.01, 0.1, 1, 10, 100 (log scale)
-- **Gamma**: 0.001, 0.01, 0.1, 1 (log scale), if applicable
+- **Gamma**: 0.001, 0.01, 1 (log scale), if applicable
 - **Degree**: 2, 3, 4 (for polynomial kernel)
+- **Epsilon**: 0.01, 0.1, 0.5, 1.0 (for regression)
 
 ---
 
@@ -341,12 +393,6 @@ For grid search, commonly tested parameter ranges include:
 - **Versatile**: Different kernel functions can be specified for decision function
 - **Robust**: Relatively insensitive to overfitting in high-dimensional space
 
-#### Feature Space Visualization
-
-This visualization demonstrates how the kernel trick works by showing how different kernel functions can separate non-linearly separable data:
-
-![Comparison of Different SVM Kernels](res/svm/svm_kernels_comparison.png)
-
 ### Disadvantages
 
 - **Scaling with sample size**: Training time is at least quadratic in the number of samples
@@ -364,6 +410,8 @@ This visualization demonstrates how the kernel trick works by showing how differ
 | **Sentiment Analysis** | Understanding opinion in text | Classification |
 | **Face Detection** | Identifying human faces in images | Classification |
 | **Regression Analysis** | Predicting continuous values | Regression |
+
+SVMs can also be used for regression tasks.
 
 ---
 
@@ -418,4 +466,3 @@ This visualization demonstrates how the kernel trick works by showing how differ
 - **Anomaly detection**: One-class SVM for identifying outliers
 
 Support Vector Machines provide a powerful and theoretically grounded approach to both classification and regression problems. Their effectiveness in high-dimensional spaces, particularly in text classification and image recognition, makes them valuable tools in the machine learning toolkit. However, their computational complexity and sensitivity to parameter choices mean they're best used after understanding the data characteristics and problem requirements. 🧠
-
