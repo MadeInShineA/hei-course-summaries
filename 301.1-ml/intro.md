@@ -82,8 +82,8 @@ that belong to a parameter space $\Theta$.
 
 | Model Type | Mathematical Form | Parameters | Model space | Parameter space |
 |------------|-------------------|------------|-------------|-----------------|
-| **Linear Regression** | $f(x) = a \cdot x + b$ | $(a, b) \in \mathbb{R}^2$ | $\mathcal{M}= \left\{ f\left( x \right ) = a \cdot x + b \mid a, b \in \mathbb{R} \right\}$ | $\left (a, b \right)=: \theta \in \Theta := \mathbb{R}^2$ |
-| **Polynomial Regression (degree $d$)** | $f(x) = a_1 \cdot x + a_2 \cdot x^2 + \ldots + a_d \cdot x^d + b$ | $(b, a_1, \ldots, a_d) \in \mathbb{R}^{d+1}$ | $\mathcal{M} = \left\{ f(x) = a_1 \cdot x + a_2 \cdot x^2 + \ldots + a_d \cdot x^d + b \vert a_1, a_2, \ldots, a_d, b \in \mathbb{R} \right\}$ | $\left (a, b \right)=: \theta \in \Theta := \mathbb{R}^{d+1}$ |
+| **Linear Regression** | $f(x) = a \cdot x + b$ | $(a, b) \in \mathbb{R}^2$ | $\mathcal{M}= \{ f( x ) = a \cdot x + b \mid a, b \in \mathbb{R} \}$ | $(a, b)=: \theta \in \Theta := \mathbb{R}^2$ |
+| **Polynomial Regression (degree $d$)** | $f(x) = a_1 \cdot x + a_2 \cdot x^2 + \ldots + a_d \cdot x^d + b$ | $(b, a_1, \ldots, a_d) \in \mathbb{R}^{d+1}$ | $\mathcal{M} = \{ f(x) = a_1 \cdot x + a_2 \cdot x^2 + \ldots + a_d \cdot x^d + b \vert a_1, a_2, \ldots, a_d, b \in \mathbb{R} \}$ | $(b, a_1, \ldots, a_d)=: \theta \in \Theta := \mathbb{R}^{d+1}$ |
 
 ### The Bias-Variance Trade-off
 
