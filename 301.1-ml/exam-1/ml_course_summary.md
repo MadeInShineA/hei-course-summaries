@@ -118,7 +118,7 @@ Our goal is to find a "model" $f$that is able to predict $y$for unseen values of
 ### First Supervised Learning Algorithm: Linear Regression
 
 A linear model is a model which, given some data point $x$predicts the response $y$using a linear function:
-$\hat{y} = f(x) = a \cdot x + b $
+$\hat{y} = f(x) = a \cdot x + b$
 
 ### The ML Lifecycle
 
