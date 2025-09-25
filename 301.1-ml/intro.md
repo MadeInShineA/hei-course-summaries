@@ -215,7 +215,7 @@ In an ideal world, residuals should be i.i.d. Gaussian distributed.
 - Look for systematic bias
 
 ```mermaid
-graph TD
+flowchart TD
     A[Collect Data] --> B[Train-Validation-Test Split]
     B --> C[Model Training on Train Set]
     C --> D[Model Validation on Validation Set]
@@ -224,6 +224,15 @@ graph TD
     F --> G[Analyze Residuals]
     G --> H[Iterate/Improve Model]
     H --> C
+
+    style A fill:#2563eb20,stroke:#2563eb,stroke-width:2px
+    style B fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
+    style C fill:#d9770620,stroke:#d97706,stroke-width:2px
+    style D fill:#16a34a20,stroke:#16a34a,stroke-width:2px
+    style E fill:#0d948820,stroke:#0d9488,stroke-width:2px
+    style F fill:#dc262620,stroke:#dc2626,stroke-width:2px
+    style G fill:#0ea5e920,stroke:#0ea5e9,stroke-width:2px
+    style H fill:#16a34a20,stroke:#16a34a,stroke-width:2px
 ```
 
 ---
