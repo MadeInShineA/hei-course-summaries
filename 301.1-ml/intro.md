@@ -198,7 +198,7 @@ Where:
 |-----------|---------|---------|
 | **L2 (Ridge)** | $J_{\text{Ridge}} = \frac{1}{n} \sum (y_i - \hat{y}_i)^2 + \lambda \sum \theta_j^2$ | Shrinks coefficients toward zero |
 | **L1 (Lasso)** | $J_{\text{Lasso}} = \frac{1}{n} \sum (y_i - \hat{y}_i)^2 + \lambda \sum \lvert \theta_j \rvert$ | Can zero out coefficients (feature selection) |
-| **Elastic Net** | $J_{\text{Elastic Net}} = \sum_{i=1}^{n} \left(y_i - \hat{y_i}\right)^2 + \lambda_1 \sum_{j=1}^{p} |\beta_j| + \lambda_2 \sum_{j=1}^{p} \beta_j^2$ | Combines the benefits of L1 and L2; it both shrinks coefficients (like Ridge) and can set some to exactly zero (like Lasso) |
+| **Elastic Net** | $J_{Ellastic\_net} = \sum_{i=1}^{n} \left(y_i - \hat{y_i}\right)^2 + \lambda_1 \sum_{j=1}^{p} \|\beta_j\| + \lambda_2 \sum_{j=1}^{p} \beta_j^2$ | Combines the benefits of L1 and L2; it both shrinks coefficients (like Ridge) and can set some to exactly zero (like Lasso) |
 
 ### Residuals Analysis 🔍
 
