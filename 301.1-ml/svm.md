@@ -150,6 +150,8 @@ For regression tasks with an epsilon-insensitive loss function:
 - Only penalizes errors that exceed a threshold $\epsilon$
 - Points within $\epsilon$ distance from the predicted value have no penalty
 
+![Example of the Epsilon intensive loss function](https://eranraviv.com/wp-content/uploads/2017/02/Epsilon-insensitive_Loss.svg)
+
 ### 4. Nu-SVR (Regression)
 
 Similar to Nu-SVM but for regression:
@@ -278,16 +280,15 @@ The following visualization demonstrates the effect of different polynomial degr
 The performance of SVMs depends not only on individual parameters but also on their interactions.
 The combination of C and gamma parameters significantly affects model complexity:
 
-- **Low C and low gamma**: Creates a very simple model, potentially leading to underfitting
-- **High C and high gamma**: Creates a very complex model, potentially leading to overfitting
-- **Balanced values**: Typically results in good generalization performance
+| C Value | Gamma Value | Description | Potential Risk |
+|---------|-------------|-------------|----------------|
+| Low | Low | Creates a very simple model, allowing more misclassification in favor of a smoother decision boundary and broader generalization | Underfitting |
+| Low | High | Prioritizes smooth decision boundary over accurate classification of individual points, with high sensitivity to individual points | Overfitting due to high sensitivity |
+| High | Low | Strongly prioritizes accurate classification of individual points, but with lower sensitivity to each point | Underfitting if too rigid |
+| High | High | Creates a very complex model, highly prioritizes accurately classifying individual points and is highly sensitive to each point | Overfitting |
+| Balanced | Balanced | Typically results in good generalization performance | None |
 
-Understanding these interactions is crucial for effective hyperparameter tuning:
-
-- **Low C, High gamma**: Model prioritizes smooth decision boundary over accurate classification of individual points, with high sensitivity to individual points
-- **High C, Low gamma**: Model strongly prioritizes accurate classification of individual points, but with lower sensitivity to each point
-- **High C, High gamma**: Model highly prioritizes accurately classifying individual points and is highly sensitive to each point, often leading to overfitting
-- **Low C, Low gamma**: Model allows more misclassification in favor of a smoother decision boundary and broader generalization
+Understanding these interactions is crucial for effective hyperparameter tuning.
 
 The following visualization demonstrates how different combinations of C and gamma parameters affect model complexity:
 
@@ -345,26 +346,6 @@ flowchart TD
     style F fill:#dc262620,stroke:#dc2626,stroke-width:2px
     style G fill:#0ea5e920,stroke:#0ea5e9,stroke-width:2px
 ```
-
-### Epsilon Parameter in SVM Regression
-
-The epsilon parameter (ε) defines the width of the epsilon-tube within which no penalty is associated with points predicted within the tube:
-
-- **Larger ε**: More training points ignored, simpler model
-- **Smaller ε**: Fewer training points ignored, more complex model
-
-The following visualization shows how different epsilon values affect the regression model:
-
-![Effect of Epsilon Parameter on SVM Regression](res/svm/svm_epsilon_parameter_effect.png)
-
-### Common Parameter Ranges
-
-For grid search, commonly tested parameter ranges include:
-
-- **C**: 0.01, 0.1, 1, 10, 100 (log scale)
-- **Gamma**: 0.001, 0.01, 1 (log scale), if applicable
-- **Degree**: 2, 3, 4 (for polynomial kernel)
-- **Epsilon**: 0.01, 0.1, 0.5, 1.0 (for regression)
 
 ---
 
