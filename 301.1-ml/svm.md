@@ -236,45 +236,42 @@ The following plot compares different SVM kernels on the same dataset:
 
 ### C Parameter (Regularization)
 
+The C parameter in SVM controls the trade-off between achieving a low training error and a smooth decision boundary
+
 | Parameter | Description | Impact |
 |-----------|-------------|---------|
-| **C (Regularization)** | Controls trade-off between smooth decision boundary and classifying training points correctly | Higher C: More training points classified correctly, potential overfitting <br/> Lower C: Smoother decision boundary, potential underfitting |
+| **High C** | Strong emphasis on correct classification of training points | Fits training data closely but risks overfitting |
+| **Low C** | Emphasis on maximizing the margin between classes | Produces smoother decision boundary, may underfit |
+
+Visualization of the effect of the different C parameter values on the SVM decision boundary:
+
+![Effect of C Parameter on SVM Decision Boundary](res/svm/svm_c_parameter_effect.png)
 
 ### Gamma Parameter (Kernel Coefficient)
 
-| Parameter | Description | Impact |
-|-----------|-------------|---------|
-| **Gamma (RBF)** | Controls how far the influence of a single training example reaches | Higher Gamma: Model fits training data more closely (overfitting risk) <br/> Lower Gamma: Model considers points farther from decision boundary |
-
-For the RBF (Radial Basis Function) kernel: $K(\mathbf{x_i}, \mathbf{x_j}) = \exp(-\gamma ||\mathbf{x_i} - \mathbf{x_j}||^2)$
-
 The gamma parameter controls how far the influence of a single training example reaches:
 
-- **Low gamma**: Creates a smoother decision boundary, considering points farther from the decision boundary
-- **High gamma**: Creates a more complex decision boundary, giving more influence to closer points
+| Parameter | Description | Impact |
+|-----------|-------------|---------|
+| **High Gamma** | Strong local influence from nearby training examples | Creates complex decision boundary, high risk of overfitting |
+| **Low Gamma** | Broad influence extending to distant examples | Produces smoother decision boundary, better generalization |
 
 The following plot illustrates the effect of different gamma values on the RBF kernel:
 
 ![Effect of Gamma Parameter on SVM Decision Boundary](res/svm/svm_gamma_parameter_effect.png)
 
-### Polynomial Kernel Degree Effect
-
-The polynomial kernel takes the form: $K(\mathbf{x_i}, \mathbf{x_j}) = (\gamma \mathbf{x_i} \cdot \mathbf{x_j} + r)^d$
+### Degree Parameter (Polynomial Kernel)
 
 The degree parameter $d$ controls the flexibility of the decision boundary:
 
-- **Lower degrees**: Simpler, smoother decision boundaries
-- **Higher degrees**: More complex, flexible decision boundaries that can capture more intricate patterns but risk overfitting
+| Parameter | Description | Impact |
+|-----------|-------------|---------|
+| **High Degree** | Higher degree in polynomial kernel | Allows more complex, flexible decision boundaries, risk of overfitting |
+| **Low Degree** | Lower degree in polynomial kernel | Results in simpler, smoother decision boundaries |
 
 The following visualization demonstrates the effect of different polynomial degrees on the SVM decision boundary:
 
 ![Effect of Polynomial Degree Parameter on SVM Decision Boundary](res/svm/svm_polynomial_degree_effect.png)
-
-### Degree Parameter (Polynomial Kernel)
-
-| Parameter | Description | Impact |
-|-----------|-------------|---------|
-| **Degree (Polynomial)** | Degree of the polynomial kernel function | Higher degree: More complex decision boundary <br/> Lower degree: Simpler decision boundary |
 
 ### Parameter Interactions
 
@@ -329,10 +326,6 @@ graph LR
 4. **Scale data**: Normalize features as SVMs are sensitive to feature scales
 
 #### Parameter Tuning Process
-
-Visualization of the effect of the C parameter on the SVM decision boundary:
-
-![Effect of C Parameter on SVM Decision Boundary](res/svm/svm_c_parameter_effect.png)
 
 ```mermaid
 flowchart TD
