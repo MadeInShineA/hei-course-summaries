@@ -9,6 +9,7 @@ This repository contains comprehensive summaries, notes, and materials for the H
 ```
 ├── 301.1-ml/                    # Machine Learning Course
 │   ├── intro.md                 # Introduction to Machine Learning concepts
+│   ├── ml_pipeline.md           # ML Pipeline and Supervised Classification Workflow
 │   ├── genetic_algorithms.md    # Genetic Algorithms content
 │   ├── svm.md                   # Support Vector Machines content
 │   ├── pyproject.toml           # Project configuration with uv dependency management
@@ -23,7 +24,8 @@ This repository contains comprehensive summaries, notes, and materials for the H
 │   │   │   └── project_1_house.ipynb              # Jupyter notebook for project
 │   │   └── week-2/
 │   │       ├── Genetic Algorithms.pdf
-│   │       └── mastermind_notebook.py              # Python implementation for Mastermind
+│   │       ├── pipeline_notebook.py               # Python implementation for ML Pipeline
+│   │       └── mastermind_notebook.py             # Python implementation for Mastermind
 │   ├── res/                     # Resources directory
 │   └── src/                     # Source code directory
 ├── 302.1-data-computation/      # Data Computation Course
@@ -34,14 +36,15 @@ This repository contains comprehensive summaries, notes, and materials for the H
 ## Available Courses
 
 ### 301.1 - Machine Learning
-- **Content**: Introduction to ML concepts, mathematical foundations, model evaluation, linear regression, genetic algorithms, support vector machines
+- **Content**: Introduction to ML concepts, mathematical foundations, model evaluation, linear regression, genetic algorithms, support vector machines, ML pipelines for supervised classification
 - **Materials Include**:
-  - Weekly summaries (intro.md, genetic_algorithms.md, svm.md)
+  - Weekly summaries (intro.md, ml_pipeline.md, genetic_algorithms.md, svm.md)
   - Lecture notes and key concepts
   - Practical labs (Fuel consumption analysis, house price prediction)
   - Projects applying regression models
   - Genetic algorithm implementations
   - Support Vector Machines (SVM) content and examples
+  - ML pipeline workflows with K-NN and SVM models
   - Exam preparation materials
   - Python project configuration with uv dependency management
 
@@ -83,3 +86,4 @@ This repository is created for educational purposes within the HEI academic cont
 ## Contact
 
 For questions or suggestions regarding this repository, please open an issue in this repository or contact the repository maintainers directly.
+
