@@ -288,7 +288,7 @@ This project demonstrated comprehensive ML pipeline implementation with multiple
 - **Overfitting detection**: Gap between training and validation performance indicates overfitting risk
 
 ```mermaid
-graph TD
+flowchart TD
     A[Data Collection] --> B[Data Preprocessing & Exploration]
     B --> C[Feature Engineering]
     C --> D[Train-Validation-Test Split]
@@ -298,6 +298,16 @@ graph TD
     G --> H[Residual Analysis]
     H --> I[Model Refinement]
     I --> E
+
+    style A fill:#2563eb20,stroke:#2563eb,stroke-width:2px
+    style B fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
+    style C fill:#d9770620,stroke:#d97706,stroke-width:2px
+    style D fill:#16a34a20,stroke:#16a34a,stroke-width:2px
+    style E fill:#0d948820,stroke:#0d9488,stroke-width:2px
+    style F fill:#dc262620,stroke:#dc2626,stroke-width:2px
+    style G fill:#0ea5e920,stroke:#0ea5e9,stroke-width:2px
+    style H fill:#16a34a20,stroke:#16a34a,stroke-width:2px
+    style I fill:#16a34a40,stroke:#16a34a,stroke-width:2px
 ```
 
 ---
