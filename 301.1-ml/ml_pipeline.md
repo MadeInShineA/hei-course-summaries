@@ -544,7 +544,7 @@ The typical process follows these steps:
 ## Complete ML Pipeline Summary
 
 ```mermaid
-graph TD
+flowchart TD
     A[Raw Data] --> B[Data Exploration]
     B --> C[Data Preparation]
     C --> D[Feature Engineering]
@@ -560,30 +560,57 @@ graph TD
     K --> M[Predictions]
     
     B --> B1[Inspect Structure]
-    B --> B2[Check Missing Values]
-    B --> B3[Check Class Balance]
+    B1 --> B1a["shape, info(), describe()"]
+    B --> B2["Check Missing Values"]
+    B2 --> B2a["isnull().sum(), percentage"]
+    B --> B3["Check Class Balance"]
+    B3 --> B3a["value_counts(), ratios"]
     
-    C --> C1[Handle Missing Values]
-    C --> C2[Feature Scaling]
-    C --> C3[Handle Class Imbalance]
-    C --> C4[Encode Categorical Variables]
+    C --> C1["Handle Missing Values (Imputation)"]
+    C1 --> C1a["Mean/Median for Numerical"]
+    C1 --> C1b["Mode for Categorical"]
+    C1 --> C1c["Advanced: KNN, IterativeImputer"]
+    C --> C2["Feature Scaling/Normalization"]
+    C2 --> C2a["Min-Max Scaling (0-1)"]
+    C2 --> C2b["Standardization (Z-score)"]
+    C --> C3["Handle Class Imbalance"]
+    C3 --> C3a["Resampling: Over/Under Sampling"]
+    C3 --> C3b["SMOTE (Synthetic Minority)"]
+    C3 --> C3c["Cost-Sensitive Learning"]
+    C --> C4["Encode Categorical Variables"]
+    C4 --> C4a["One-Hot Encoding (Nominal)"]
+    C4 --> C4b["Ordinal Encoding (Ordered)"]
+    C4 --> C4c["Binary Encoding"]
     
-    D --> D1[Feature Selection]
-    D --> D2[Feature Creation]
+    D --> D1["Feature Selection"]
+    D1 --> D1a["Filter: Correlation, Chi-Sq"]
+    D1 --> D1b["Wrapper: Recursive Feature Elimination"]
+    D1 --> D1c["Embedded: Lasso, Tree Importance"]
+    D --> D2["Feature Creation"]
+    D2 --> D2a["Polynomial Features"]
+    D2 --> D2b["Interaction Terms"]
     
-    E --> E1[Train/Validation/Test Split]
+    E --> E1["Train/Validation/Test Split (70/15/15, Stratified)"]
     
-    F --> F1[Cross-Validation]
-    F1 --> F2[K-Fold CV]
+    F --> F1["Cross-Validation"]
+    F1 --> F2["K-Fold CV (k=5-10, Stratified)"]
+    F1 --> F3["Repeated K-Fold"]
     
-    G --> G1[Grid Search]
-    G --> G2[Random Search]
+    G --> G1["Grid Search (Exhaustive)"]
+    G --> G2["Random Search (Sampled)"]
+    G --> G3["Bayesian Optimization"]
     
-    H --> H1[Performance Metrics]
-    H --> H2[Confusion Matrix]
+    H --> H1["Performance Metrics"]
+    H1 --> H1a["Accuracy, Precision, Recall, F1"]
+    H1 --> H1b["AUC-ROC, Log Loss"]
+    H --> H2["Confusion Matrix"]
+    H2 --> H2a["TP, TN, FP, FN Visualization"]
     
-    I --> I1[Bias-Variance Tradeoff]
-    I --> I2[Overfitting Detection]
+    I --> I1["Bias-Variance Tradeoff"]
+    I1 --> I1a["Learning Curves (Train vs Val Error)"]
+    I --> I2["Overfitting/Underfitting Detection"]
+    I2 --> I2a["High Variance: Low Train, High Val Error"]
+    I2 --> I2b["High Bias: High Errors Both"]
     
     classDef rawData fill:#2563eb20,stroke:#2563eb,stroke-width:2px
     classDef exploration fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
@@ -598,14 +625,14 @@ graph TD
     classDef iterate fill:#dc262620,stroke:#dc2626,stroke-width:2px
     
     class A rawData
-    class B,B1,B2,B3 exploration
-    class C,C1,C2,C3,C4 prep
-    class D,D1,D2 featureEng
+    class B,B1,B1a,B2,B2a,B3,B3a exploration
+    class C,C1,C1a,C1b,C1c,C2,C2a,C2b,C3,C3a,C3b,C3c,C4,C4a,C4b,C4c prep
+    class D,D1,D1a,D1b,D1c,D2,D2a,D2b featureEng
     class E,E1 dataSplit
-    class F,F1,F2 training
-    class G,G1,G2 tuning
-    class H,H1,H2 evaluation
-    class I,I1,I2 diagnostics
+    class F,F1,F2,F3 training
+    class G,G1,G2,G3 tuning
+    class H,H1,H1a,H1b,H2,H2a evaluation
+    class I,I1,I1a,I2,I2a,I2b diagnostics
     class J iterate
     class K,M deploy
     class L deploy
