@@ -102,6 +102,57 @@ Tailor techniques to data types for effective transformation:
 | **Missing Values** | Imputation (mean/median for numerical; mode for categorical) | Preserve samples; advanced (KNN) leverages correlations |
 | **Scaling** | Standardization (z-score) or normalization | Equalizes ranges for distance-sensitive algorithms |
 | **Categorical Encoding** | One-hot (nominal) or ordinal (ordered) | Numerically represents categories without false ordering |
+| **Class Imbalance** | Resampling, cost-sensitive learning, ensemble methods | Address bias toward majority class |
+
+### Class Imbalance
+
+An unbalanced training set can significantly impact the performance of some classifiers, especially algorithms like K-NN. When classes are unbalanced (skewed), the model may be biased toward the majority class, leading to poor performance on the minority class.
+
+**Solutions for Class Imbalance:**
+
+- Balance the training set by randomly repeating samples from the minority class
+- Apply cost-sensitive learning by giving more importance to errors on the minority class
+- Use ensemble methods designed to handle imbalanced data
+
+```mermaid
+flowchart LR
+    A[Unbalanced Dataset] --> B{Class Distribution Check}
+    B -->|Balanced| C[Proceed to Training]
+    B -->|Imbalanced| D[Apply Imbalance Correction]
+    D --> E[Resampling / Cost-sensitive Learning]
+    E --> C
+    
+    style A fill:#2563eb20,stroke:#2563eb,stroke-width:2px
+    style B fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
+    style D fill:#d9770620,stroke:#d97706,stroke-width:2px
+    style E fill:#16a34a20,stroke:#16a34a,stroke-width:2px
+    style C fill:#0d948820,stroke:#0d9488,stroke-width:2px
+```
+
+### Feature Scaling and Normalization
+
+Some machine learning algorithms (K-NN, SVM, neural networks, and others) ignore features with smaller scales. Proper feature scaling ensures that all features contribute fairly to the model.
+
+**Example: Predicting flat energy label based on:**
+
+- Feature 1: Number of rooms (ranging from 1 to 12)
+- Feature 2: Price of the flat (ranging from 300,000 to 2,000,000)
+
+Without normalization, the price feature would dominate the distance calculations in algorithms like K-NN.
+
+**Common Scaling Techniques:**
+
+1. **Min-Max Scaling (Rescaling)**: Features are rescaled to the range [0,1]
+   $x_{scaled} = \frac{x - x_{min}}{x_{max} - x_{min}}$
+
+2. **Standardization**: Features are transformed to have zero mean and unit variance
+   $x_{standardized} = \frac{x - \mu}{\sigma}$
+
+| Sample | # of rooms (orig) | Price (orig) | # of rooms (scaled) | Price (scaled) |
+|--------|------------------|--------------|-------------------|----------------|
+| 1      | 4                | 300,000      | 0                 | 0              |
+| 2      | 12               | 2,000,000    | 1                 | 1              |
+| 3      | 6                | 650,000      | 0.25              | 0.206          |
 
 ### Assembly
 
@@ -143,7 +194,32 @@ Establish a performance baseline using straightforward algorithms.
 - **Exemplar: K-NN**: Non-parametric classifier relying on nearest neighbors; initial k (e.g., 5) for basic predictions.
 - **Process**: Train (`fit(X_tr, y_tr)`) and predict (`predict(X_te)`) to gauge initial viability.
 
-### K-Fold Cross-Validation
+### Cross-Validation
+
+Cross-validation is a statistical method for evaluating and comparing learning algorithms by dividing data into two segments: one used to learn (or train) a model and the other used to validate the model. The goal of machine learning is to automatically extract relevant information from data and apply it to analyze new data (regression or classification). However, good prediction capability on the training data might fail to predict future unseen data, so we need a procedure for estimating the generalization performance.
+
+#### Cross-Validation Approaches
+
+1. **Resubstitution Validation**:
+   - Learning from all the available data
+   - Test on all the available data
+   - Pros: Uses all available data
+   - Cons: Suffers seriously from overfitting
+
+2. **Hold-Out Validation**:
+   - Learning from half of the available data (or 80-20 split)
+   - Test on the other half of data (held out during training)
+   - Pros: Avoids overlap between training and test data
+   - Cons: Doesn't use all available data for training; results dependent on split choice
+
+3. **K-Fold Cross-Validation**:
+   - The data is partitioned into k equally sized segments (or folds)
+   - K iterations of training and validation:
+     - Learning on k-1 folds
+     - Test on the held-out fold
+   - Data are commonly stratified first to ensure each fold is a good representative of the whole
+
+#### K-Fold Cross-Validation Process
 
 To reliably estimate performance and tune hyperparameters, employ K-fold Cross-Validation (CV). This method partitions the training data into K folds, iteratively training on K-1 and validating on the remaining fold, averaging results for stability.
 
@@ -160,10 +236,25 @@ To reliably estimate performance and tune hyperparameters, employ K-fold Cross-V
 | **Tuning** | Scores guide best params | Prevents overfitting in selection |
 | **Diagnosis** | Fold variances highlight instability | Informs further refinements |
 
-#### Variants and Flow
+#### What is the right number of folds?
 
-- **Repeated K-Fold**: Multiple runs for extra stability.
-- **Nested CV**: Outer loop for final eval, inner for tuning.
+- **Larger k**:
+  - More performance estimations
+  - Training set size is closer to full data size (better generalization)
+  - Overlap between training sets increases
+  - Test set size is very reduced (less precise measurements)
+
+- **In practice**:
+  - Bigger k means longer computation time
+  - K=10 is a good compromise
+
+#### Model Selection with K-Fold Cross-Validation
+
+1. Put aside the test set (remember to stratify the data first)
+2. Use k-fold cross-validation to determine hyperparameters that optimize accuracy
+3. Calculate the mean accuracy as a function of the hyperparameter
+4. Train the algorithm using optimal hyperparameters on the whole dataset
+5. Evaluate the algorithm on the test set
 
 ```mermaid
 flowchart TD
@@ -185,14 +276,48 @@ flowchart TD
     style H fill:#16a34a40,stroke:#16a34a,stroke-width:2px
 ```
 
+#### Variants and Flow
+
+- **Repeated K-Fold**: Multiple runs for extra stability.
+- **Nested CV**: Outer loop for final eval, inner for tuning.
+
 ### Optimization Techniques
 
 - **Search Methods**: Exhaustive (GridSearch) or sampled (RandomSearch); CV-scored for accuracy/F1.
 - **Exemplar: SVM**: Optimizes margins; tunes C and kernel parameters via CV.
 
-### Diagnostics
+### Diagnostics: Bias vs Variance (Underfitting vs Overfitting)
 
-Use learning curves to visualize train/validation performance trends.
+The trade-off between bias and variance is crucial in model selection:
+
+1. **High Bias (Underfitting)**:
+   - The model is too simple to capture the underlying pattern
+   - Both training and validation errors are high
+   - Symptoms: High error from the beginning; getting more training data will NOT help
+   - Solution: Try getting additional features or using more complex models
+
+2. **High Variance (Overfitting)**:
+   - The model is too complex and captures noise instead of the underlying pattern
+   - Training error is low but validation error is high
+   - A large gap exists between training and validation errors
+   - Symptoms: Larger gap between the two errors; getting more training data is likely to help
+   - Solution: Regularization, simplification, or more training data
+
+```mermaid
+flowchart TD
+    A[Training Data] --> B{Model Complexity}
+    B -->|Low| C[High Bias<br/>Underfitting]
+    B -->|High| D[High Variance<br/>Overfitting]
+    B -->|Just Right| E[Good Fit]
+    C --> F[Symptoms: High error on both sets]
+    D --> G[Symptoms: Low train error, high val error]
+    E --> H[Optimal Performance]
+    
+    style A fill:#2563eb20,stroke:#2563eb,stroke-width:2px
+    style C fill:#d9770620,stroke:#d97706,stroke-width:2px
+    style D fill:#dc262620,stroke:#dc2626,stroke-width:2px
+    style E fill:#16a34a40,stroke:#16a34a,stroke-width:2px
+```
 
 | Fit Type | Train Perf | Val Perf | Action |
 |----------|------------|----------|--------|
@@ -241,10 +366,75 @@ The culmination: Test the tuned model on unseen data to quantify generalization.
 | **F1-Score** | P/R harmony | Imbalanced classes |
 | **ROC-AUC** | Threshold-independent | Probabilistic models |
 
+### Confusion Matrix
+
+A confusion matrix is a specific table layout that allows visualization of the performance of an algorithm. It's particularly useful for understanding the types of errors the model makes.
+
+|           | Actual Positive | Actual Negative |
+|-----------|-----------------|-----------------|
+| Predicted Positive | True Positive (TP) | False Positive (FP) |
+| Predicted Negative | False Negative (FN) | True Negative (TN) |
+
+**Components:**
+
+- **True Positives (TP)**: Correctly predicted positive observations
+- **True Negatives (TN)**: Correctly predicted negative observations
+- **False Positives (FP)**: Incorrectly predicted as positive (Type I error)
+- **False Negatives (FN)**: Incorrectly predicted as negative (Type II error)
+
+**Example:**
+
+```
+                    Actual Class
+                 Tuna  Codfish  Salmon
+Predicted  Tuna    15      4       7
+  Class   Codfish   3     20       4
+         Salmon     6      1      15
+```
+
+### Performance Indicators
+
+#### Accuracy and Precision
+
+- **Accuracy** = $\frac{TP + TN}{TP + TN + FP + FN}$ - The proportion of true results in the population
+- **Precision** = $\frac{TP}{TP + FP}$ - The proportion of true positive results among what was predicted as positive
+
+#### Sensitivity (Recall) and Specificity
+
+- **Sensitivity (Recall)** = $\frac{TP}{TP + FN}$ - Probability that a positive test will be given if the patient is ill
+- **Specificity** = $\frac{TN}{TN + FP}$ - Probability that a negative test will be given if the patient is well
+
+#### F-Score (F1-Score)
+
+- **F1-Score** = $F_1 = 2 \times \frac{Precision \times Recall}{Precision + Recall}$ - Combines precision and recall in one metric
+- Most commonly used when β = 1
+
+#### Additional Metrics
+
+- **Information Retrieval Interpretation**:
+  - Precision: Fraction of retrieved instances that are relevant
+  - Recall: Fraction of relevant instances that are retrieved
+
 ### Visualizations
 
 - **Confusion Matrix**: Cross-tab of predictions vs. actuals; normalization aids interpretation.
 - **ROC Curve**: Plots true/false positive rates; AUC measures overall discrimination.
+- **Confidence Intervals**: Indicate the reliability of an estimate (e.g., average accuracy, precision, etc.).
+
+### Confidence Intervals
+
+Confidence intervals quantify the uncertainty in model performance metrics:
+
+- A confidence interval describes the precision of the estimation of a parameter (e.g., mean accuracy)
+- The confidence interval indicates the reliability of an estimate
+- A large confidence interval is related to an uncertain estimate
+- Increasing the number of observations (n) reduces the width of the confidence interval
+- Result example: 90% ± 2% (i.e.: [88% - 92%])
+- General formula: $CI = \bar{X} \pm Z \times \frac{\sigma}{\sqrt{n}}$ where:
+  - $\bar{X}$ is the sample mean
+  - $Z$ is the Z-score corresponding to the desired confidence level
+  - $\sigma$ is the standard deviation
+  - $n$ is the sample size
 
 ### Model Comparison
 
@@ -294,6 +484,8 @@ flowchart TD
 | **K-Fold CV** | Reliable resampling for tuning and estimation |
 | **Evaluation** | Unbiased metrics and visuals for generalization check |
 | **Bias-Variance** | Diagnostic curves guide optimal complexity |
+| **Class Imbalance** | Important to address skewed training sets that can bias models |
+| **Feature Scaling** | Critical for distance-based algorithms to ensure all features contribute fairly |
 
 ### 3. Best Practices ✅
 
@@ -303,11 +495,120 @@ flowchart TD
 - 📊 **Multi-Faceted Eval**: Combine metrics/visuals for complete picture.
 - 🔄 **Benchmark Models**: Compare (e.g., K-NN/SVM) to validate choices.
 - 🚀 **Scale Concepts**: Adapt to regression by metric swaps (e.g., MSE).
+- ⚖️ **Handle Imbalanced Data**: Apply resampling or cost-sensitive learning when classes are skewed.
+- 📏 **Normalize Features**: Apply scaling techniques for distance-based algorithms to work properly.
 
 ### 4. Model Philosophy 📈
 
 - **Baselines First**: Simple models (K-NN) test assumptions before complexity.
 - **Robust Selection**: SVM's structure aids noisy/high-dim data.
 - **No Universal Best**: Problem-specific tuning via CV yields tailored solutions.
+- **Cross-Validation**: Essential for model selection and hyperparameter tuning.
+- **Diagnose Overfitting/Underfitting**: Use learning curves to identify high variance vs high bias.
+
+### 5. Performance Assessment 📊
+
+- **Comprehensive Metrics**: Use accuracy, precision, recall, F1-score depending on the problem.
+- **Confusion Matrix**: Essential for understanding model behavior across classes.
+- **Confidence Intervals**: Quantify uncertainty in model performance estimates.
 
 This streamlined workflow promotes efficient, reproducible ML development. From exploration's insights to evaluation's validation, it equips practitioners for scalable classification tasks – extensible to regression or beyond. 🚀
+
+---
+
+## Additional Notes: Validation Approaches
+
+When building and evaluating machine learning models, several validation approaches can be used:
+
+### Learning Process General Schema
+
+The typical process follows these steps:
+
+1. Training Set: Feature extraction and data modelization
+2. Validation Set: Optimization of the model
+3. Iterate steps 1 and 2
+4. Test Set: Final assessment with no assumptions using these data
+
+### Types of Validation Methods
+
+- **Resubstitution Validation**: Train and test on all available data (prone to overfitting)
+- **Hold-Out Validation**: Split data into training and test sets (e.g., 80-20 split)
+- **K-Fold Cross-Validation**: Partition data into k segments, train on k-1 and test on 1, repeat k times
+
+### Applications of Cross-Validation
+
+- Obtain reliable performance estimation (accuracy, precision, recall, F-score)
+- Algorithm tuning (feature selection, hyperparameter optimization)
+- Finding parameters that optimize classifier performance (K for K-NN, number of trees for Random Forest)
+
+## Complete ML Pipeline Summary
+
+```mermaid
+graph TD
+    A[Raw Data] --> B[Data Exploration]
+    B --> C[Data Preparation]
+    C --> D[Feature Engineering]
+    D --> E[Data Splitting]
+    E --> F[Model Training]
+    F --> G[Hyperparameter Tuning]
+    G --> H[Model Evaluation]
+    H --> I[Model Diagnostics]
+    I --> J{Iterate?}
+    J -->|Yes| B
+    J -->|No| K[Deployed Model]
+    L[New Data] --> K
+    K --> M[Predictions]
+    
+    B --> B1[Inspect Structure]
+    B --> B2[Check Missing Values]
+    B --> B3[Check Class Balance]
+    
+    C --> C1[Handle Missing Values]
+    C --> C2[Feature Scaling]
+    C --> C3[Handle Class Imbalance]
+    C --> C4[Encode Categorical Variables]
+    
+    D --> D1[Feature Selection]
+    D --> D2[Feature Creation]
+    
+    E --> E1[Train/Validation/Test Split]
+    
+    F --> F1[Cross-Validation]
+    F1 --> F2[K-Fold CV]
+    
+    G --> G1[Grid Search]
+    G --> G2[Random Search]
+    
+    H --> H1[Performance Metrics]
+    H --> H2[Confusion Matrix]
+    
+    I --> I1[Bias-Variance Tradeoff]
+    I --> I2[Overfitting Detection]
+    
+    classDef rawData fill:#2563eb20,stroke:#2563eb,stroke-width:2px
+    classDef exploration fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
+    classDef prep fill:#d9770620,stroke:#d97706,stroke-width:2px
+    classDef featureEng fill:#ca8a0420,stroke:#ca8a04,stroke-width:2px
+    classDef dataSplit fill:#4f46e520,stroke:#4f46e5,stroke-width:2px
+    classDef training fill:#16a34a20,stroke:#16a34a,stroke-width:2px
+    classDef tuning fill:#0d948820,stroke:#0d9488,stroke-width:2px
+    classDef evaluation fill:#a855f720,stroke:#a855f7,stroke-width:2px
+    classDef diagnostics fill:#ec489920,stroke:#ec4899,stroke-width:2px
+    classDef deploy fill:#16a34a40,stroke:#16a34a,stroke-width:2px
+    classDef iterate fill:#dc262620,stroke:#dc2626,stroke-width:2px
+    
+    class A rawData
+    class B,B1,B2,B3 exploration
+    class C,C1,C2,C3,C4 prep
+    class D,D1,D2 featureEng
+    class E,E1 dataSplit
+    class F,F1,F2 training
+    class G,G1,G2 tuning
+    class H,H1,H2 evaluation
+    class I,I1,I2 diagnostics
+    class J iterate
+    class K,M deploy
+    class L deploy
+```
+
+This comprehensive diagram summarizes all the key stages and sub-operations in a typical machine learning pipeline, from raw data to deployment, incorporating the content covered in this document.
