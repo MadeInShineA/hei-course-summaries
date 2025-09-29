@@ -45,6 +45,7 @@ Data pipelines are the backbone of modern data computation, systematically inges
 Unlike ad-hoc scripts, pipelines ensure **reproducibility**, **scalability**, and **reliability**. They handle everything from batch ETL jobs to real-time streaming, making them indispensable for big data workflows. This summary expands on the introductory quiz material, providing deeper explanations, examples, and practical guidance to solidify your understanding.
 
 Key learning outcomes:
+
 - Model pipelines using Directed Acyclic Graphs (DAGs).
 - Differentiate ETL/ELT and storage types (lakes, warehouses).
 - Optimize for performance with parallelism and tools like Docker.
@@ -77,8 +78,6 @@ This high-level view sets the stage for detailed components.
 
 ## <a name="fundamentals"></a>Fundamental Concepts
 
-Master these to design robust pipelines.
-
 ### <a name="what-is-pipeline"></a>What is a Data Pipeline?
 
 A data pipeline is a directed sequence of data processing steps that ingests raw data, applies transformations, and outputs refined data for downstream use. It's a specialized workflow emphasizing **acyclicity** (no loops) and **dependency management** to ensure deterministic execution.
@@ -99,6 +98,7 @@ DAGs are the mathematical foundation for pipelines, representing tasks as nodes 
 - **Execution**: Traverse in topological order—process sources first, then dependents. Parallelism emerges naturally for independent nodes.
 
 Example pseudo-code for a simple DAG executor:
+
 ```python
 def execute_dag(tasks, dependencies):
     topo_order = topological_sort(tasks, dependencies)  # e.g., using Kahn's algorithm
@@ -197,6 +197,7 @@ Tools like Prometheus monitor these in production.
 ### <a name="dependencies"></a>Handling Dependencies and Transformations
 
 Dependencies enforce order: Use edges in DAGs to sequence tasks. Transformations include:
+
 - **Cleaning**: Remove duplicates/nulls.
 - **Enriching**: Join external data.
 - **Aggregating**: Summarize (e.g., GROUP BY in SQL).
@@ -235,10 +236,12 @@ Examples now demonstrate these in action.
 ### <a name="basic-dag"></a>Basic DAG Structures
 
 A simple ETL pipeline as DAG:
+
 - Nodes: Extract (from CSV), Transform (filter/aggregate), Load (to DB).
 - Edges: Extract → Transform → Load.
 
 Pseudo-code:
+
 ```python
 # Simple DAG in Python (using networkx for visualization)
 import networkx as nx
@@ -299,6 +302,7 @@ This branched DAG shows parallelism between Clean and Enrich.
 ### <a name="hardware-limits"></a>Hardware Constraints on Laptops
 
 Laptops impose limits critical for local pipeline testing:
+
 - **CPU Cores**: Dictate parallelism (e.g., 4 cores → 4 concurrent tasks max).
 - **RAM Capacity**: In-memory ops (e.g., Pandas DataFrames) fail if exceeded; aim for 16GB+ for datasets >1GB.
 - **Disk Speed**: SSDs speed I/O; HDDs bottleneck large loads.
@@ -313,6 +317,7 @@ Docker encapsulates pipelines, solving dependency hell. Containers share the hos
 - **VM Comparison**: VMs virtualize hardware (heavy, slow boot); containers virtualize OS (light, seconds to start).
 
 Example: Containerize a pipeline script:
+
 ```dockerfile
 FROM python:3.9-slim
 RUN pip install pandas pyspark
@@ -357,6 +362,7 @@ graph TB
 - **Storage Config**: Partition lakes by date; index warehouses for queries.
 
 Example config (YAML for pipeline):
+
 ```yaml
 pipeline:
   tasks:
@@ -400,11 +406,13 @@ Case Study: Netflix uses DAGs (via Apache Airflow) for content recommendation pi
 ### <a name="benefits-limitations"></a>Benefits and Limitations
 
 **Benefits**:
+
 - **Efficiency**: Parallelism cuts processing time by 30-70% in branched DAGs.
 - **Reliability**: Acyclicity + Docker = fewer deployment issues.
 - **Scalability**: From laptop prototypes to cloud (e.g., Kubernetes-orchestrated DAGs).
 
 **Limitations**:
+
 - **Complexity**: Large DAGs hard to debug; solution: modular sub-DAGs.
 - **Overhead**: Docker adds ~10% startup; negligible for long-running tasks.
 - **Vendor Lock-in**: ELT to specific lakes (e.g., Delta Lake); mitigate with standards like Parquet.
