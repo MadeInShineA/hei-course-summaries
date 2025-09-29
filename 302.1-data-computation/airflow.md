@@ -74,13 +74,13 @@ graph TB
     MetadataDB --> Webserver[Web UI<br/>Flask App]
     Webserver --> Users[Users/Admins]
     
-    style DAGs fill:#2563eb20
-    style Scheduler fill:#7c3aed20
-    style MetadataDB fill:#d9770620
-    style Executor fill:#16a34a20
-    style Workers fill:#0d948820
-    style Logs fill:#0ea5e920
-    style Webserver fill:#f59e0b20
+    style DAGs fill:#3b82f620,stroke:#3b82f6
+    style Scheduler fill:#8b5cf620,stroke:#8b5cf6
+    style MetadataDB fill:#f59e0b20,stroke:#f59e0b
+    style Executor fill:#10b98120,stroke:#10b981
+    style Workers fill:#05966920,stroke:#059669
+    style Logs fill:#0284c720,stroke:#0284c7
+    style Webserver fill:#f59e0b20,stroke:#f59e0b
 ```
 
 #### Basic Example
@@ -136,12 +136,12 @@ flowchart TD
     WORK --> DB[Metadata DB<br/>State Tracking]
     DB --> UI[Web UI<br/>Monitoring]
     
-    style DAG fill:#2563eb20,stroke:#2563eb,stroke-width:2px
-    style SCH fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
-    style EXE fill:#d9770620,stroke:#d97706,stroke-width:2px
-    style WORK fill:#16a34a20,stroke:#16a34a,stroke-width:2px
-    style DB fill:#0d948820,stroke:#0d9488,stroke-width:2px
-    style UI fill:#0ea5e920,stroke:#0ea5e9,stroke-width:2px
+    style DAG fill:#3b82f620,stroke:#3b82f6,stroke-width:2px
+    style SCH fill:#8b5cf620,stroke:#8b5cf6,stroke-width:2px
+    style EXE fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
+    style WORK fill:#10b98120,stroke:#10b981,stroke-width:2px
+    style DB fill:#05966920,stroke:#059669,stroke-width:2px
+    style UI fill:#0284c720,stroke:#0284c7,stroke-width:2px
 ```
 
 ---
@@ -181,15 +181,15 @@ flowchart TD
     G --> C
     H --> UI
     
-    style A fill:#2563eb20,stroke:#2563eb,stroke-width:2px
-    style B fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
-    style C fill:#d9770620,stroke:#d97706,stroke-width:2px
-    style D fill:#16a34a20,stroke:#16a34a,stroke-width:2px
-    style E fill:#0d948820,stroke:#0d9488,stroke-width:2px
+    style A fill:#3b82f620,stroke:#3b82f6,stroke-width:2px
+    style B fill:#8b5cf620,stroke:#8b5cf6,stroke-width:2px
+    style C fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
+    style D fill:#10b98120,stroke:#10b981,stroke-width:2px
+    style E fill:#05966920,stroke:#059669,stroke-width:2px
     style F fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
-    style G fill:#16a34a40,stroke:#16a34a,stroke-width:2px
+    style G fill:#10b98120,stroke:#10b981,stroke-width:2px
     style H fill:#ef444420,stroke:#ef4444,stroke-width:2px
-    style UI fill:#0ea5e920,stroke:#0ea5e9,stroke-width:2px
+    style UI fill:#0284c720,stroke:#0284c7,stroke-width:2px
 ```
 
 #### Dependency Schema
@@ -209,10 +209,10 @@ graph LR
     Clean --> Load
     Validate --> Load
     
-    style Extract fill:#2563eb20
-    style Transform fill:#7c3aed20
-    style Load fill:#16a34a20
-    style Notify fill:#d9770620
+    style Extract fill:#3b82f620,stroke:#3b82f6
+    style Transform fill:#8b5cf620,stroke:#8b5cf6
+    style Load fill:#10b98120,stroke:#10b981
+    style Notify fill:#f59e0b20,stroke:#f59e0b
 ```
 
 ---

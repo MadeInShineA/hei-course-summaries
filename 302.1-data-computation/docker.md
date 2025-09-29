@@ -53,11 +53,13 @@ Unlike traditional virtual machines, which include a full operating system, Dock
 ### <a name="core-concepts-and-benefits"></a>Core Concepts and Benefits
 
 Key concepts include:
+
 - **Containerization**: Each container runs in isolation, preventing conflicts between applications.
 - **Portability**: Containers can run on any system with Docker installed, from laptops to cloud servers.
 - **Efficiency**: Containers start in seconds and use fewer resources, ideal for scaling data workloads.
 
 Benefits in data contexts:
+
 - Ensures data processing scripts run identically regardless of the underlying infrastructure.
 - Facilitates microservices architectures for distributed data systems.
 - Simplifies dependency management for libraries like NumPy or Hadoop clients.
@@ -82,11 +84,9 @@ graph TB
     Containers --> Networks
     Containers --> Volumes
     
-    style Host fill:#f0f0f0
-    style Kernel fill:#e0e0e0
-    style DockerEngine fill:#2563eb20
-    style CLI fill:#7c3aed20
-    style Daemon fill:#d9770620
+    style DockerEngine fill:#3b82f620,stroke:#3b82f6
+    style CLI fill:#8b5cf620,stroke:#8b5cf6
+    style Daemon fill:#f59e0b20,stroke:#f59e0b
 ```
 
 #### Simple Example
@@ -148,12 +148,12 @@ flowchart TD
     CN --> V[Volume for Data]
     CN --> N[Network Connection]
     
-    style DF fill:#2563eb20,stroke:#2563eb,stroke-width:2px
-    style BI fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
-    style R fill:#d9770620,stroke:#d97706,stroke-width:2px
-    style CR fill:#16a34a20,stroke:#16a34a,stroke-width:2px
-    style CN fill:#0d948820,stroke:#0d9488,stroke-width:2px
-    style V fill:#0ea5e920,stroke:#0ea5e9,stroke-width:2px
+    style DF fill:#3b82f620,stroke:#3b82f6,stroke-width:2px
+    style BI fill:#8b5cf620,stroke:#8b5cf6,stroke-width:2px
+    style R fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
+    style CR fill:#10b98120,stroke:#10b981,stroke-width:2px
+    style CN fill:#05966920,stroke:#059669,stroke-width:2px
+    style V fill:#0284c720,stroke:#0284c7,stroke-width:2px
     style N fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
 ```
 
@@ -192,13 +192,13 @@ flowchart TD
     F -->|Yes| G[Orchestrate with Compose/Swarm]
     F -->|Done| H[Stop & Clean Up<br/>docker stop/rm]
     
-    style A fill:#2563eb20,stroke:#2563eb,stroke-width:2px
-    style B fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
-    style C fill:#d9770620,stroke:#d97706,stroke-width:2px
-    style D fill:#16a34a20,stroke:#16a34a,stroke-width:2px
-    style E fill:#0d948820,stroke:#0d9488,stroke-width:2px
+    style A fill:#3b82f620,stroke:#3b82f6,stroke-width:2px
+    style B fill:#8b5cf620,stroke:#8b5cf6,stroke-width:2px
+    style C fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
+    style D fill:#10b98120,stroke:#10b981,stroke-width:2px
+    style E fill:#05966920,stroke:#059669,stroke-width:2px
     style F fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
-    style G fill:#8b5cf620,stroke:#8b5cf6,stroke-width:2px
+    style G fill:#0284c720,stroke:#0284c7,stroke-width:2px
     style H fill:#ef444420,stroke:#ef4444,stroke-width:2px
 ```
 
@@ -347,11 +347,11 @@ graph LR
     CLI --> Up[Up: Start Services]
     CLI --> Down[Down: Stop Services]
     
-    style ComposeFile fill:#2563eb20
-    style Services fill:#7c3aed20
-    style Networks fill:#d9770620
-    style Volumes fill:#16a34a20
-    style CLI fill:#0d948820
+    style ComposeFile fill:#3b82f620,stroke:#3b82f6
+    style Services fill:#8b5cf620,stroke:#8b5cf6
+    style Networks fill:#0284c720,stroke:#0284c7
+    style Volumes fill:#10b98120,stroke:#10b981
+    style CLI fill:#f59e0b20,stroke:#f59e0b
 ```
 
 ---
@@ -422,10 +422,12 @@ Docker offers fine-grained control:
 ### <a name="advantages-and-limitations"></a>Advantages and Limitations
 
 **Advantages**:
+
 - Portability reduces deployment errors.
 - Scalability supports microservices in data architectures.
 
 **Limitations**:
+
 - Overhead for very small apps.
 - Requires learning curve for advanced networking.
 
@@ -438,11 +440,11 @@ flowchart TD
     TEST --> DEPLOY[Deploy to Prod]
     DEPLOY --> MONITOR[Monitor & Scale]
     
-    style DEV fill:#2563eb20,stroke:#2563eb
-    style BUILD fill:#7c3aed20,stroke:#7c3aed
-    style TEST fill:#16a34a20,stroke:#16a34a
-    style DEPLOY fill:#d9770620,stroke:#d97706
-    style MONITOR fill:#0d948820,stroke:#0d9488
+    style DEV fill:#3b82f620,stroke:#3b82f6
+    style BUILD fill:#8b5cf620,stroke:#8b5cf6
+    style TEST fill:#10b98120,stroke:#10b981
+    style DEPLOY fill:#f59e0b20,stroke:#f59e0b
+    style MONITOR fill:#05966920,stroke:#059669
 ```
 
 ---
@@ -470,3 +472,4 @@ flowchart TD
 - Security tools like Docker Bench.
 
 Docker and Compose form the foundation for modern data infrastructure, enabling efficient, reproducible computation environments. 🐳
+

@@ -76,13 +76,13 @@ graph TB
     Executors --> Storage[In-Memory Storage]
     Driver --> Optimizer[Catalyst Optimizer]
     
-    style Driver fill:#2563eb20
-    style ClusterManager fill:#7c3aed20
-    style Executors fill:#d9770620
-    style DAGScheduler fill:#16a34a20
-    style TaskScheduler fill:#0d948820
-    style Storage fill:#0ea5e920
-    style Optimizer fill:#f59e0b20
+    style Driver fill:#3b82f620,stroke:#3b82f6
+    style ClusterManager fill:#8b5cf620,stroke:#8b5cf6
+    style Executors fill:#f59e0b20,stroke:#f59e0b
+    style DAGScheduler fill:#10b98120,stroke:#10b981
+    style TaskScheduler fill:#05966920,stroke:#059669
+    style Storage fill:#0284c720,stroke:#0284c7
+    style Optimizer fill:#f59e0b20,stroke:#f59e0b
 ```
 
 #### Basic Example
@@ -138,11 +138,11 @@ flowchart TD
     CORE --> ML[MLlib<br/>Algorithms, Pipelines]
     CORE --> GRAPH[GraphX<br/>Graph Processing]
     
-    style CORE fill:#2563eb20,stroke:#2563eb,stroke-width:2px
-    style SQL fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
-    style STREAM fill:#d9770620,stroke:#d97706,stroke-width:2px
-    style ML fill:#16a34a20,stroke:#16a34a,stroke-width:2px
-    style GRAPH fill:#0d948820,stroke:#0d9488,stroke-width:2px
+    style CORE fill:#3b82f620,stroke:#3b82f6,stroke-width:2px
+    style SQL fill:#8b5cf620,stroke:#8b5cf6,stroke-width:2px
+    style STREAM fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
+    style ML fill:#10b98120,stroke:#10b981,stroke-width:2px
+    style GRAPH fill:#05966920,stroke:#059669,stroke-width:2px
 ```
 
 ---
@@ -181,14 +181,14 @@ flowchart TD
     F -->|Batch| G[Job Complete]
     F -->|Stream| H[Continuous Processing]
     
-    style A fill:#2563eb20,stroke:#2563eb,stroke-width:2px
-    style B fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
-    style C fill:#d9770620,stroke:#d97706,stroke-width:2px
-    style D fill:#16a34a20,stroke:#16a34a,stroke-width:2px
-    style E fill:#0d948820,stroke:#0d9488,stroke-width:2px
+    style A fill:#3b82f620,stroke:#3b82f6,stroke-width:2px
+    style B fill:#8b5cf620,stroke:#8b5cf6,stroke-width:2px
+    style C fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
+    style D fill:#10b98120,stroke:#10b981,stroke-width:2px
+    style E fill:#05966920,stroke:#059669,stroke-width:2px
     style F fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
-    style G fill:#16a34a40,stroke:#16a34a,stroke-width:2px
-    style H fill:#0ea5e920,stroke:#0ea5e9,stroke-width:2px
+    style G fill:#10b98120,stroke:#10b981,stroke-width:2px
+    style H fill:#0284c720,stroke:#0284c7,stroke-width:2px
 ```
 
 #### Execution Sequence
@@ -369,11 +369,11 @@ flowchart TD
     PROCESS --> ML[MLlib Models]
     PROCESS --> SQL[Spark SQL Queries]
     
-    style INPUT fill:#2563eb20,stroke:#2563eb
-    style PROCESS fill:#7c3aed20,stroke:#7c3aed
-    style OUTPUT fill:#16a34a20,stroke:#16a34a
-    style ML fill:#d9770620,stroke:#d97706
-    style SQL fill:#0d948820,stroke:#0d9488
+    style INPUT fill:#3b82f620,stroke:#3b82f6
+    style PROCESS fill:#8b5cf620,stroke:#8b5cf6
+    style OUTPUT fill:#10b98120,stroke:#10b981
+    style ML fill:#f59e0b20,stroke:#f59e0b
+    style SQL fill:#05966920,stroke:#059669
 ```
 
 ---
