@@ -124,7 +124,7 @@ In data engineering and computation, Docker's strengths shine for building relia
 
 **Key Applications** (Quiz-Informed):
 
-- **Interactive Data Analysis**: Run Jupyter notebooks in containers with mounted local datasets for reproducible exploration. Example: `docker run -p 8888:8888 -v ./my-data:/home/jovyan/work jupyter/datascience-notebook`—access at http://localhost:8888, with data persisted via volume.
+- **Interactive Data Analysis**: Run Jupyter notebooks in containers with mounted local datasets for reproducible exploration. Example: `docker run -p 8888:8888 -v ./my-data:/home/jovyan/work jupyter/datascience-notebook`—access at <http://localhost:8888>, with data persisted via volume.
 - **Pipeline Orchestration**: Combine tools like Kafka (ingestion), Spark (processing), and Elasticsearch (storage) in a multi-container setup using Docker Compose, simulating production environments locally for testing ETL workflows.
 - **CI/CD Integration**: Automate building and testing data applications in isolated containers on platforms like GitHub Actions. For instance, a workflow can build a Spark image, run unit tests on sample data, and push to a registry only if successful, ensuring pipeline reliability.
 
@@ -316,7 +316,7 @@ Commands are grouped by function, with focus on data usage. Each includes syntax
 
 #### Build and Image Management
 
-- **docker build**: Builds an image from a Dockerfile in the specified context (default: current directory .). It executes instructions sequentially, creating layers, and caches them for efficiency (detailed in Section 5). 
+- **docker build**: Builds an image from a Dockerfile in the specified context (default: current directory .). It executes instructions sequentially, creating layers, and caches them for efficiency (detailed in Section 5).
   - **Explanation**: Reads the Dockerfile, pulls base images if needed, runs RUN/COPY steps, and tags the result. Output shows each step's progress, layer ID, and size—useful for spotting inefficiencies.
   - **Key Flags**: `-t name:tag` (name the image), `--no-cache` (ignore cache for full rebuild, e.g., after major changes), `-f Dockerfile` (specify file), `--pull` (pull newer base images).
   - **Example**: `docker build -t my-spark-job:v1 .`—builds a Spark ETL image from Dockerfile in current dir, tags it v1. If you change the base tag in FROM, it invalidates all layers (quiz Q11).
@@ -431,6 +431,7 @@ Docker's caching system is a key optimization feature during image builds, drama
   - **Layer Invalidation Rules** (Full Quiz Coverage - Q2, Q6, Q11): Changes affect only from the point of change onward. Modifying a file used in a later COPY step (e.g., source code) invalidates that COPY layer and everything after it, but earlier layers (e.g., RUN apt-get install dependencies) remain cached and reused (quiz Q2: False—modifying a later COPY does not rebuild all earlier layers). Reordering instructions can shift invalidation: moving a RUN (e.g., apt install) earlier might cause more layers to rebuild if its inputs change (quiz Q11). Changing the base image tag in FROM invalidates all subsequent layers (quiz Q11 true). In the cowsay example (quiz Q6), modifying the later `COPY docker.cow` only rebuilds from there, making it the fastest change compared to reordering RUN or changing FROM (which busts everything).
   - **Cache Buster Technique** (Quiz Q4): To intentionally force a cache miss for subsequent layers (e.g., in CI/CD pipelines to ensure fresh code pulls or avoid stale artifacts), add a `RUN` instruction with dynamic output like `RUN echo "$(date +%Y-%m-%dT%H:%M:%S)"` or `RUN echo "$(git rev-parse HEAD)"`. Docker treats the changed output as a modification, invalidating the layer and all after it. This is useful for time-sensitive builds but use sparingly to avoid unnecessary slowdowns. Place it strategically, e.g., after stable deps but before variable code COPY.
   - **.dockerignore for Context Optimization** (Quiz Q11): The build context is all files in the directory (or specified path) sent to the Docker daemon during `docker build .`. Large or irrelevant files (e.g., .git, node_modules, logs) bloat the context, slowing transfers and potentially polluting cache if they change often. Create a `.dockerignore` file in the build root to exclude them (like .gitignore), ensuring only necessary files are sent—thus, excluded files don't affect cache as they're never included (quiz Q11 true). Example .dockerignore:
+
     ```
     .git
     node_modules
@@ -438,9 +439,40 @@ Docker's caching system is a key optimization feature during image builds, drama
     __pycache__
     .env
     ```
+
     This keeps builds fast for data projects with large datasets.
 
 - **Viewing and Debugging Cache** (Quiz Q7): Use `docker image history <image>` to inspect layers: it shows columns like IMAGE (layer ID), CREATED (timestamp), CREATED BY (instruction), SIZE (virtual/real). This reveals cache hits (reused layers marked "<missing>" for command if cached) and helps identify bloat (e.g., a large RUN layer from uncombined installs). For data apps, check if PySpark install layers are cached properly to avoid repeated downloads.
+
+#### Docker Caching Flow Diagram
+
+The following Mermaid diagram illustrates the Docker build caching process, showing how cache hits and misses determine layer reuse during image construction:
+
+```mermaid
+flowchart TD
+    Start["Start Build Process"] --> A["Process Next Dockerfile<br/>Instruction"]
+    A --> B["Compute Hash of<br/>Instruction + Inputs<br/>(e.g., Files, Commands)"]
+    B --> C{"Cache Match?<br/>(Hash Equals Previous Build)?"}
+    C -->|Yes - Cache Hit| D["Reuse Existing Layer<br/>(Skip Execution)"]
+    C -->|No - Cache Miss| E["Execute Instruction<br/>Create New Layer<br/>Cache the Result"]
+    D --> F["Proceed to Next<br/>Instruction"]
+    E --> F
+    F --> G{"All Instructions<br/>Processed?"}
+    G -->|No| A
+    G -->|Yes| End["Final Image Built<br/>(Layered Stack Complete)"]
+    
+    style Start fill:#10b98120,stroke:#10b981,stroke-width:2px
+    style End fill:#10b98120,stroke:#10b981,stroke-width:2px
+    style C fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
+    style D fill:#05966920,stroke:#059669,stroke-width:2px
+    style E fill:#ef444420,stroke:#ef4444,stroke-width:2px
+    style B fill:#3b82f620,stroke:#3b82f6,stroke-width:2px
+    style F fill:#8b5cf620,stroke:#8b5cf6,stroke-width:2px
+    style G fill:#06b6d420,stroke:#06b6d4,stroke-width:2px
+    style A fill:#f9731620,stroke:#f97316,stroke-width:2px
+```
+
+**Optimization Strategy for Data Builds**:
 
 **Optimization Strategy for Data Builds**: To maximize cache hits and minimize rebuild times (critical for iterating on ETL scripts with heavy deps like PySpark):
 
@@ -485,7 +517,7 @@ Dockerfile instructions (keywords) define how to construct the image. Each creat
 | **ENTRYPOINT** | Configures the container as an executable, setting the primary command (CMD as args). | `ENTRYPOINT ["python", "app.py"]`<br>With CMD: `ENTRYPOINT ["spark-submit"] CMD ["job.py"]` | Makes the container run like a command (e.g., for daemons); overrides with --entrypoint in run. Changes invalidate layer. Use for fixed apps like Spark jobs (quiz Q5: not for base, but pairs with CMD). |
 | **USER** | Switches the user/group for RUN, CMD, and ENTRYPOINT (default: root). | `RUN useradd -m appuser && chown -R appuser /app`<br>`USER appuser` | Runs subsequent instructions as non-root for security (create user first). No cache impact, but affects file permissions in layers. Best practice to avoid root in data apps (e.g., USER 1000 for Spark). |
 | **ARG** | Defines build-time variables (not in runtime image). | `ARG SPARK_VERSION=3.5`<br>`FROM bitnami/spark:${SPARK_VERSION}`<br>Build: `docker build --build-arg SPARK_VERSION=3.6 .` | Only available during build; changes to ARG value invalidate using layers (quiz Q11: ARG changes bust cache). Use for flexibility (e.g., versions). Not exposed at runtime (use ENV for that). |
-| **HEALTHCHECK** | Defines how to test if the container is healthy (for orchestration tools). | `HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -f http://localhost:8080/health || exit 1` | Runs the test periodically; sets status (healthy/unhealthy). Flags: --interval (check frequency), --timeout (per-test time), --start-period (initial grace), --retries (fail threshold). No cache impact. Useful in Compose for depends_on readiness (e.g., wait for DB before app). |
+| **HEALTHCHECK** | Defines how to test if the container is healthy (for orchestration tools). | `HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -f <http://localhost:8080/health> || exit 1` | Runs the test periodically; sets status (healthy/unhealthy). Flags: --interval (check frequency), --timeout (per-test time), --start-period (initial grace), --retries (fail threshold). No cache impact. Useful in Compose for depends_on readiness (e.g., wait for DB before app). |
 | **LABEL** | Adds metadata key-value pairs to the image (non-functional). | `LABEL maintainer="data-team@example.com" version="1.0"` | Metadata for tools (e.g., description); multiple on one line. No cache or runtime effect, but helps with image management in registries. |
 
 **Recommended Order for Optimal Caching** (Quiz-Optimized): FROM/ARG (stable base) → COPY deps files (e.g., requirements.txt) → RUN install (unchanged deps) → COPY source code (frequent changes last) → WORKDIR/EXPOSE/VOLUME (setup) → ENTRYPOINT/CMD (runtime). This maximizes cache hits for fast rebuilds (quiz Q6: modifying later docker.cow only rebuilds from there, fastest option).
@@ -563,6 +595,61 @@ ENTRYPOINT ["spark-submit", "--jars", "/opt/spark/jars/udf.so", "spark_job.py"]
 Build: `docker build -t spark-with-udf .`—final image has Spark + UDF, no g++ bloat.
 
 Multi-stage is a best practice for data images (quiz Q19: multiple FROM, selective COPY, different bases).
+
+### Benefits of Multi-Stage Builds in Data Computation
+
+Multi-stage builds are particularly useful in data computation workflows where images can become large due to heavy dependencies like data science libraries (e.g., TensorFlow, PyTorch, or Dask). By separating the build environment from the runtime, you can install build-time dependencies (e.g., compilers for C extensions in scikit-learn) in one stage and copy only the necessary runtime artifacts to a slim base image in another stage. This reduces image size, improves security by excluding unnecessary tools, and speeds up deployment in container orchestrators like Kubernetes for data pipelines.
+
+**Example for Data Pipeline:**
+
+Consider a Dockerfile for a data processing app that requires compiling a custom C library for performance:
+
+```dockerfile
+# Build stage
+FROM ubuntu:22.04 AS builder
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY . .
+RUN gcc -shared -o libdata.so src/data.c \
+    && python3 setup.py build_ext --inplace
+
+# Runtime stage
+FROM python:3.9-slim
+RUN apt-get update && apt-get install -y \
+    python3 \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY --from=builder /app/libdata.so /usr/lib/
+COPY --from=builder /app/dist /app/
+RUN pip install /app/dist/*.whl
+CMD ["python", "process_data.py"]
+```
+
+This results in a smaller runtime image containing only the Python interpreter, the compiled library, and the app, without the build tools.
+
+#### Multi-Stage Build Diagram
+
+The following Mermaid diagram illustrates the multi-stage build process and its impact on the resulting container, showing how the heavy builder stage is discarded, leaving a slim runtime image for efficient container execution:
+
+```mermaid
+graph LR
+    subgraph "Build Stages"
+        Builder["Builder Stage<br/>FROM ubuntu:22.04 AS builder<br/>Install tools, compile libdata.so<br/>(Heavy: ~500MB+)"]
+        Runtime["Runtime Stage<br/>FROM python:3.9-slim<br/>COPY --from=builder libdata.so<br/>Install app<br/>(Slim: ~100MB)"]
+    end
+    
+    Builder -.->|Artifacts Copied| Runtime
+    Runtime --> Image["Final Image<br/>(Slim Runtime)"]
+    Image --> Container["Container<br/>docker run slim-image<br/>Efficient, secure runtime<br/>No build tools included"]
+    
+    style Builder fill:#ef444420,stroke:#ef4444,stroke-width:2px
+    style Runtime fill:#10b98120,stroke:#10b981,stroke-width:2px
+    style Image fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
+    style Container fill:#3b82f620,stroke:#3b82f6,stroke-width:2px
+```
 
 ### Data-Specific Examples
 
@@ -755,6 +842,50 @@ networks:  # Custom tiers (Q22)
   4. Interact: `docker compose exec backend psql -U user -d appdb` (query via internal net).
   5. Logs: `docker compose logs -f frontend` (UI errors).
   6. Down: `docker compose down -v` (cleans volumes).
+
+#### Compose Network Flow Diagram
+
+The following Mermaid diagram shows how services communicate in a custom network setup, with frontend accessing backend via the shared back-tier network:
+
+```mermaid
+graph TB
+    %% External entities
+    User["👤 External User"] 
+    Config["🔐 Configs & Secrets<br/>(env, TLS certs)"]
+    
+    %% Services
+    Frontend["frontend-app<br/>• Image: node:18<br/>• Ports: 443:8043<br/>• Networks: app-net"]
+    Backend["backend-db<br/>• Image: postgres:15<br/>• Expose: 5432<br/>• Networks: app-net, db-net<br/>• Internal-only"]
+
+    %% Data layer
+    Volume["💾 flocker-data<br/>(Named Volume)<br/>• Driver: flocker<br/>• Scales with dataset size"]
+    Secrets["🗝️ prod-secrets<br/>(Docker Secret)<br/>• DB_PASSWORD<br/>• API_KEYS"]
+    EnvConfig["📝 app-config<br/>(Docker Config)<br/>• LOG_LEVEL=prod<br/>• DB_HOST=backend-db"]
+
+    %% Data flow
+    User -->|HTTPS / Dashboard| Frontend
+    Frontend -->|Query Data| Backend
+    Backend -->|Read/Write| Volume
+    Config --> Secrets
+    Config --> EnvConfig
+    Secrets --> Backend
+    EnvConfig --> Frontend
+    EnvConfig --> Backend
+
+    %% Styling — matching your original flowchart palette
+    style User fill:#ef444420,stroke:#ef4444,stroke-width:2px
+    style Frontend fill:#3b82f620,stroke:#3b82f6,stroke-width:2px
+    style Backend fill:#10b98120,stroke:#10b981,stroke-width:2px
+    style Volume fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
+    style Secrets fill:#8b5cf620,stroke:#8b5cf6,stroke-width:2px
+    style EnvConfig fill:#06b6d420,stroke:#06b6d4,stroke-width:2px
+    style Config fill:none,stroke:none,color:#6b7280,font-size:12px
+
+    %% Invisible layout helpers
+    Config --- dummy[ ]
+    dummy --- Backend
+    style dummy fill:none,stroke:none
+```
 
 **Data Context**: Frontend visualizes data from backend DB; flocker volume scales storage for large datasets; external configs/secrets for secure prod deploys.
 
