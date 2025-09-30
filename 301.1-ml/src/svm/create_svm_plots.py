@@ -1,8 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn import svm
+from sklearn import svm, SVR, NuSVR
 from sklearn.datasets import make_classification, make_regression
 from sklearn.inspection import DecisionBoundaryDisplay
+
 
 # Generate sample data
 X, y = make_classification(
@@ -361,9 +362,6 @@ plt.savefig("res/svm/svm_polynomial_degree_effect.png", dpi=150, bbox_inches="ti
 plt.show()
 
 # Create a plot comparing different SVM variants (classification and regression)
-from sklearn.svm import SVC, NuSVC
-from sklearn.svm import SVR, NuSVR
-from sklearn.datasets import make_regression
 
 # Generate sample classification data
 X_var, y_var = make_classification(
@@ -521,4 +519,3 @@ for i, (title, model, X_data, y_data, variant_type) in enumerate(variants):
 plt.tight_layout()
 plt.savefig("res/svm/svm_variants_comparison.png", dpi=150, bbox_inches="tight")
 plt.show()
-

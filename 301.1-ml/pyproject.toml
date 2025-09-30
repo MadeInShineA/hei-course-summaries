@@ -1,7 +1,0 @@
-[project]
-name = "hei-ba5-301.1-ml-course"
-version = "0.1.0"
-description = "Uv env for HEI BA5 course summary"
-readme = "README.md"
-requires-python = ">=3.8"
-dependencies = ["scikit-learn>=1.0.0", "matplotlib>=3.5.0"]
