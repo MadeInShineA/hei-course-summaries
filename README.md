@@ -8,28 +8,18 @@ This repository contains comprehensive summaries, notes, and materials for the H
 
 ```
 ├── 301.1-ml/                    # Machine Learning Course
-│   ├── intro.md                 # Introduction to Machine Learning concepts
-│   ├── ml_pipeline.md           # ML Pipeline and Supervised Classification Workflow
-│   ├── genetic_algorithms.md    # Genetic Algorithms content
-│   ├── svm.md                   # Support Vector Machines content
-│   ├── pyproject.toml           # Project configuration with uv dependency management
-│   ├── uv.lock                  # uv lock file for dependency management
-│   ├── .venv/                   # Virtual environment created with uv
-│   ├── content/                 # Course content and resources
-│   │   ├── week-1/
-│   │   │   ├── 1_introduction.pdf
-│   │   │   ├── 2_mathematical_foundations.pdf
-│   │   │   ├── 3_model_evaluation.pdf
-│   │   │   ├── mini_lab_1_fuel_consumption.ipynb   # Jupyter notebook for lab
-│   │   │   └── project_1_house.ipynb              # Jupyter notebook for project
-│   │   └── week-2/
-│   │       ├── Genetic Algorithms.pdf
-│   │       ├── pipeline_notebook.py               # Python implementation for ML Pipeline
-│   │       └── mastermind_notebook.py             # Python implementation for Mastermind
-│   ├── res/                     # Resources directory
-│   └── src/                     # Source code directory
+│   ├── summaries/               # Course summaries in Markdown
+│   ├── content/                 # Lecture notes, PDFs, notebooks, and scripts
+│   │   ├── week-1/              # Week 1 materials
+│   │   └── week-2/              # Week 2 materials
+│   ├── res/                     # Generated resources like plots
+│   ├── src/                     # Source code for examples
+│   ├── pyproject.toml           # Python project configuration
+│   └── uv.lock                  # Dependency lock file
 ├── 302.1-data-computation/      # Data Computation Course
-│   └── ...                      # Course content
+│   ├── content/                 # Course content including HTML notes
+│   ├── quizzes/                 # Quiz scripts
+│   └── summaries/               # Course summaries in Markdown
 └── README.md                    # This file
 ```
 
