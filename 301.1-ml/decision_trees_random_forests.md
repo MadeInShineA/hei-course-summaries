@@ -387,3 +387,10 @@ flowchart TD
 - **Hybrid Models**: Combine with neural nets for complex tasks
 
 Decision Trees and Random Forests offer powerful, interpretable tools for classification and regression, balancing simplicity with strong performance in real-world machine learning applications. 🌳
+
+## Additional Resources
+
+### Videos
+
+- [Decision Tree Classification Clearly Explained!](https://www.youtube.com/watch?v=ZVR2Way4nwQ)
+- [Random Forest Algorithm Clearly Explained!](https://www.youtube.com/watch?v=v6VJ2RO66Ag)
