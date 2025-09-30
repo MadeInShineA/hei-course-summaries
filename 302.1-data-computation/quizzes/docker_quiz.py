@@ -667,7 +667,7 @@ def render_question(q):
         )
         condition = ans == q["correct_value"]
     col1, col2 = st.columns([3, 1])
-    with col2:
+    with col1:
         submit_button(q["id"], condition, q["exp_correct"], q["exp_wrong"])
     if q["id"] in st.session_state.submitted:
         show_feedback(q["id"])
