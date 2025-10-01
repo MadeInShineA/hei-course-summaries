@@ -1,509 +1,325 @@
 # Data Computation Course Summary: MapReduce and Apache Spark
 
-This guide provides an in-depth exploration of MapReduce and Apache Spark, foundational distributed systems for data computation. It fully incorporates the quiz content from the "5 MapReduce & Apache Spark" module, including all 28 questions, answers, and explanations (e.g., GFS/HDFS chunks/replicas/metadata, input splits/locality, MapReduce phases/materialization/shuffles, RDD lineage/caching/narrow-wide transformations, DataFrames optimization/pruning, stage boundaries/DAG, SLURM directives, and more). The flow is logical: introduction → foundations (GFS → MapReduce → HDFS) → Spark core concepts → commands → optimization → applications → summary, with detailed explanations, examples, and transitions for clarity.
+This comprehensive guide explores MapReduce and Apache Spark, key distributed computing frameworks for big data processing. It fully integrates all 28 quiz questions from the "5 MapReduce & Apache Spark" module, covering GFS/HDFS architecture, MapReduce workflows, Spark's RDDs/DataFrames, transformations, caching, optimizations, and more. The structure follows a logical progression: introduction to distributed systems → foundational storage (GFS/HDFS) → processing models (MapReduce) → Spark's advanced abstractions → practical commands and optimizations → real-world applications → key takeaways with quiz mappings.
 
-**Key Quiz Coverage**:
+**Quiz Coverage Overview** (All 28 Questions Integrated):
+- **GFS/HDFS (Q1-2, Q6-7, Q9, Q18, Q21)**: Metadata-only master (Q1: False), 64MB chunks with 3 replicas (Q2: True), write-once read-many (Q6: True), NameNode metadata (Q7: True), off-path design (Q18: False), no random updates (Q21: False), cost-effective via replication/sequential I/O (Q9: True).
+- **MapReduce (Q3-5, Q8, Q10, Q22, Q24-25)**: Data locality via block mapping (Q3: True), materialization at input/map/reduce (Q4: Partial), local disk intermediates (Q5: False), disk-bound multi-stage (Q8: True), input splits logical/aligned (Q10, Q24: True), reducers pull (Q25: True), costly materialization/shuffles (Q22: True).
+- **Spark Core (Q11, Q13-17, Q19, Q23, Q26-27)**: RDDs immutable/partitioned/lineage (Q11: True), wide transformations (Q13: True), caching for iterations (Q14, Q27: True), DataFrames declarative/pruning (Q15, Q26: True), stage boundaries at shuffles/sources (Q17: True), narrow no-shuffle (Q19: True), DAG minimizes boundaries (Q23: True).
+- **Optimizations (Q12, Q16)**: DataFrames may shuffle (Q12: False), columnar pruning/pushdown (Q16: True).
+- **Other (Q20, Q28)**: SLURM --nodes (Q20: True), abstractions/formats/storage layers (Q28: All true).
 
-- Q1: GFS Master serves file data to clients (False; metadata only, off data path).
-- Q2: GFS files split into fixed-size chunks (~64MB), 3 replicates across chunkservers (True).
-- Q3: Data locality in MapReduce enabled by filesystem's mapping of blocks/chunks to replicas (True).
-- Q4: Materialization points in MapReduce: input read from HDFS, mapper intermediates on local disk, final reducer output to HDFS (Partial; excludes RDD caching).
-- Q5: MapReduce intermediates stored in HDFS before reducers fetch (False; local disk, reducers pull).
-- Q6: HDFS is write-once, read-many (True).
-- Q7: HDFS NameNode stores block/replica metadata and namespace (True; not file contents).
-- Q8: Multi-stage MapReduce is disk-bound due to HDFS materialization (True).
-- Q9: GFS/HDFS cost-effective via software replication, commodity hardware, sequential I/O (True).
-- Q10: MapReduce input split is logical slice for map task, often aligned to block (True).
-- Q11: Spark RDDs are immutable, partitioned, fault-tolerant via lineage (True).
-- Q12: Spark guarantees no shuffles in DataFrames (False; shuffles possible).
-- Q13: Wide transformations in Spark: groupBy, join, reduceByKey (True).
-- Q14: Spark RDD caching advantage for iterative ML: in-memory reuse across steps (True).
-- Q15: DataFrames declarative, enabling pruning/reordering to reduce shuffles (True).
-- Q16: Columnar formats like Parquet enable column pruning/predicate pushdown (True).
-- Q17: Spark stage boundaries at wide transformations/shuffles and new sources (True).
-- Q18: GFS/HDFS metadata server on data path, streaming bytes (False; off-path).
-- Q19: Narrow transformations don't require shuffling across partitions (True).
-- Q20: SLURM #SBATCH --nodes specifies nodes to allocate (True).
-- Q21: HDFS provides random in-place updates by default (False; append-only).
-- Q22: GFS cost model: materialization (disk I/O) and data movement (shuffles) most costly (True).
-- Q23: Spark transformations form DAG across stages, minimizing wide boundaries (True).
-- Q24: Input splits logical for map tasks; aligning to blocks maximizes locality (True).
-- Q25: MapReduce reducers pull mapper outputs during shuffle (True).
-- Q26: DataFrames outperform RDDs by exposing relational intent for better plans (True).
-- Q27: Spark RDD caching most helpful for iterative algorithms with data reuse (True).
-- Q28: MapReduce/RDD/DataFrame are compute abstractions over storage; formats like Parquet influence costs; HDFS/object stores for long-term storage (All true).
-
-**Usage**: Follow sections sequentially; execute code; use Mermaid for visuals.
-
----
+Use this sequentially for learning; execute examples in Spark/PySpark; visualize with Mermaid diagrams.
 
 ## Table of Contents
 
-1. [Introduction](#introduction)
-2. [Foundations of Distributed Storage and Processing](#foundations)
+1. [Introduction to Distributed Data Processing](#introduction)
+2. [Foundational Storage Systems](#foundations)
    - [Google File System (GFS)](#gfs)
-   - [MapReduce](#mapreduce)
    - [Hadoop Distributed File System (HDFS)](#hdfs)
-3. [Apache Spark Core Concepts](#spark-core)
-   - [RDDs (Resilient Distributed Datasets)](#rdds)
-   - [DataFrames](#dataframes)
-   - [DAG and Stage Boundaries](#dag-stages)
-   - [Narrow and Wide Transformations](#transformations)
-   - [Caching](#caching)
-4. [Common Commands](#commands)
-5. [Optimization and Best Practices](#optimization)
-   - [Columnar Formats like Parquet (Q16)](#parquet)
-6. [Applications, Benefits, and Real-World Use Cases](#applications)
-7. [Key Takeaways](#key-takeaways)
+3. [MapReduce Processing Model](#mapreduce)
+4. [Apache Spark: Core Concepts](#spark-core)
+   - [Resilient Distributed Datasets (RDDs)](#rdds)
+   - [DataFrames and Optimizations](#dataframes)
+   - [Directed Acyclic Graph (DAG) and Stages](#dag-stages)
+   - [Transformations: Narrow vs. Wide](#transformations)
+   - [Caching and Persistence](#caching)
+5. [Practical Commands and Tools](#commands)
+6. [Optimization Strategies](#optimization)
+7. [Applications and Ecosystem](#applications)
+8. [Key Takeaways and Quiz Mappings](#key-takeaways)
 
 ---
 
-## <a name="introduction"></a>1. Introduction
+## 1. Introduction to Distributed Data Processing {#introduction}
 
-Apache Spark builds on foundational distributed systems like GFS, MapReduce, and HDFS to enable scalable analytics and computation. This section introduces these concepts, contrasting traditional approaches, and highlights their role in data computation.
+Distributed systems like MapReduce and Spark tackle big data challenges by scaling storage and computation across clusters of commodity hardware (Q9). GFS/HDFS provide fault-tolerant storage (Q2, Q6), MapReduce enables parallel processing (Q3-5), and Spark accelerates it with in-memory computing (up to 100x faster than disk-bound MapReduce; Q8, Q28).
 
-### What is Distributed Data Processing?
+### Why These Systems Matter
+They address scalability, fault tolerance, and efficiency: replication for reliability (Q2), data locality to minimize network I/O (Q3), and minimizing costly operations like shuffles/materialization (Q22). Spark unifies batch, streaming, ML, and SQL workloads (Q28).
 
-Distributed systems handle large-scale data across clusters. GFS provides scalable storage, MapReduce enables parallel processing, HDFS implements GFS principles, and Spark unifies them for in-memory analytics (Q28). Spark's speed (up to 100x faster than disk-bound MapReduce; Q8) stems from these foundations.
-
-### Core Value in Data Computation
-
-These systems address big data challenges: scalability (Q9: commodity hardware), fault tolerance (Q2: replication), and efficiency (Q22: minimize materialization/shuffles). Spark integrates them for ETL, ML, and streaming.
-
-#### Basic Example: Word Count in MapReduce (Q4, Q5)
+#### Simple Word Count Example (Ties to Q4-5, Q25)
+In MapReduce, process text files by mapping words to counts (local disk output; Q5) and reducing aggregates (pull via shuffle; Q25).
 
 ```python
-# Mapper: Process split locally
+# Mapper (local processing for locality, Q3)
 def map(key, value):
     for word in value.split():
-        yield word, 1  # Emit to local disk (Q5)
+        yield word, 1  # Intermediate to local disk (Q4, Q5: not HDFS)
 
-# Reducer: Pull from mappers (Q25)
+# Reducer (pulls from mappers, Q25)
 def reduce(key, values):
-    return sum(values)  # Aggregate, output to HDFS (Q4)
+    return sum(values)  # Output to HDFS (Q4)
 ```
 
-Intermediates on local disk, reducers pull (Q5).
-
-With foundations established, next explore GFS.
+This flows into storage foundations for context.
 
 ---
 
-## <a name="foundations"></a>2. Foundations of Distributed Storage and Processing
+## 2. Foundational Storage Systems {#foundations}
 
-This section covers the foundational systems: GFS, MapReduce, and HDFS, which form the backbone of distributed data processing.
+Reliable storage underpins distributed processing. GFS inspired HDFS for scalable, fault-tolerant file systems optimized for large files and sequential access (Q9).
 
-### <a name="gfs"></a>Google File System (GFS)
+### Google File System (GFS) {#gfs}
 
-GFS is a scalable distributed filesystem designed for large files with append-only operations, serving as inspiration for HDFS. It handles petabyte-scale data on commodity hardware (Q9).
+GFS handles petabyte-scale data on commodity hardware with append-only semantics (Q21: no random updates).
 
-#### Core Concepts (Q1, Q2, Q9, Q18, Q21)
+#### Key Features (Q1, Q2, Q9, Q18)
+- **Architecture**: Single Master manages lightweight metadata (Q1: False, serves locations only; Q18: off-path); chunkservers store 64MB fixed chunks with 3 replicas (Q2: True).
+- **Fault Tolerance**: Software replication (Q9); sequential I/O favored to reduce costs (Q22 precursor).
+- **Access**: Clients query Master, then read directly from chunkservers (Q18: False).
 
-- **Architecture**: Single Master manages metadata; multiple chunkservers store data in 64MB chunks with 3 replicas (Q2). Clients interact with Master for locations, then directly with chunkservers (off-path design).
-- **Key Features**: Fault-tolerant replication, sequential I/O optimization, large files (multi-GB), append-only writes (no random updates; Q21). Files split into fixed-size chunks (~64MB) replicated across chunkservers (Q2: True).
-- **Cost Model**: Focuses on sequential I/O; materialization (disk) and data movement (network) are costly (Q22). Cost-effective via software replication on commodity hardware (Q9: True).
-- **Data Locality**: Chunk placement on nearby chunkservers for efficient access (Q3 precursor).
-
-#### GFS Architecture Diagram
-
-This diagram illustrates GFS's architecture, showing how clients query the Master for metadata and then access chunkservers directly for data, emphasizing the off-path design for scalability and tying to quiz questions on metadata handling and replication.
-
+#### GFS Architecture
 ```mermaid
 graph TB
-    Client["Client"] -->|1. Request metadata| Master["Master\n(Metadata only: Q1, Q18)"]
-    Master -->|2. Return locations| Client
-    Client -->|3. Direct I/O| Chunkservers["Chunkservers\n(64MB chunks, 3 replicas: Q2)"]
-
-    style Client fill:#3b82f620,stroke:#3b82f6,stroke-width:2px
-    style Master fill:#8b5cf620,stroke:#8b5cf6,stroke-width:2px
-    style Chunkservers fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
+    Client["Client"] -->|Metadata Query (Q1, Q18)| Master["Master (Metadata Only)"]
+    Master -->|Chunk Locations| Client
+    Client -->|Direct Data Access| Chunkservers["Chunkservers (64MB Chunks, 3 Replicas: Q2)"]
+    style Master fill:#f9d,stroke:#333
+    style Chunkservers fill:#bbf,stroke:#333
 ```
 
-**Characteristics**:
+**Characteristics Table**:
+| Aspect          | Details                          | Quiz Tie |
+|-----------------|----------------------------------|----------|
+| Chunk Size     | ~64MB fixed                     | Q2      |
+| Replication    | 3 replicas across chunkservers  | Q2, Q9  |
+| Write Pattern  | Append-only, no random (Q21)    | Q21     |
+| Scalability    | Master off-path (Q18)           | Q1, Q18 |
 
-- **File Size**: Optimized for large files (multi-GB); small files inefficient due to chunk overhead.
-- **Block Size**: 64MB chunks (fixed-size for sequential access).
-- **Replication**: 3 replicas default; software-managed for fault tolerance (Q9).
-- **Access Pattern**: Append-only writes; high-throughput reads (sequential I/O favored, Q22).
-- **Scalability**: Single Master for metadata (lightweight); multiple chunkservers for data.
+GFS enables locality (Q3); transitions to HDFS implementation.
 
-GFS enables efficient large-scale storage; next, MapReduce for processing.
+### Hadoop Distributed File System (HDFS) {#hdfs}
 
-### <a name="mapreduce"></a>MapReduce
+HDFS adapts GFS for Hadoop: write-once, read-many (Q6: True) with 128MB blocks.
 
-MapReduce is a programming model for processing large datasets in parallel across clusters, popularized by Google and implemented in Hadoop. It processes data in key-value pairs via map (parallel input) and reduce (aggregation) phases.
+#### Key Features (Q6, Q7, Q9, Q21)
+- **Architecture**: NameNode stores namespace/block metadata (Q7: True, not contents); DataNodes hold blocks with 3 replicas (Q9).
+- **Access**: Off-path like GFS (Q1, Q18); append-only (Q21: False for random).
+- **Optimization**: Sequential reads; block alignment for locality (Q3, Q24).
 
-#### Core Concepts (Q3, Q4, Q5, Q8, Q10, Q22, Q24, Q25)
+#### HDFS vs. GFS Comparison Table
+| Feature       | GFS                  | HDFS                 | Quiz Tie |
+|---------------|----------------------|----------------------|----------|
+| Block Size   | 64MB chunks         | 128MB blocks        | Q2      |
+| Master/Node  | Master (metadata)   | NameNode (Q7)       | Q7      |
+| Replication  | 3 (software)        | 3 (default)         | Q9      |
+| Write        | Append-only         | Write-once (Q6)     | Q6, Q21 |
 
-- **Input Splits**: Logical divisions of input data for map tasks (Q10: logical slice, aligned to blocks for locality Q3, Q24). Splits map to filesystem blocks/chunks (Q2).
-- **Map Phase**: Processes splits locally, emitting intermediates to local disk (Q4, Q5: not HDFS; reducers pull Q25). Enables data locality by running maps near data (Q3: True).
-- **Shuffle**: Reducers pull intermediates over network (Q25); costly data movement (Q22).
-- **Reduce Phase**: Aggregates, writes final output to storage (Q4: HDFS materialization).
-- **Multi-Stage**: Chains jobs; disk-bound due to HDFS writes between stages (Q8: True).
-
-**Characteristics**:
-
-- **File Size**: Handles large inputs via splits (logical, ~128MB blocks); outputs partitioned for next stage.
-- **Data Flow**: Key-value pairs; map emits to local disk (temporary, small files per mapper), shuffle sorts/merges, reduce writes sequentially.
-- **Parallelism**: Maps run in parallel (one per split); reduces aggregate (fan-in).
-- **Fault Tolerance**: Restart failed tasks; idempotent reduces.
-- **Performance**: Disk-bound (Q8); shuffles expensive (Q22: network I/O).
-
-#### MapReduce Workflow Diagram
-
-This flowchart depicts the MapReduce workflow, from input splits to final output, highlighting key phases like map (local processing for locality Q3), shuffle (data pull Q25), and reduce (aggregation with HDFS materialization Q4,Q8), showing how data flows through the pipeline with emphasis on disk-bound nature (Q8).
-
-```mermaid
-flowchart TD
-    Input["Input (Splits Q10, Blocks Q2)"] --> Map["Map Phase (Local, Locality Q3)"]
-    Map --> Intermediates["Local Disk Intermediates (Q4,Q5)"]
-    Intermediates --> Shuffle["Shuffle (Pull Q25, Costly Q22)"] --> Reduce["Reduce Phase"]
-    Reduce --> Output["Output to HDFS (Materialization Q4,Q8)"]
-
-    style Input fill:#3b82f620,stroke:#3b82f6,stroke-width:2px
-    style Map fill:#8b5cf620,stroke:#8b5cf6,stroke-width:2px
-    style Intermediates fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
-    style Shuffle fill:#ef444420,stroke:#ef4444,stroke-width:2px
-    style Reduce fill:#10b98120,stroke:#10b981,stroke-width:2px
-    style Output fill:#05966920,stroke:#059669,stroke-width:2px
-```
-
-**Word Count Example** (Q4, Q5, Q25):
-
-```java
-// Mapper: Process split locally (Q3 locality)
-public class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
-    public void map(LongWritable key, Text value, Context context) {
-        for (String word : value.toString().split("\\s+")) {
-            context.write(new Text(word), new IntWritable(1));  // Local disk (Q5)
-        }
-    }
-}
-
-// Reducer: Pull from mappers (Q25)
-public class WordCountReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
-    public void reduce(Text key, Iterable<IntWritable> values, Context context) {
-        int sum = 0;
-        for (IntWritable val : values) sum += val.get();
-        context.write(key, new IntWritable(sum));  // HDFS output (Q4)
-    }
-}
-```
-
-Stages materialize to disk (Q8); locality via block mapping (Q3).
-
-MapReduce scales processing; next, HDFS for storage.
-
-### <a name="hdfs"></a>Hadoop Distributed File System (HDFS)
-
-HDFS implements GFS principles for reliable, scalable storage on commodity hardware (Q9). It supports large files with block-based distribution.
-
-#### Core Concepts (Q6, Q7, Q9, Q21)
-
-- **Blocks and Replication**: Files split into 128MB blocks with 3 replicas (Q2, Q9: software replication). Write-once, read-many (Q6: append-only, no random updates Q21).
-- **NameNode Role**: Manages metadata (namespace, block locations; Q7: stores metadata only). Off data path: Clients query for locations, then access DataNodes directly (Q1, Q18).
-- **DataNodes**: Store actual blocks; handle reads/writes.
-- **Fault Tolerance**: Automatic replication on failures (Q9).
-
-#### HDFS Architecture Diagram
-
-This diagram shows HDFS's architecture, illustrating the NameNode's role in metadata management and the direct client-to-DataNode data flow, highlighting the off-path design for efficient, scalable access and tying to quiz questions on metadata and data handling.
-
+#### HDFS Architecture
 ```mermaid
 graph TB
-    Client["Client"] -->|1. Request metadata| NameNode["NameNode\n(Namespace & Block Locations: Q7)"]
-    NameNode -->|2. Return locations| Client
-    Client -->|3. Direct I/O| DataNodes["DataNodes\n(128MB blocks, 3 replicas: Q2)"]
-
-    style Client fill:#3b82f620,stroke:#3b82f6,stroke-width:2px
-    style NameNode fill:#8b5cf620,stroke:#8b5cf6,stroke-width:2px
-    style DataNodes fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
+    Client["Client"] -->|Metadata (Q7)| NameNode["NameNode (Namespace/Blocks)"]
+    NameNode -->|Locations| Client
+    Client -->|Direct I/O| DataNodes["DataNodes (128MB Blocks, Replicas: Q9)"]
+    style NameNode fill:#f9d,stroke:#333
 ```
 
-**Characteristics**:
-
-- **File Size**: Optimized for large files (>GB); small files inefficient (one block overhead).
-- **Block Size**: 128MB default (configurable; balances I/O and replication).
-- **Replication**: 3 replicas (default; software-managed for fault tolerance Q9).
-- **Access Pattern**: Append-only (Q6, Q21: no random writes); high-throughput sequential reads.
-- **Scalability**: NameNode single (metadata); DataNodes distributed (data).
-
-HDFS enables reliable storage; next, Spark for unified processing.
+HDFS stores data durably; next, processing via MapReduce.
 
 ---
 
-## <a name="spark-core"></a>3. Apache Spark Core Concepts
+## 3. MapReduce Processing Model {#mapreduce}
 
-Spark builds on MapReduce/HDFS for in-memory, unified analytics (Q28). It supports batch, streaming, ML, and graphs via RDDs/DataFrames.
+MapReduce processes large datasets in parallel: map tasks on input splits (Q10), shuffle, reduce.
 
-### <a name="rdds"></a>RDDs (Resilient Distributed Datasets) (Q11)
+#### Workflow (Q3-5, Q8, Q10, Q22, Q24-25)
+- **Input Splits**: Logical divisions (~128MB, aligned to blocks for locality; Q10, Q24: True; Q3).
+- **Map Phase**: Local processing, intermediates to disk (Q4, Q5: False for HDFS; not cached like RDDs).
+- **Shuffle**: Reducers pull over network (Q25: True; costly Q22).
+- **Reduce**: Aggregates to HDFS (Q4); multi-stage disk-bound (Q8: True).
 
-RDDs are immutable, partitioned, fault-tolerant via lineage (Q11).
-
-- **Immutability**: Once created, RDDs cannot be modified, ensuring consistency.
-- **Partitioned**: Data divided into partitions (default 128MB) for parallel processing.
-- **Fault-Tolerant via Lineage**: Recomputes lost partitions using transformation history (Q11).
-
-RDDs are lazy: transformations build DAG (Q23), executed on actions.
-
-Example (Q11):
-
-```scala
-val rdd = sc.textFile("input")  // New source (stage boundary, Q17)
-val words = rdd.flatMap(_.split(" "))  // Narrow (no shuffle, Q19)
-val pairs = words.map((_, 1))          // Narrow
-val counts = pairs.reduceByKey(_ + _)  // Wide (shuffle, Q13)
-counts.cache()                         // For iteration (Q14, Q27)
-```
-
-### <a name="dataframes"></a>DataFrames (Q12, Q15, Q26)
-
-DataFrames are structured RDDs with named columns, declarative for optimization (Q15, Q26: True).
-
-- **Declarative**: Specify what (Q15), not how; Catalyst reorders/prunes.
-- **Shuffles Possible**: (Q12: False) Like RDDs, but optimized.
-- **Relational Intent**: Schema enables better plans (Q26).
-
-Example (Q15, Q26):
-
-```scala
-val df = spark.read.text("input")  // DataFrame
-df.filter($"value" > "10").groupBy().count()  // Optimizer prunes/reorders (Q15)
-```
-
-DataFrames outperform RDDs via relational intent (Q26).
-
-### <a name="dag-stages"></a>DAG and Stage Boundaries (Q17, Q23)
-
-Spark's DAG (Q23) is a graph of transformations; stages are split at boundaries (Q17).
-
-- **DAG**: Logical plan; optimized to minimize wide boundaries (Q23).
-- **Stage Boundaries**: At wide transformations/shuffles or new sources (Q17). Stages pipeline narrow ops; boundaries trigger shuffles (Q22).
-
-Example (Q17, Q23):
-
-```scala
-val rdd = sc.textFile("input")  // New source: boundary
-val words = rdd.flatMap(_.split(" "))  // Narrow: same stage
-val counts = words.reduceByKey(_ + _)  // Wide: boundary (Q17)
-```
-
-DAG minimizes boundaries (Q23).
-
-#### Spark Execution Flow Diagram
-
-This diagram visualizes DAG execution, with stages separated by boundaries.
-
-```mermaid
-graph TD
-    Source["Data Source (Boundary Q17)"] --> Narrow1["Narrow Transforms (Q19)"]
-    Narrow1 --> Narrow2["Narrow Transforms (Q19)"]
-    Narrow2 --> Wide["Wide Transform (Q13) - Boundary Q17"]
-    Wide --> Action["Action (e.g., collect)"]
-
-    style Source fill:#3b82f620,stroke:#3b82f6,stroke-width:2px
-    style Narrow1 fill:#8b5cf620,stroke:#8b5cf6,stroke-width:2px
-    style Narrow2 fill:#8b5cf620,stroke:#8b5cf6,stroke-width:2px
-    style Wide fill:#ef444420,stroke:#ef4444,stroke-width:2px
-    style Action fill:#10b98120,stroke:#10b981,stroke-width:2px
-```
-
-### <a name="transformations"></a>Narrow and Wide Transformations (Q13, Q19)
-
-- **Narrow (Q19)**: Within partition, no shuffle (e.g., map, filter).
-- **Wide (Q13)**: Across partitions, requires shuffle (e.g., groupBy, join, reduceByKey).
-
-Narrow: Efficient, same stage. Wide: Costly, boundary (Q17).
-
-Example (Q13, Q19):
-
-```scala
-val narrow = rdd.map(_ * 2)  // No shuffle (Q19)
-val wide = rdd.reduceByKey(_ + _)  // Shuffle (Q13)
-```
-
-### <a name="caching"></a>Caching (Q14, Q27)
-
-Caching persists RDDs/DataFrames in memory/disk for reuse (Q14, Q27: True).
-
-- **Advantage**: Avoids recomputation in iterations (Q14); ideal for ML (Q27).
-- **How**: `cache()` or `persist()`; uses lineage for fault tolerance.
-
-Example (Q14, Q27):
-
-```scala
-val rdd = sc.textFile("input").cache()  // Cache for reuse
-rdd.count()  // First use
-rdd.filter(_ > 0).take(5)  // Second, cached (Q14, Q27)
-```
-
-#### Spark Components Diagram
-
-This flowchart visualizes Spark's key components.
-
+#### MapReduce Workflow
 ```mermaid
 flowchart TD
-    Core["Spark Core\nRDDs (Q11), Scheduling"] --> SQL["Spark SQL\nDataFrames (Q15,Q26)"]
-    Core --> ML["MLlib\nCaching (Q14,Q27)"]
-    Storage["HDFS (Q6,Q7)"] --> Core
-
-    style Core fill:#3b82f620,stroke:#3b82f6,stroke-width:2px
-    style SQL fill:#8b5cf620,stroke:#8b5cf6,stroke-width:2px
-    style ML fill:#10b98120,stroke:#10b981,stroke-width:2px
-    style Storage fill:#ef444420,stroke:#ef4444,stroke-width:2px
+    Input["Input Splits (Logical, Aligned: Q10, Q24)"] --> Map["Map (Local Disk: Q3-5)"]
+    Map --> Shuffle["Shuffle (Reducers Pull: Q25, Costly: Q22)"] --> Reduce["Reduce (HDFS Output: Q4, Q8)"]
+    style Input fill:#e1f5fe
+    style Map fill:#f3e5f5
+    style Shuffle fill:#fff3e0
+    style Reduce fill:#e8f5e8
 ```
 
-Spark unifies processing; next, commands.
+**Performance Insights (Q22)**: Minimize materialization (disk I/O) and shuffles (network); locality via block mapping (Q3).
+
+Example: Word count as above; scales to TB+ via parallelism.
+
+MapReduce is foundational; Spark improves it with in-memory abstractions.
 
 ---
 
-## <a name="commands"></a>4. Common Commands
+## 4. Apache Spark: Core Concepts {#spark-core}
 
-Essential tools for running and managing (Q20: SLURM for HPC).
+Spark extends MapReduce for faster, unified analytics (Q28): batch/streaming/ML on HDFS (Q8 faster via memory).
 
-### Hadoop/MapReduce Commands
+### Resilient Distributed Datasets (RDDs) {#rdds} (Q11, Q14, Q27)
+RDDs: Immutable, partitioned collections; fault-tolerant via lineage (Q11: True). Lazy evaluation builds DAG (Q23).
 
-- **hdfs dfs**: HDFS ops (Q2, Q7).
-  - Explanation: Manages files (ls, put, get); NameNode coordinates (Q7).
-  - Example: `hdfs dfs -put localfile /path` (write-once, Q6); `hdfs fsck -blocks /file` (replicas, Q2).
+- **Key Traits**: Partitions (~128MB); recompute lost data (lineage).
+- **Use**: Ideal for iterative ML (cache reuse; Q14, Q27: True).
 
-- **hadoop jar**: Submit MapReduce jobs.
-  - Example: `hadoop jar wordcount.jar /input /output` (Q3-Q5).
-
-### Spark Commands
-
-- **spark-submit**: Run Spark apps.
-  - Flags: `--master yarn` (cluster), `--executor-memory 4g`.
-  - Example: `spark-submit --master local[*] wordcount.py` (DAG, Q23).
-
-- **pyspark**: Interactive shell.
-  - Example: `pyspark --master local[2]` (Q11-Q15).
-
-### SLURM (Q20)
-
-- **sbatch**: Submit batch jobs.
-  - Example: Script with `#SBATCH --nodes=4` (nodes, Q20); `sbatch spark_job.sh`.
-
-**Table: Key Commands** (Quiz Ties):
-
-| Command | Description | Example | Characteristics |
-|---------|-------------|---------|----------|
-| hdfs dfs -ls | List HDFS files (metadata Q7) | hdfs dfs -ls / | Fast metadata ops; off-path (Q1,Q18); handles large dirs (millions files) |
-| hadoop jar | Run MapReduce (splits/shuffle Q3,Q10,Q25) | hadoop jar app.jar | Processes large inputs (TB+); disk-bound (Q8); parallel maps/reduces |
-| spark-submit | Submit Spark (DAG/shuffles Q13,Q23) | spark-submit app.py | In-memory (faster Q8); supports 128MB partitions; scalable to 1000s nodes |
-| sbatch | SLURM job (#SBATCH --nodes Q20) | sbatch --nodes=2 script.sh | HPC scaling; allocates 1-1000s nodes; integrates with YARN for Spark |
-
-**Data Tip**: Use `hdfs fsck` for replicas (Q2); spark-submit with caching (Q14).
-
-Commands execute workflows; next, optimization.
-
----
-
-## <a name="optimization"></a>5. Optimization and Best Practices (Q8, Q13, Q15-Q16, Q19, Q22, Q26)
-
-Optimizations reduce materialization/shuffles (Q8, Q22); formats enable pruning (Q16).
-
-### Spark Optimizations (Q15, Q23, Q26)
-
-- **DAG & Lazy Evaluation**: Builds plan, minimizes stages/shuffles (Q23); wide at shuffles (Q13, Q17, Q19).
-- **Caching**: MEMORY_AND_DISK for iteration (Q14, Q27).
-- **DataFrames/Catalyst**: Declarative (Q15, Q26: relational intent for plans); pruning in columnar formats (Q16).
-
-**Tuning Example** (Q13, Q19):
-
-```python
-df = spark.read.parquet("data.parquet")  # Pruning (Q16)
-df.filter(df.col > 10).groupBy("key").agg(...)  # Reorder (Q15,Q26); wide (Q13)
-df.cache()  # Multi-pass (Q27)
+Example:
+```scala
+val rdd = sc.textFile("input.txt")  // Source (Q17 boundary)
+val words = rdd.flatMap(_.split(" "))  // Narrow (Q19)
+val counts = words.map((_, 1)).reduceByKey(_ + _)  // Wide (Q13)
+counts.cache()  // For iterations (Q14, Q27)
 ```
 
-### Columnar Formats like Parquet (Q16)
+### DataFrames and Optimizations {#dataframes} (Q12, Q15, Q26)
+Structured like tables; declarative API enables Catalyst optimizer (Q15: True; prunes/reorders). Expose relational intent for better plans (Q26: True); shuffles possible (Q12: False).
 
-Columnar formats like Parquet enable column pruning/predicate pushdown (Q16), allowing Spark to read only necessary data, reducing I/O. Formats influence costs (Q28).
+- **Advantages**: Predicate pushdown/column pruning with columnar formats (Q16).
+- **vs. RDDs**: Faster analytics via schema (Q26).
 
-Example (Q16):
-
-```python
-df = spark.read.parquet("data.parquet").filter(df.age > 18)  # Prunes columns (Q16)
+Example:
+```scala
+val df = spark.read.parquet("data.parquet")  // Columnar (Q16)
+df.filter(col("age") > 18).groupBy("city").count()  // Optimized (Q15, Q26)
 ```
 
----
+### Directed Acyclic Graph (DAG) and Stages {#dag-stages} (Q17, Q23)
+Transformations form DAG (Q23: True); stages split at boundaries (Q17: shuffles/sources). Pipelines narrow ops; minimizes wide boundaries.
 
-## <a name="applications"></a>6. Applications, Benefits, and Real-World Use Cases (Q28)
-
-### Real-World Use Cases
-
-- **ETL Pipelines**: MapReduce/Spark on HDFS with columnar formats (Q28: abstractions/formats influence costs).
-- **ML**: Spark caching for training (Q14, Q27).
-- **HPC**: SLURM + Spark (Q20).
-- **Analytics**: DataFrames for queries with pruning (Q15, Q16).
-
-### Advantages & Limitations (Q8, Q9, Q12, Q22)
-
-**Advantages**:
-
-- Unified abstractions (Q28); in-memory faster than disk-bound MapReduce (Q8); opt. via DataFrames (Q26).
-- Scalable on commodity hardware (Q9).
-
-**Limitations**:
-
-- Shuffles costly (Q22); DataFrames still shuffle (Q12); HDFS no random writes (Q21).
-
-#### Ecosystem Diagram
-
-This graph depicts the integrated ecosystem, showing how HDFS provides storage, MapReduce/Spark handles computation, columnar formats optimize, and SLURM enables HPC scaling (Q28).
-
+#### Spark Execution DAG
 ```mermaid
 graph LR
-    Storage["HDFS (Q6,Q9)"] --> Compute["MapReduce/Spark (Q28)"]
-    Compute --> Formats["Columnar Formats (Q16)"]
-    Storage --> SLURM["SLURM (Q20)"] --> Compute
-
-    style Storage fill:#ef444420,stroke:#ef4444,stroke-width:2px
-    style Compute fill:#3b82f620,stroke:#3b82f6,stroke-width:2px
-    style Formats fill:#10b98120,stroke:#10b981,stroke-width:2px
-    style SLURM fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
+    Source["Source (Boundary: Q17)"] --> Narrow["Narrow Transforms (Q19)"] --> Wide["Wide/Shuffle (Q13, Q17)"] --> Action["Action Triggers Exec"]
+    style Source fill:#e1f5fe
+    style Narrow fill:#f3e5f5
+    style Wide fill:#fff3e0
 ```
+
+### Transformations: Narrow vs. Wide {#transformations} (Q13, Q19)
+- **Narrow (Q19: True)**: Partition-local (map, filter); no shuffle, same stage.
+- **Wide (Q13: True)**: Cross-partition (groupBy, join, reduceByKey); shuffle boundary (Q17).
+
+#### Transformations Table
+| Type    | Examples              | Shuffle? | Stage Impact | Quiz Tie |
+|---------|-----------------------|----------|--------------|----------|
+| Narrow | map, filter          | No      | Same stage  | Q19     |
+| Wide   | reduceByKey, join    | Yes     | New stage   | Q13, Q17|
+
+Example: Narrow `map(_ * 2)`; wide `reduceByKey(_ + _)` (Q13).
+
+### Caching and Persistence {#caching} (Q14, Q27)
+`cache()` or `persist()` stores in memory/disk; avoids recompute in iterations (Q14, Q27: True for ML).
+
+- **Levels**: MEMORY_ONLY (fastest); use for reused data.
+
+Spark's abstractions outperform MapReduce (Q8, Q26); proceed to commands.
 
 ---
 
-## <a name="key-takeaways"></a>7. Key Takeaways (Full Quiz Coverage)
+## 5. Practical Commands and Tools {#commands} (Q20, Q28)
 
-### Summary Table
+Run jobs on clusters; integrate with HDFS/SLURM (Q20).
 
-| Topic | Key Concepts | Characteristics | File Size/Block Details |
-|-------|--------------|-----------------|------------------------|
-| **GFS** | Q1, Q2, Q9, Q18, Q21 | Single Master (lightweight metadata); multiple chunkservers (distributed data); append-only; fault-tolerant replication | 64MB chunks; large files (multi-GB); 3 replicas default |
-| **MapReduce** | Q3, Q4, Q5, Q8, Q10, Q22, Q24, Q25 | Key-value processing; parallel maps (per split); fan-in reduces; idempotent; disk I/O heavy | Input splits ~128MB (logical); intermediates small/temp files; outputs partitioned (variable size) |
-| **HDFS** | Q6, Q7, Q9, Q21 | Distributed blocks on DataNodes; NameNode coordinates (metadata only); append-only; high-throughput sequential | 128MB blocks; 3 replicas; large files (>GB); metadata small (KB per file) |
-| **Spark** | Q11, Q12, Q13, Q14, Q15, Q16, Q17, Q19, Q23, Q26, Q27 | In-memory processing; lazy evaluation; unified (batch/stream/ML); adaptive query execution | 128MB default partitions; adaptive 100MB-1GB; in-memory (up to cluster RAM); columnar row groups 128MB-1GB |
-| **Optimization** | Q8, Q13, Q15-Q16, Q19, Q22, Q26 | Minimize disk I/O (Q8); columnar formats (Q16); balance parallelism/memory | Partitions 100MB-1GB (default 128MB); shuffles configurable (200 partitions); columnar pages 1MB |
+### HDFS Commands
+- `hdfs dfs -ls /path`: List (metadata via NameNode; Q7).
+- `hdfs dfs -put local /hdfs`: Upload (write-once; Q6).
 
-### Practical Advice
+### MapReduce
+- `hadoop jar app.jar /input /output`: Submit (splits/shuffles; Q3-5, Q10).
 
-- GFS/HDFS: Use for durable storage (Q6); align blocks for locality (Q24).
-- MapReduce: Minimize materialization (Q8); leverage locality (Q3).
-- Spark: Cache iterative (Q27); DataFrames for analytics (Q26); columnar pruning (Q16).
-- Tune shuffles (Q22); SLURM scaling (Q20).
-- Partition by filters (date/region); use columnar formats for efficiency (Q16).
-- Balance partitions (100MB-1GB); monitor skew.
+### Spark
+- `spark-submit --master yarn app.py`: Run (DAG; Q23); `--executor-memory 4g`.
+- `pyspark`: Shell (RDDs/DataFrames; Q11-15).
 
-### Advanced Topics
+### SLURM for HPC (Q20: True)
+- `#SBATCH --nodes=4`: Allocate nodes.
+- `sbatch script.sh`: Submit Spark job.
 
-- Delta Lake for ACID on HDFS.
-- Spark on K8s/SLURM.
-- GPU via RAPIDS.
-- Formats: Parquet/ORC/Avro (Q28).
+#### Commands Summary Table
+| Tool      | Command Example                  | Purpose                  | Quiz Tie |
+|-----------|----------------------------------|--------------------------|----------|
+| HDFS     | `hdfs dfs -ls /`                | Metadata ops (Q7)       | Q7      |
+| MapReduce| `hadoop jar ...`                | Splits/shuffles (Q10,25)| Q3-5    |
+| Spark    | `spark-submit app.py`           | DAG/caching (Q23,27)    | Q11-15  |
+| SLURM    | `#SBATCH --nodes=4`             | Node allocation         | Q20     |
 
-### Glossary (Quiz Terms)
+Use `hdfs fsck -blocks` for replicas (Q2); cache in Spark (Q14).
 
-- **Input Split**: Logical map unit (Q10).
-- **Shuffle**: Data movement in wide (Q13, Q25).
-- **Lineage**: RDD fault-tolerance (Q11).
-- **Predicate Pushdown**: Filter before scan (Q16).
-- **Partitioning**: Dividing data for parallelism (Q24).
-- **Stage Boundary**: Point in DAG where shuffling or new data source splits execution into stages (Q17).
-- **Narrow Transformation**: Operations within partitions, no shuffle (Q19).
-- **Wide Transformation**: Operations requiring shuffle across partitions (Q13).
+---
 
-Practice with word count (Q4,Q5) or RDD caching (Q14). MapReduce/Spark enable big data—explore Spark docs (spark.apache.org).
+## 6. Optimization Strategies {#optimization} (Q8, Q12, Q15-16, Q19, Q22, Q26)
+
+Reduce costs: shuffles (Q22), disk I/O (Q8); leverage DataFrames (Q15, Q26).
+
+- **DAG Tuning**: Minimize stages (Q23); narrow chaining (Q19).
+- **Caching**: For iterations (Q27); MEMORY_AND_DISK.
+- **DataFrames/Catalyst**: Declarative plans (Q15); shuffles optimized (Q12).
+- **Formats**: Columnar like Parquet for pruning/pushdown (Q16: True; Q28).
+
+#### Optimization Techniques Table
+| Technique       | Benefit                          | Example                  | Quiz Tie |
+|-----------------|----------------------------------|--------------------------|----------|
+| Caching        | Reuse in iterations (Q27)       | `df.cache()`            | Q14,27  |
+| Columnar Formats| Pruning/pushdown (Q16)          | Parquet reads            | Q16     |
+| Narrow Chaining| No shuffle (Q19)                | map → filter            | Q19     |
+| Declarative DF | Better plans (Q26)              | filter → groupBy        | Q15,26  |
+
+Tuned Example (Q16, Q22):
+```python
+df = spark.read.parquet("data.parquet").cache()  # Q16, Q27
+result = df.filter(col("val") > 10).groupBy("key").count()  # Pruned/optimized (Q15)
+```
+
+Formats influence costs (Q28); balance partitions (100MB-1GB).
+
+---
+
+## 7. Applications and Ecosystem {#applications} (Q28)
+
+### Use Cases
+- **ETL**: Spark on HDFS with Parquet (Q16, Q28).
+- **ML**: Iterative caching (Q14, Q27).
+- **HPC**: SLURM + Spark (Q20).
+- **Analytics**: DataFrames for queries (Q15, Q26).
+
+### Benefits & Limitations
+- **Pros**: Unified API (Q28); in-memory speed (Q8); scalable (Q9).
+- **Cons**: Shuffles costly (Q12, Q22); HDFS append-only (Q21).
+
+#### Ecosystem Overview
+```mermaid
+graph LR
+    Storage["HDFS/Object Stores (Q6-7, Q28)"] --> Compute["MapReduce/Spark (Q8, Q28)"]
+    Compute --> Formats["Parquet/ORC (Q16, Q28)"]
+    Storage --> SLURM["SLURM (Q20)"] --> Compute
+    style Storage fill:#3b82f620,stroke:#3b82f6,stroke-width:2px
+    style Compute fill:#10b98120,stroke:#10b981,stroke-width:2px
+    style Formats fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px
+    style SLURM fill:#8b5cf620,stroke:#8b5cf6,stroke-width:2px
+```
+
+Integrates for end-to-end pipelines (Q28).
+
+---
+
+## 8. Key Takeaways and Quiz Mappings {#key-takeaways}
+
+### Core Concepts Summary Table
+| Topic      | Highlights                                      | Characteristics                  | Quiz Ties                  |
+|------------|-------------------------------------------------|----------------------------------|----------------------------|
+| **GFS/HDFS** | Metadata master, replicated blocks, sequential I/O | 64/128MB, 3 replicas, append-only | Q1-2,6-7,9,18,21          |
+| **MapReduce** | Splits → map (local) → shuffle (pull) → reduce | Disk-bound, locality-aligned    | Q3-5,8,10,22,24-25        |
+| **Spark RDDs** | Immutable, lineage, cacheable                  | Partitions, lazy DAG            | Q11,14,19,23,27           |
+| **DataFrames** | Declarative, optimized plans                   | Pruning, relational             | Q12,15-16,26              |
+| **Transformations/Stages** | Narrow (no shuffle), wide (boundary)          | Minimize shuffles               | Q13,17,19                 |
+
+### Practical Tips
+- Align splits/blocks for locality (Q24); cache iterations (Q27).
+- Use DataFrames/Parquet for analytics (Q15-16, Q26).
+- Monitor shuffles (Q22); SLURM for scaling (Q20).
+- Avoid HDFS random writes (Q21); formats matter (Q28).
+
+### Glossary
+- **Input Split (Q10,24)**: Logical map unit, aligned to blocks.
+- **Shuffle (Q13,25)**: Cross-partition data movement (costly Q22).
+- **Lineage (Q11)**: RDD recompute history.
+- **Predicate Pushdown (Q16)**: Filter at source.
+- **Stage Boundary (Q17)**: Shuffle or new source.
+- **Narrow/Wide (Q13,19)**: Local vs. cross-partition ops.
+
+Practice: Implement word count in Spark; review Spark docs (spark.apache.org). This covers the full quiz for mastery.
