@@ -150,18 +150,37 @@ Integration: Pipelines often lake → warehouse (ELT) or source → mart (ETL).
 
 ```mermaid
 graph TB
-    Raw[Raw Data<br/>Multi-Format] --> Lake[Data Lake<br/>Schema-On-Read]
-    Lake --> Transform[ELT Transform]
-    Transform --> Warehouse[Data Warehouse<br/>Schema-On-Write]
-    Warehouse --> Mart[Data Mart<br/>Focused Subset]
-    Structured[Curated Data] --> Warehouse
-    
-    style Raw fill:#3b82f620,stroke:#3b82f6
-    style Lake fill:#8b5cf620,stroke:#8b5cf6
-    style Transform fill:#f59e0b20,stroke:#f59e0b
-    style Warehouse fill:#10b98120,stroke:#10b981
-    style Mart fill:#05966920,stroke:#059669
-    style Structured fill:#0284c720,stroke:#0284c7
+    %% --- Nodes ---
+    Raw["Raw Data\n(Multi-Format)"]
+    Lake["Data Lake\nSchema-on-Read\n(Raw / Bronze)"]
+    ETL["ETL Process\n• Transform BEFORE Load\n• Direct to Warehouse"]
+    ELT["ELT Process\n• Load raw → Lake\n• Transform AFTER Load\n• Output to Warehouse"]
+    Warehouse["Data Warehouse\nSchema-on-Write\n(Trusted Layer)"]
+    Mart["Data Mart\n(Focused Views)"]
+    Structured["Curated Data\n(Master/Reference)"]
+
+    %% --- Flow ---
+    Raw --> ETL
+    Raw --> Lake
+    Lake --> ELT
+    ETL --> Warehouse
+    ELT --> Warehouse
+    Warehouse --> Mart
+    Structured --> Warehouse
+
+    %% --- Styling ---
+    classDef source fill:#3b82f610,stroke:#3b82f6,stroke-width:1.5px;
+    classDef lake fill:#8b5cf610,stroke:#8b5cf6,stroke-width:1.5px;
+    classDef etl fill:#ef444410,stroke:#ef4444,stroke-width:1.5px;
+    classDef elt fill:#f59e0b10,stroke:#f59e0b,stroke-width:2px;  %% Slightly bolder for emphasis
+    classDef storage fill:#10b98110,stroke:#10b981,stroke-width:1.5px;
+    classDef curated fill:#0284c710,stroke:#0284c7,stroke-width:1.5px;
+
+    class Raw,Structured source
+    class Lake lake
+    class ETL etl
+    class ELT elt
+    class Warehouse,Mart storage
 ```
 
 These fundamentals flow into practical design.
@@ -173,7 +192,7 @@ These fundamentals flow into practical design.
 ### <a name="workflow"></a>Step-by-Step Workflow
 
 1. **Planning**: Identify sources/sinks; define tasks and dependencies to form a DAG.
-2. **Ingestion**: Extract data (e.g., via APIs, files); handle errors gracefully.
+2. **Ingestion / Extraction**: Extract data (e.g., via APIs, files); handle errors gracefully.
 3. **Transformation**: Apply logic (e.g., SQL joins, Python scripts); use ETL/ELT based on scale.
 4. **Loading**: Persist to storage; ensure idempotency for retries.
 5. **Orchestration**: Execute via tools (e.g., Airflow schedules DAG runs).
@@ -208,15 +227,15 @@ Ensure transformations are idempotent (rerunnable without side effects) for resi
 
 ```mermaid
 flowchart TD
-    Plan[1. Plan DAG & Tasks] --> Ingest[2. Ingest/Extract]
-    Ingest --> DepCheck{3. Check Dependencies}
-    DepCheck -->|Met| Transform[4. Transform Data<br/>Clean/Enrich/Aggregate]
-    DepCheck -->|Pending| Parallel[Parallel Branches]
+    Plan["1. Plan DAG & Tasks"] --> Ingest["2. Ingest/Extract<br/>(Raw Data Sources)"]
+    Ingest --> DepCheck{"3. Dependencies Ready?"}
+    DepCheck -->|"Yes"| Transform["4. Transform Data<br/>• Clean<br/>• Enrich<br/>• Aggregate"]
+    DepCheck -->|"No"| Parallel["Wait or Run<br/>Parallel Prep Tasks"]
     Parallel --> Transform
-    Transform --> Load[5. Load to Storage]
-    Load --> Orchestrate[6. Orchestrate & Monitor<br/>Latency/Errors]
-    Orchestrate --> Validate[Validate Outputs]
-    
+    Transform --> Load["5. Load to Storage<br/>(Warehouse / Lake)"]
+    Load --> Orchestrate["6. Orchestrate & Monitor<br/>• Latency<br/>• Errors"]
+    Orchestrate --> Validate["7. Validate Outputs"]
+
     style Plan fill:#3b82f620,stroke:#3b82f6
     style Ingest fill:#8b5cf620,stroke:#8b5cf6
     style DepCheck fill:#f59e0b20,stroke:#f59e0b
