@@ -1,4 +1,5 @@
 import streamlit as st
+import random
 
 # Central questions dictionary (renumbered sequentially 1-37 for logical order)
 questions_dict = {
@@ -19,10 +20,10 @@ questions_dict = {
         "type": "radio",
         "input_label": "Your answer:",
         "options": [
-            "The full guest operating system",
-            "The host kernel",
             "Dedicated hardware resources",
+            "The full guest operating system",
             "A separate boot loader",
+            "The host kernel"
         ],
         "correct": "The host kernel",
         "exp_correct": "Containers share the host kernel for process isolation, enabling fast startup (seconds) and low resource use (MBs RAM), ideal for scaling data workloads like Spark clusters.",
@@ -35,10 +36,10 @@ questions_dict = {
         "type": "radio",
         "input_label": "Your answer:",
         "options": [
-            "Namespaces and cgroups",
             "Hypervisors and VMs",
-            "Chroot and SELinux only",
             "iptables and AppArmor",
+            "Chroot and SELinux only",
+            "Namespaces and cgroups"
         ],
         "correct": "Namespaces and cgroups",
         "exp_correct": "Namespaces provide isolation (e.g., PID for processes, NET for networks); cgroups limit resources (CPU/memory)—enabling lightweight, secure data tasks without full OS overhead.",
@@ -51,10 +52,10 @@ questions_dict = {
         "type": "radio",
         "input_label": "Your answer:",
         "options": [
-            "a) Increases image size",
-            "b) Enables layer sharing and efficient caching",
             "c) Requires full OS per image",
             "d) Disables portability",
+            "a) Increases image size",
+            "b) Enables layer sharing and efficient caching"
         ],
         "correct": "b) Enables layer sharing and efficient caching",
         "exp_correct": "Layers are diffs; common bases (e.g., python:3.9) share across images, reducing storage/pull time; changes only rebuild affected layers for fast data app iterations.",
@@ -67,10 +68,10 @@ questions_dict = {
         "type": "radio",
         "input_label": "Your answer:",
         "options": [
-            "Bind mounts map host paths directly; named volumes are Docker-managed",
-            "Bind mounts are always anonymous; named are persistent",
-            "Named volumes require host paths; bind mounts are managed",
             "Both are identical in usage",
+            "Named volumes require host paths; bind mounts are managed",
+            "Bind mounts are always anonymous; named are persistent",
+            "Bind mounts map host paths directly; named volumes are Docker-managed"
         ],
         "correct": "Bind mounts map host paths directly; named volumes are Docker-managed",
         "exp_correct": "Bind mounts (-v /host/data:/container/data) link specific host dirs for dev; named volumes (docker volume create mydata) persist independently, shareable across containers for prod data like DBs.",
@@ -83,10 +84,10 @@ questions_dict = {
         "type": "radio",
         "input_label": "Your answer:",
         "options": [
-            "docker run -it container bash",
-            "docker exec -it container bash",
-            "docker attach container",
             "docker logs -f",
+            "docker attach container",
+            "docker run -it container bash",
+            "docker exec -it container bash"
         ],
         "correct": "docker exec -it container bash",
         "exp_correct": "docker exec -it <container> bash starts a new interactive shell in a running container; -it must precede the container name for TTY allocation.",
@@ -98,7 +99,7 @@ questions_dict = {
         "question": "Q7: When running docker run image, does it automatically pull the latest from Docker Hub if the image is missing locally? (T/F)",
         "type": "radio",
         "input_label": "True or False:",
-        "options": ["True", "False"],
+        "options": ["False", "True"],
         "correct": "True",
         "exp_correct": "docker run pulls the image (e.g., alpine:latest from Docker Hub) if not local; use --pull always to force fresh pull even if local exists, ensuring reproducibility.",
         "exp_wrong": "True. By default, it pulls if missing; specify tags like :3.9 for versions, avoiding 'latest' changes.",
@@ -131,7 +132,7 @@ questions_dict = {
         "question": "Q10: True or False: Modifying a file used in a later COPY instruction in a Dockerfile only invalidates that COPY layer and subsequent layers, leaving earlier layers (e.g., RUN installs) intact and cached.",
         "type": "radio",
         "input_label": "True or False:",
-        "options": ["True", "False"],
+        "options": ["False", "True"],
         "correct": "True",
         "exp_correct": "Docker builds layers sequentially; changes to a later COPY (e.g., source code) only invalidate from that point onward, reusing earlier cached layers like dependency installs for faster rebuilds.",
         "exp_wrong": "True. This forward-only invalidation optimizes iterative builds by reusing unchanged earlier layers (e.g., RUN apt install remains cached).",
@@ -154,10 +155,10 @@ questions_dict = {
         "type": "radio",
         "input_label": "Your answer:",
         "options": [
-            "RUN apt-get update && apt-get install -y package",
-            'RUN echo "$(date)" > /tmp/cache-bust.txt',
-            "RUN --mount=type=cache ...",
             "RUN FROM scratch",
+            "RUN apt-get update && apt-get install -y package",
+            "RUN --mount=type=cache ...",
+            'RUN echo "$(date)" > /tmp/cache-bust.txt'
         ],
         "correct": 'RUN echo "$(date)" > /tmp/cache-bust.txt',
         "exp_correct": "Dynamic output like $(date) or $(git rev-parse HEAD) changes the layer hash each build, invalidating it and all subsequent layers to ensure fresh code/dependencies without full --no-cache.",
@@ -181,10 +182,10 @@ questions_dict = {
         "type": "radio",
         "input_label": "Your answer:",
         "options": [
+            "Adding a new environment variable",
             "Updating a dependency in the RUN layer",
             "Changing the base image in FROM",
-            "Editing source code in the final COPY (e.g., docker.cow)",
-            "Adding a new environment variable",
+            "Editing source code in the final COPY (e.g., docker.cow)"
         ],
         "correct": "Editing source code in the final COPY (e.g., docker.cow)",
         "exp_correct": "Changes to the last COPY only invalidate that layer and CMD, reusing all prior cached layers (e.g., deps install), ideal for frequent code iterations in development.",
@@ -208,10 +209,10 @@ questions_dict = {
         "type": "radio",
         "input_label": "Your answer:",
         "options": [
-            "-p for ports",
-            "-v for volumes",
-            "--network for connectivity",
             "-e for environment variables",
+            "--network for connectivity",
+            "-p for ports",
+            "-v for volumes"
         ],
         "correct": "-v for volumes",
         "exp_correct": "The -v flag creates bind mounts (e.g., -v /host/data:/app/data) or named volumes for durable storage, essential for datasets in data pipelines surviving container restarts.",
@@ -235,10 +236,10 @@ questions_dict = {
         "type": "radio",
         "input_label": "Your answer:",
         "options": [
-            "ARG",
-            "ENV",
-            "LABEL",
             "EXPOSE",
+            "LABEL",
+            "ARG",
+            "ENV"
         ],
         "correct": "ENV",
         "exp_correct": "ENV KEY=value sets vars for build and runtime (e.g., ENV SPARK_HOME=/opt/spark); ARG is build-only; use for data configs like DB_URL=postgres://db:5432.",
@@ -274,10 +275,10 @@ questions_dict = {
         "type": "radio",
         "input_label": "Your answer:",
         "options": [
-            "a) COPY code first, then RUN installs",
-            "b) FROM base, COPY deps file, RUN install, then COPY code",
-            "c) All RUN commands first, then FROM",
             "d) ENV vars before FROM",
+            "c) All RUN commands first, then FROM",
+            "a) COPY code first, then RUN installs",
+            "b) FROM base, COPY deps file, RUN install, then COPY code"
         ],
         "correct": "b) FROM base, COPY deps file, RUN install, then COPY code",
         "exp_correct": "Stable elements first (FROM pinned, COPY requirements.txt, RUN pip install) cache deps; variable code last (COPY .) minimizes rebuilds for iterations on ETL scripts.",
@@ -290,10 +291,10 @@ questions_dict = {
         "type": "radio",
         "input_label": "Your answer:",
         "options": [
-            "a) Single-image builds",
-            "b) Multi-service orchestration",
             "c) VM management",
             "d) Cache optimization only",
+            "a) Single-image builds",
+            "b) Multi-service orchestration"
         ],
         "correct": "b) Multi-service orchestration",
         "exp_correct": "Compose defines and runs multi-container apps via YAML (services like web + db), automating networking/volumes/dependencies for local dev of complex data stacks.",
@@ -318,10 +319,10 @@ questions_dict = {
         "type": "radio",
         "input_label": "Your answer:",
         "options": [
-            "a) Only pulls images",
-            "b) Builds images if needed and starts services detached",
             "c) Stops all services",
             "d) Lists service status",
+            "a) Only pulls images",
+            "b) Builds images if needed and starts services detached"
         ],
         "correct": "b) Builds images if needed and starts services detached",
         "exp_correct": "up -d runs detached (background); --build forces rebuild of services with build: in YAML (not default—caches otherwise), pulling others; starts in dependency order.",
@@ -333,7 +334,7 @@ questions_dict = {
         "question": "Q25: Does docker compose ps display port mappings in a format like 0.0.0.0:443->8043/tcp for running services? (T/F)",
         "type": "radio",
         "input_label": "True or False:",
-        "options": ["True", "False"],
+        "options": ["False", "True"],
         "correct": "True",
         "exp_correct": "docker compose ps shows service status (Up/Exited), names (e.g., project_web_1), and ports (e.g., 0.0.0.0:443->8043/tcp for published mappings), confirming networking.",
         "exp_wrong": "Answer: True. It provides a snapshot of the stack, including bound ports for host access.",
@@ -359,10 +360,10 @@ questions_dict = {
         "type": "radio",
         "input_label": "Your answer:",
         "options": [
-            "a) No impact on build or cache",
-            "b) Excludes files from build context, preventing cache pollution",
             "c) Forces full rebuild every time",
             "d) Adds extra layers to the image",
+            "a) No impact on build or cache",
+            "b) Excludes files from build context, preventing cache pollution"
         ],
         "correct": "b) Excludes files from build context, preventing cache pollution",
         "exp_correct": ".dockerignore filters the build context (files sent to daemon), excluding irrelevant items like .git/logs to reduce transfer time and avoid unnecessary cache invalidations from changing files.",
@@ -397,10 +398,10 @@ questions_dict = {
         "type": "radio",
         "input_label": "Your answer:",
         "options": [
-            "a) Resource limits",
-            "b) Startup order/dependencies",
-            "c) Port mappings",
             "d) Volume mounts",
+            "c) Port mappings",
+            "a) Resource limits",
+            "b) Startup order/dependencies"
         ],
         "correct": "b) Startup order/dependencies",
         "exp_correct": "depends_on: - db ensures db starts before app; list of service names; pair with healthchecks for readiness (e.g., wait for DB healthy).",
@@ -447,7 +448,7 @@ questions_dict = {
         "question": "Q34: True or False: Multi-stage builds allow discarding build tools (e.g., compilers) from the final image by copying only runtime artifacts, resulting in smaller images.",
         "type": "radio",
         "input_label": "True or False:",
-        "options": ["True", "False"],
+        "options": ["False", "True"],
         "correct": "True",
         "exp_correct": "Multi-stage uses multiple FROM with COPY --from=<stage> to transfer only essentials (e.g., binaries) to a slim runtime stage, excluding heavy build deps for secure, efficient data images.",
         "exp_wrong": "Answer: True. Example: Build in 'builder' stage, copy artifact to 'runtime' FROM scratch/python-slim; discards tools, reducing size from GBs to MBs.",
@@ -462,7 +463,7 @@ questions_dict = {
             "docker build",
             "docker run",
             "docker compose up --build",
-            "docker push",
+            "docker push"
         ],
         "correct_set": {"docker build", "docker compose up --build"},
         "exp_correct": "docker build directly builds from Dockerfile; docker compose up --build rebuilds services with build: in YAML; run/pull/push use existing images (no build).",
@@ -491,7 +492,7 @@ questions_dict = {
             "RDB snapshots",
             "AOF logs",
             "In-memory only (no persistence)",
-            "SQL transactions",
+            "SQL transactions"
         ],
         "correct_set": {"RDB snapshots", "AOF logs", "In-memory only (no persistence)"},
         "exp_correct": "Redis supports RDB (periodic snapshots), AOF (append-only logs for durability), or pure in-memory (fastest, volatile); configure in redis.conf or command line (e.g., --appendonly yes).",
@@ -550,6 +551,8 @@ if "feedbacks" not in st.session_state:
     st.session_state.feedbacks = {}
 if "hints_shown" not in st.session_state:
     st.session_state.hints_shown = {}
+if "shuffled_options" not in st.session_state:
+    st.session_state.shuffled_options = {}
 
 # Full-width Progress Bar
 progress = len(st.session_state.submitted) / total_questions * 100
@@ -585,8 +588,8 @@ with st.sidebar:
         st.session_state.submitted = set()
         st.session_state.feedbacks = {}
         st.session_state.hints_shown = {}
+        st.session_state.shuffled_options = {}
         st.rerun()
-
 
 def submit_button(
     q_key, correct_condition, explanation_correct, explanation_wrong, disabled=False
@@ -603,7 +606,6 @@ def submit_button(
             st.session_state.feedbacks[q_key] = f"Incorrect. {explanation_wrong}"
         st.rerun()
 
-
 def show_feedback(q_key):
     if q_key in st.session_state.submitted:
         fb = st.session_state.feedbacks.get(q_key, "")
@@ -616,7 +618,6 @@ def show_feedback(q_key):
                 f'<div class="feedback-error">{fb}</div>', unsafe_allow_html=True
             )
 
-
 def toggle_hint(q_key):
     if q_key not in st.session_state.hints_shown:
         st.session_state.hints_shown[q_key] = False
@@ -628,13 +629,17 @@ def toggle_hint(q_key):
         hint_text = questions_dict[q_key]["hint"]
         st.markdown(f'<div class="hint-box">{hint_text}</div>', unsafe_allow_html=True)
 
-
 def render_question(q):
     toggle_hint(q["id"])
     condition = False
     if q["type"] == "radio":
         input_label = q.get("input_label", "Your answer:")
-        ans = st.radio(input_label, q["options"], key=q["id"], horizontal=True)
+        if q["id"] not in st.session_state.shuffled_options:
+            shuffled = q["options"][:]
+            random.shuffle(shuffled)
+            st.session_state.shuffled_options[q["id"]] = shuffled
+        shuffled_options = st.session_state.shuffled_options[q["id"]]
+        ans = st.radio(input_label, shuffled_options, key=q["id"], horizontal=True)
         condition = ans == q["correct"]
     elif q["type"] == "text":
         input_label = q["input_label"]
@@ -671,7 +676,6 @@ def render_question(q):
         submit_button(q["id"], condition, q["exp_correct"], q["exp_wrong"])
     if q["id"] in st.session_state.submitted:
         show_feedback(q["id"])
-
 
 # Sections configuration (questions now in sequential order q1-q37)
 sections = [
@@ -741,6 +745,7 @@ if len(st.session_state.submitted) == total_questions:
         st.session_state.submitted = set()
         st.session_state.feedbacks = {}
         st.session_state.hints_shown = {}
+        st.session_state.shuffled_options = {}
         st.rerun()
 else:
     st.info(
