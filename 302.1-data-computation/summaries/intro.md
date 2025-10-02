@@ -151,13 +151,13 @@ Integration: Pipelines often lake → warehouse (ELT) or source → mart (ETL).
 ```mermaid
 graph TB
     %% --- Nodes ---
-    Raw["Raw Data\n(Multi-Format)"]
-    Lake["Data Lake\nSchema-on-Read\n(Raw / Bronze)"]
-    ETL["ETL Process\n• Transform BEFORE Load\n• Direct to Warehouse"]
-    ELT["ELT Process\n• Load raw → Lake\n• Transform AFTER Load\n• Output to Warehouse"]
-    Warehouse["Data Warehouse\nSchema-on-Write\n(Trusted Layer)"]
-    Mart["Data Mart\n(Focused Views)"]
-    Structured["Curated Data\n(Master/Reference)"]
+    Raw["Raw Data<br/>(Multi-Format)"]
+    Lake["Data Lake<br/>Schema-on-Read<br/>(Raw / Bronze)"]
+    ETL["ETL Process<br/>• Transform BEFORE Load<br/>• Direct to Warehouse"]
+    ELT["ELT Process<br/>• Load raw → Lake<br/>• Transform AFTER Load<br/>• Output to Warehouse"]
+    Warehouse["Data Warehouse<br/>Schema-on-Write<br/>(Trusted Layer)"]
+    Mart["Data Mart<br/>(Focused Views)"]
+    Structured["Curated Data<br/>(Master/Reference)"]
 
     %% --- Flow ---
     Raw --> ETL
