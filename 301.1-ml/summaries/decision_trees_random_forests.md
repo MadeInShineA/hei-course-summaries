@@ -378,17 +378,25 @@ flowchart TD
 
 | Parameter | Description | Impact |
 |-----------|-------------|--------|
-| **Max Depth** | Maximum tree levels | Deeper trees fit more but overfit |
-| **Min Samples Split** | Min data for internal node | Higher values prevent overfitting |
-| **Min Samples Leaf** | Min data for leaf | Smooths predictions, reduces overfitting |
+| **Criterion** | Splitting criterion (gini, entropy for classification; mse, mae, friedman_mse for regression) | Gini is faster; entropy may produce slightly different trees; mse is default for regression |
+| **Splitter** | Strategy to choose split (best or random) | 'best' chooses optimal split; 'random' selects randomly for faster training |
+| **Max Depth** | Maximum tree levels | Deeper trees fit more but overfit; None allows full growth |
+| **Min Samples Split** | Min samples required to split an internal node | Higher values prevent overfitting by requiring more data for splits |
+| **Min Samples Leaf** | Min samples required for a leaf node | Smooths predictions and reduces overfitting; higher values create simpler trees |
+| **Min Weight Fraction Leaf** | Min weighted fraction of total samples for leaf | Similar to min_samples_leaf but weighted; useful for imbalanced data |
+| **Max Features** | Max features considered for best split | 'sqrt' or 'log2' for classification; reduces overfitting by limiting feature choices |
+| **Max Leaf Nodes** | Max number of leaf nodes | Limits tree size; grows best-first pruning |
+| **Min Impurity Decrease** | Min impurity decrease required for split | Higher values prevent splits that don't improve purity much |
+| **Class Weight** | Weights for classes in classification | Balances imbalanced classes; 'balanced' adjusts automatically |
+| **CCP Alpha** | Complexity parameter for cost-complexity pruning | Higher values prune more aggressively; 0 means no pruning |
 
-Tuning: Use grid search and cross-validation to find optimal values.
+Tuning: Use grid search and cross-validation to find optimal values. Start with defaults and tune max_depth, min_samples_split, and min_samples_leaf first.
 
 ---
 
 ## <a name="random-forests"></a>Random Forests
 
-### What are Random Forests?
+### Introduction to Random Forests
 
 Random Forests are an ensemble learning method that combines multiple decision trees to improve predictive performance and control overfitting. Each tree is trained on a random subset of the data and features, and predictions are aggregated for robustness. They excel in classification and regression, often outperforming single trees on noisy or high-dimensional data.
 
@@ -396,7 +404,7 @@ Random Forests are an ensemble learning method that combines multiple decision t
 - **Bagging + Randomness**: Reduces variance through bootstrap sampling and feature randomization
 - **Robust and Accurate**: Handles overfitting better than single trees while maintaining interpretability via feature importances
 
-### How Random Forests Work
+### Core Mechanism: Bagging and Random Feature Selection
 
 Random Forests extend decision trees by introducing randomness and aggregation:
 
@@ -408,23 +416,94 @@ Random Forests extend decision trees by introducing randomness and aggregation:
 
 This process reduces the high variance of single trees, leading to more stable and accurate models.
 
-#### Detailed Explanation of Splitting in Random Forests
+#### Detailed Example: Bagging and Random Feature Selection
+
+To illustrate bagging and random feature selection, consider a simplified Iris-like dataset with 8 samples and 4 features: Sepal Length (SL), Sepal Width (SW), Petal Length (PL), Petal Width (PW). Target: 2 classes (A, B) for simplicity.
+
+**Original Dataset:**
+
+| Sample | SL | SW | PL | PW | Class |
+|--------|----|----|----|----|-------|
+| 1      | 5.1| 3.5| 1.4| 0.2| A     |
+| 2      | 4.9| 3.0| 1.4| 0.2| A     |
+| 3      | 4.7| 3.2| 1.3| 0.2| A     |
+| 4      | 4.6| 3.1| 1.5| 0.2| A     |
+| 5      | 5.0| 3.6| 1.4| 0.2| A     |
+| 6      | 5.4| 3.9| 1.7| 0.4| A     |
+| 7      | 6.3| 3.3| 6.0| 2.5| B     |
+| 8      | 5.8| 2.7| 5.1| 1.9| B     |
+
+**Bagging Example**:
+
+- Bootstrap sample for one tree: Randomly sample 8 samples with replacement.
+- Example bootstrap sample (indices): 1, 3, 3, 5, 7, 8, 2, 4 (duplicates: 3 appears twice).
+- Resulting sample:
+
+| Sample | SL | SW | PL | PW | Class |
+|--------|----|----|----|----|-------|
+| 1      | 5.1| 3.5| 1.4| 0.2| A     |
+| 3      | 4.7| 3.2| 1.3| 0.2| A     |
+| 3      | 4.7| 3.2| 1.3| 0.2| A     |
+| 5      | 5.0| 3.6| 1.4| 0.2| A     |
+| 7      | 6.3| 3.3| 6.0| 2.5| B     |
+| 8      | 5.8| 2.7| 5.1| 1.9| B     |
+| 2      | 4.9| 3.0| 1.4| 0.2| A     |
+| 4      | 4.6| 3.1| 1.5| 0.2| A     |
+
+- Unique samples: 7/8 (~87.5%), with duplication introducing variety.
+- Repeat for each tree to ensure diversity.
+
+**Random Feature Selection Example**:
+
+- At each split, select random subset: m = √4 ≈ 2 features.
+- The following Mermaid graph shows a simplified tree for one bootstrap sample, with random features selected at each node.
+
+```mermaid
+graph TD
+    ROOT["Root Node<br/>Random Features: PL, SW<br/>Best Split: PL <= 2.5<br/>Gini Reduction: 0.375"]
+    ROOT -->|"PL <= 2.5"| LEFT["Leaf: Class A<br/>(Pure)"]
+    ROOT -->|"PL > 2.5"| RIGHT["Internal Node<br/>Random Features: PW, SL<br/>Best Split: PW <= 2.0<br/>Gini Reduction: 0.222"]
+    RIGHT -->|"PW <= 2.0"| LEAF1["Leaf: Class B<br/>(Majority)"]
+    RIGHT -->|"PW > 2.0"| LEAF2["Leaf: Class A<br/>(Majority)"]
+
+    style ROOT fill:#2563eb40,stroke:#2563eb,stroke-width:3px
+    style LEFT fill:#16a34a20,stroke:#16a34a
+    style RIGHT fill:#7c3aed20,stroke:#7c3aed
+    style LEAF1 fill:#16a34a20,stroke:#16a34a
+    style LEAF2 fill:#16a34a20,stroke:#16a34a
+```
+
+- Root: Randomly picked PL and SW. Tested splits on PL (e.g., <=2.5 separates classes well) and SW, chose PL <=2.5.
+- Right node: Randomly picked PW and SL. Tested PW (e.g., <=2.0) and SL, chose PW <=2.0.
+- This decorrelates trees by forcing different feature considerations.
+
+**Full Process**:
+
+- Build 100 such trees with varied bootstrap samples and random features.
+- For prediction on a new sample (e.g., PL=5.0, SW=3.5): Each tree predicts; aggregate votes.
+- This shows how bagging adds data diversity and random feature selection adds feature diversity for robustness.
+
+#### Splitting in Random Forests
 
 Splitting mirrors decision trees but uses random feature subsets at each node for diversity. Core criteria (Gini, Entropy, MSE, MAE) are the same.
 
 - **Feature Subset Size**: Typically $m = \sqrt{n}$ (classification) or $m = n/3$ (regression), where $n$ is total features. Sample $m$ features randomly per split and select the best.
-
-  This decorrelates trees by limiting options, even for dominant features.
-
 - **Impurity Calculation**: Compute criterion (e.g., Gini) only over the $m$ features; choose split minimizing weighted child impurity.
-
-  **Example**: 10 features, $m \approx 3$. Sample {Age, Income, Education}. Test splits (e.g., Age > 30?), pick lowest $Gini_{split}$. Repeat per node.
-
 - **Impact**: Less greedy splits reduce overfitting. For regression, MSE over fewer features adds robustness.
-
 - **OOB Error**: ~37% data OOB per tree; aggregate for generalization estimate without validation set.
 
+#### Out-of-Bag (OOB) Error Estimation
+
+OOB error provides an internal, unbiased estimate of model performance without needing a separate validation set. Since each tree is trained on a bootstrap sample (~63% unique data), the remaining ~37% OOB samples per tree are used for prediction.
+
+- **Calculation**: For each tree, predict on its OOB samples and compute error (e.g., misclassification rate for classification, MSE for regression).
+- **Aggregation**: Average OOB errors across all trees to get overall OOB error.
+- **Advantages**: Efficient (no extra data split), approximates cross-validation; stabilizes as n_estimators increases.
+- **Example**: In a 100-tree forest, each sample is OOB in ~37 trees; its predictions are averaged for final OOB estimate.
+
 Individual trees may overfit, but ensemble averages errors for better performance.
+
+### Building, Prediction, and Visualization
 
 #### Example (Classification with Random Forest)
 
@@ -471,39 +550,7 @@ graph TD
 
 This illustrates how multiple trees, trained on varied data and features, contribute to a consensus prediction.
 
-#### Random Forest Prediction Flow
-
-```mermaid
-flowchart TD
-    INPUT["New Sample"] --> TREE1["Tree 1 Predict"]
-    INPUT --> TREE2["Tree 2 Predict"]
-    INPUT --> TREES["... Up to N Trees"]
-    TREE1 --> AGG["Aggregate Outputs<br/>Vote (Classif) / Avg (Reg)"]
-    TREE2 --> AGG
-    TREES --> AGG
-    AGG --> OUTPUT["Final Prediction"]
-    
-    style INPUT fill:#f3f4f620,stroke:#6b7280
-    style TREE1 fill:#d9770620,stroke:#d97706
-    style TREE2 fill:#d9770620,stroke:#d97706
-    style TREES fill:#d9770620,stroke:#d97706
-    style AGG fill:#7c3aed20,stroke:#7c3aed
-    style OUTPUT fill:#16a34a40,stroke:#16a34a
-```
-
-### Key Components of Random Forests
-
-- **Bootstrap Aggregating (Bagging)**: Trains trees on random samples to reduce variance.
-- **Random Feature Selection**: Ensures tree diversity by limiting split options.
-- **Voting/Averaging**: Combines predictions for final output.
-- **Out-of-Bag (OOB) Error**: Internal estimate of model performance.
-- **Feature Importance**: Mean impurity decrease per feature across trees.
-
-### Pruning and Regularization in Random Forests
-
-Individual trees can use the same pruning as decision trees, but the ensemble inherently regularizes via averaging. Parameters like max_depth apply per tree, while n_estimators controls ensemble size.
-
-### Algorithm Pipeline (Random Forest)
+#### Algorithm Pipeline (Random Forest)
 
 ```mermaid
 flowchart TD
@@ -512,7 +559,7 @@ flowchart TD
     C --> D["Collect Tree Predictions"]
     D --> E{"Aggregate:<br/>Vote (Classif)/Avg (Reg)"}
     E --> F["Final Prediction"]
-    
+
     style A fill:#2563eb20,stroke:#2563eb,stroke-width:2px
     style B fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
     style C fill:#d9770620,stroke:#d97706,stroke-width:2px
@@ -520,6 +567,16 @@ flowchart TD
     style E fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
     style F fill:#16a34a40,stroke:#16a34a,stroke-width:2px
 ```
+
+### Key Components and Regularization
+
+- **Bootstrap Aggregating (Bagging)**: Trains trees on random samples to reduce variance.
+- **Random Feature Selection**: Ensures tree diversity by limiting split options.
+- **Voting/Averaging**: Combines predictions for final output.
+- **Out-of-Bag (OOB) Error**: Internal estimate of model performance.
+- **Feature Importance**: Mean impurity decrease per feature across trees.
+
+Individual trees can use the same pruning as decision trees, but the ensemble inherently regularizes via averaging. Parameters like max_depth apply per tree, while n_estimators controls ensemble size.
 
 ### Parameters and Tuning (Random Forest)
 
@@ -545,6 +602,10 @@ Tuning Strategies:
 - **Feature Importance**: Global ranking across the ensemble.
 - **Robustness**: Handles noisy data and outliers better.
 - **Parallelizable**: Trees trained independently.
+
+### Comparison to Boosting
+
+While Random Forests use bagging (parallel, independent trees), boosting (e.g., AdaBoost, Gradient Boosting) builds trees sequentially, each correcting previous errors. Boosting often achieves higher accuracy but is more prone to overfitting and slower. Use RF for speed and robustness; boosting for precision on complex data.
 
 ---
 
