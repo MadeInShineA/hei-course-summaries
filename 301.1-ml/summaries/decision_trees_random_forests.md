@@ -18,6 +18,31 @@ Decision Trees are supervised learning models that represent decisions and their
 - **Non-parametric**: No assumptions about data distribution
 - **Interpretable**: Easy to visualize and understand decision paths
 
+### Tree Structure
+
+Decision Trees consist of hierarchical nodes that progressively refine the dataset:
+
+- **Root Node**: The top node containing the entire training dataset; first split is chosen here.
+- **Internal Nodes**: Non-leaf nodes representing decisions based on a feature threshold (e.g., "Age > 30?"). Each leads to two child nodes.
+- **Leaf Nodes**: Terminal nodes where splitting stops; store the prediction (majority class for classification, mean/median for regression).
+
+The tree's depth and branching reflect the complexity of decision boundaries.
+
+#### Components Visualization
+
+```mermaid
+graph LR
+    ROOT["Root Node<br/>Full Dataset<br/>Best Split: Feature X > Threshold"] -->|"Yes"| INTERNAL1["Internal Node<br/>Subset Data<br/>Next Split: Feature Y <= Value"]
+    ROOT -->|"No"| INTERNAL1
+    INTERNAL1 -->|"Yes"| LEAF1["Leaf Node<br/>Class A (Majority Vote)<br/>or Mean Value"]
+    INTERNAL1 -->|"No"| LEAF2["Leaf Node<br/>Class B"]
+    
+    style ROOT fill:#2563eb40,stroke:#2563eb,stroke-width:3px
+    style INTERNAL1 fill:#7c3aed20,stroke:#7c3aed
+    style LEAF1 fill:#16a34a20,stroke:#16a34a
+    style LEAF2 fill:#16a34a20,stroke:#16a34a
+```
+
 ### How Decision Trees Work
 
 Decision Trees build by recursively splitting the dataset:
@@ -100,43 +125,198 @@ For regression (house prices):
   - Yes → Mean price: $300k
   - No → Mean price: $150k
 
-#### Decision Tree Structure Graph (Iris Classification)
+#### Detailed Example: Building a Decision Tree with Gini Impurity
+
+This comprehensive example demonstrates the step-by-step construction of a decision tree using the Gini impurity criterion for a binary classification task. We'll use a toy dataset of 8 samples with two numerical features (Age and Income) and a binary target (Buy: Yes or No). The goal is to predict whether a person will buy based on age and income. We'll detail every calculation using LaTeX math, explain the rationale behind each split, and visualize the tree's growth. This mirrors the mathematical rigor found in notebooks, ensuring transparency in how impurity is minimized at each node.
+
+**Dataset Overview:**
+
+The dataset is small for clarity but representative of real-world tabular data. Samples are sorted by feature for threshold selection.
+
+| Sample | Age | Income (k) | Buy  |
+|--------|-----|------------|------|
+| 1      | 25  | 40         | No   |
+| 2      | 30  | 50         | No   |
+| 3      | 35  | 60         | Yes  |
+| 4      | 40  | 70         | Yes  |
+| 5      | 45  | 80         | Yes  |
+| 6      | 50  | 90         | No   |
+| 7      | 55  | 100        | Yes  |
+| 8      | 60  | 110        | Yes  |
+
+Class distribution: 5 Yes, 3 No (62.5% Yes, 37.5% No). Features are continuous, so we test binary splits at midpoints between sorted values.
+
+**Step 1: Compute Gini Impurity for the Root Node**
+
+The root node contains all 8 samples. Gini impurity quantifies class mixing:  
+$Gini = 1 - \sum_{i=1}^{C} p_i^2$  
+where $C = 2$ (classes: Yes, No), $p_{\text{Yes}} = 5/8 = 0.625$, $p_{\text{No}} = 3/8 = 0.375$.  
+
+$Gini = 1 - (0.625^2 + 0.375^2) = 1 - (0.390625 + 0.140625) = 1 - 0.53125 = 0.46875$  
+
+This value (0.46875) indicates moderate impurity. A pure node has Gini = 0; maximum for binary is 0.5. Lower Gini means better separation.
+
+**Step 2: Evaluate Potential Splits to Minimize Weighted Gini**
+
+We test splits on each feature by choosing thresholds between consecutive sorted values (e.g., for Age: midpoints like 27.5, 32.5, etc.). For each threshold, compute:  
+
+- Left and right child subsets.  
+- Gini for each child: $Gini_{\text{left}} = 1 - \sum p_{i,\text{left}}^2$, similarly for right.  
+- Weighted Gini for the split: $Gini_{\text{split}} = \frac{n_{\text{left}}}{n} Gini_{\text{left}} + \frac{n_{\text{right}}}{n} Gini_{\text{right}}$.  
+Select the split with the lowest $Gini_{\text{split}}$ (maximizing purity gain).  
+
+**Substep 2.1: Splits on Age**  
+Sorted Ages: 25, 30, 35, 40, 45, 50, 55, 60. Possible thresholds: 27.5, 32.5, 37.5, 42.5, 47.5, 52.5, 57.5.  
+
+- **Threshold: Age ≤ 32.5** (Left: Samples 1-2; Right: 3-8)  
+  Left (n=2): 2 No → $p_{\text{No}} = 1$  
+  $Gini_{\text{left}} = 1 - 1^2 = 0$  
+  Right (n=6): 5 Yes, 1 No → $p_{\text{Yes}} = 5/6 \approx 0.833$, $p_{\text{No}} = 1/6 \approx 0.167$.  
+  $Gini_{\text{right}} = 1 - (0.833^2 + 0.167^2) = 1 - (0.6944 + 0.0278) = 0.2778$ (some impurity due to minority class; calculated as 1 - (0.6944 + 0.0278) = 0.2778).  
+  $Gini_{\text{split}} = (2/8) \times 0 + (6/8) \times 0.2778 = 0 + 0.20835 = 0.20835$ (weighted by subset sizes).  
+  Gain = $0.46875 - 0.20835 = 0.2604$ (significant reduction, good split).
+
+  **Hypothetical Tree for Age ≤32.5:**  
+
+  ```mermaid
+  graph TD
+      ROOT["Root<br/>Age <= 32.5?<br/>Gain=0.2604"] -->|"Yes"| L["Leaf: No<br/>(Pure)"]
+      ROOT -->|"No"| R["Node: 5 Yes, 1 No<br/>Gini=0.2778"]
+      style ROOT fill:#2563eb40,stroke:#2563eb,stroke-width:3px
+      style L fill:#16a34a20,stroke:#16a34a
+      style R fill:#7c3aed20,stroke:#7c3aed
+  ```
+
+**Substep 2.2: Splits on Income**  
+Sorted Incomes: 40, 50, 60, 70, 80, 90, 100, 110. Thresholds: 45, 55, 65, 75, 85, 95, 105.  
+
+- **Threshold: Income ≤ 55k** (Left: 1-2; Right: 3-8)  
+  Left (n=2): 2 No → $p_{\text{No}} = 1$  
+  $Gini_{\text{left}} = 1 - 1 ^ 2 = 0$  
+  Right (n=6): 5 Yes, 1 No → $p_{\text{Yes}} = 5/6 \approx 0.833$, $p_{\text{No}} = 1/6 \approx 0.167$.  
+  $Gini_{\text{right}} = 1 - (0.833^2 + 0.167^2) = 1 - (0.6944 + 0.0278) = 0.2778$  
+  $Gini_{\text{split}} = (2/8) \times 0 + (6/8) \times 0.2778 = 0 + 0.20835 = 0.20835$  
+  Gain = $0.46875 - 0.20835 = 0.2604$  
+
+  **Hypothetical Tree for Income ≤55k:**  
+
+  ```mermaid
+  graph TD
+      ROOT["Root<br/>Income <= 55k?<br/>Gain=0.2604"] -->|"Yes"| L["Leaf: No<br/>(Pure)"]
+      ROOT -->|"No"| R["Node: 5 Yes, 1 No<br/>Gini=0.2778"]
+      style ROOT fill:#2563eb40,stroke:#2563eb,stroke-width:3px
+      style L fill:#16a34a20,stroke:#16a34a
+      style R fill:#7c3aed20,stroke:#7c3aed
+  ```
+
+Overall best split: Tie between Age ≤32.5 and Income ≤55k. We choose Age ≤32.5 (arbitrary but consistent). This reduces root Gini from 0.46875 to 0.20835, a gain of 0.2604.
+
+**Tree After Root Split:**
+
+The tree now branches based on Age ≤32.5. Left is pure (No), right needs further splitting.
 
 ```mermaid
 graph TD
-    A["Root: All Samples<br/>Petal Length <= 2.45 cm?"]
-    A -->|"Yes (<=2.45)"| C["Leaf: Setosa<br/>100% Pure"]
-    A -->|"No (>2.45)"| B["Node: Petal Width <= 1.75 cm?<br/>Petal Length > 2.45 cm"]
-    B -->|"Yes (<=1.75)"| E["Leaf: Versicolor<br/>~90% Pure"]
-    B -->|"No (>1.75)"| D["Leaf: Virginica<br/>~50%"]
-
-    style A fill:#2563eb20,stroke:#2563eb,stroke-width:2px
-    style B fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
-    style C fill:#16a34a20,stroke:#16a34a,stroke-width:2px
-    style D fill:#16a34a20,stroke:#16a34a,stroke-width:2px
-    style E fill:#16a34a20,stroke:#16a34a,stroke-width:2px
+    ROOT["Root<br/>Age <= 32.5?<br/>Gain=0.2604"] -->|"Yes"| LEFT["Leaf: No<br/>(2 No, Pure<br/>Gini=0)"]
+    ROOT -->|"No"| RIGHT["Internal Node<br/>Age > 32.5<br/>(5 Yes, 1 No)<br/>Gini=0.2778"]
+    
+    style ROOT fill:#2563eb40,stroke:#2563eb,stroke-width:3px
+    style LEFT fill:#16a34a20,stroke:#16a34a
+    style RIGHT fill:#7c3aed20,stroke:#7c3aed
 ```
 
-This graph illustrates a simplified decision tree for the Iris dataset, showing how samples are partitioned based on feature thresholds to reach class predictions at the leaves, with approximate purity levels at leaves.
+**Step 3: Evaluate Child Nodes for Further Splitting**
 
-#### Regression Decision Tree Example Graph (House Prices)
+- **Left Child**: Pure (Gini=0) → Becomes a leaf: Predict No for new samples with Age ≤32.5.  
+- **Right Child**: Gini=0.2778 >0 → Not pure; recurse to split further. Subset: Samples 3-8 (Ages 35-60, Incomes 60k-110k, 5 Yes, 1 No).
+
+**Step 4: Split the Right Child Node**
+
+Repeat the process on the right subset (n=6). Compute Gini for this node:  
+$Gini_{\text{right}} = 1 - \left( (5/6)^2 + (1/6)^2 \right) = 1 - (0.6944 + 0.0278) = 0.2778$ (same as before).  
+
+**Substep 4.1: Splits on Age in Right Subset**  
+Sorted Ages in subset: 35,40,45,50,55,60. Thresholds: 37.5,42.5,47.5,52.5,57.5.  
+
+- **Threshold: Age ≤37.5** (Left: 3; Right: 4-8)  
+  Left (n=1): 1 Yes → $p_{\text{Yes}} = 1$
+  $Gini_{\text{left}} = 1 - 1 ^ 2 = 0$  
+  Right (n=5): 4 Yes, 1 No → $p_{\text{Yes}} = 4/5 = 0.8$, $p_{\text{No}} = 1/5 = 0.2$.  
+  $Gini_{\text{right}} = 1 - (0.8^2 + 0.2^2) = 1 - (0.64 + 0.04) = 1 - 0.68 = 0.32$  
+  $Gini_{\text{split}} = (1/6) \times 0 + (5/6) \times 0.32 \approx 0.2667$  
+  Gain = $0.2778 - 0.2667 = 0.0111$  
+
+  **Hypothetical Tree for Age ≤37.5 (Right Node):**  
+
+  ```mermaid
+  graph TD
+      ROOT["Right Node<br/>Age <= 37.5?<br/>Gain=0.0111"] -->|"Yes"| L["Leaf: Yes<br/>(Pure)"]
+      ROOT -->|"No"| R["Node: 4 Yes, 1 No<br/>Gini=0.32"]
+      style ROOT fill:#7c3aed40,stroke:#7c3aed,stroke-width:3px
+      style L fill:#16a34a20,stroke:#16a34a
+      style R fill:#7c3aed20,stroke:#7c3aed
+  ```
+
+**Substep 4.2: Splits on Income in Right Subset**  
+Sorted Incomes: 60,70,80,90,100,110. Thresholds: 65,75,85,95,105.  
+
+- **Threshold: Income ≤65k** (Left: 3; Right: 4-8)  
+  Left (n=1): 1 Yes → $p_{\text{Yes}} = 1$  
+  $Gini_{\text{left}} = 1 - 1 ^ 2 = 0$.  
+  Right (n=5): 4 Yes, 1 No → $p_{\text{Yes}} = 4/5 = 0.8$, $p_{\text{No}} = 1/5 = 0.2$.  
+  $Gini_{\text{right}} = 1 - (0.8^2 + 0.2^2) = 1 - (0.64 + 0.04) = 1 - 0.68 = 0.32$.  
+  $Gini_{\text{split}} = (1/6) \times 0 + (5/6) \times 0.32 \approx 0.2667$ (same as Age ≤37.5).  
+  Gain = $0.2778 - 0.2667 = 0.0111$.
+
+  **Hypothetical Tree for Income ≤65k (Right Node):**  
+
+  ```mermaid
+  graph TD
+      ROOT["Right Node<br/>Income <= 65k?"] -->|"Yes"| L["Leaf: Yes<br/>(Pure)"]
+      ROOT -->|"No"| R["Node: 4 Yes, 1 No<br/>Gini=0.32"]
+      style ROOT fill:#7c3aed40,stroke:#7c3aed,stroke-width:3px
+      style L fill:#16a34a20,stroke:#16a34a
+      style R fill:#7c3aed20,stroke:#7c3aed
+  ```
+
+Choose Age ≤37.5 (tie-breaker). This reduces right node's Gini from 0.2778 to 0.2667.
+
+**Step 5: Finalize the Tree Structure**
+
+The right node splits into:  
+
+- Left (Age ≤37.5): Sample 3 (Yes) → Pure leaf: Predict Yes.  
+- Right (Age >37.5): Samples 4-8 (4 Yes, 1 No) → Not pure, but for this example, we stop (as if min_samples_leaf=1). Predict Yes (majority).  
+
+The tree is now complete (max depth=2). Overall impurity reduction: From 0.46875 to weighted average of leaves (0 for most, small for right leaf).
+
+**Final Tree Visualization:**
 
 ```mermaid
 graph TD
-    A["Root: All Houses<br/>Size > 1000 sq ft?"]
-    A -->|"No (<=1000)"| B["Leaf: Mean Price $150k<br/>Small Houses"]
-    A -->|"Yes (>1000)"| C["Node: Bedrooms > 3?<br/>Large Houses"]
-    C -->|"No (<=3)"| D["Leaf: Mean Price $250k<br/>2-3 Bed Large"]
-    C -->|"Yes (>3)"| E["Leaf: Mean Price $350k<br/>4+ Bed Large"]
-
-    style A fill:#2563eb20,stroke:#2563eb,stroke-width:2px
-    style C fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
-    style B fill:#16a34a20,stroke:#16a34a,stroke-width:2px
-    style D fill:#16a34a20,stroke:#16a34a,stroke-width:2px
-    style E fill:#16a34a20,stroke:#16a34a,stroke-width:2px
+    ROOT["Root<br/>Age <= 32.5?"] -->|"Yes"| LEAF1["Predict: No<br/>(Pure)"]
+    ROOT -->|"No"| INTERNAL["Age <= 37.5?"]
+    INTERNAL -->|"Yes"| LEAF2["Predict: Yes<br/>(Pure)"]
+    INTERNAL -->|"No"| LEAF3["Predict: Yes<br/>(4 Yes, 1 No)"]
+    
+    style ROOT fill:#2563eb40,stroke:#2563eb,stroke-width:3px
+    style INTERNAL fill:#7c3aed20,stroke:#7c3aed
+    style LEAF1 fill:#16a34a20,stroke:#16a34a
+    style LEAF2 fill:#16a34a20,stroke:#16a34a
+    style LEAF3 fill:#16a34a20,stroke:#16a34a
 ```
 
-This graph shows a simple regression tree for house price prediction, where leaves contain mean target values for the subset, demonstrating how continuous predictions are made.
+**Step 6: Prediction Example and Insights**
+
+For a new sample (Age=28, Income=45k):  
+
+- Age=28 ≤32.5 → Follow "Yes" branch → Predict No.  
+
+For (Age=38, Income=75k):  
+
+- Age=38 >32.5 → "No" branch → Age=38 >37.5 → "No" subbranch → Predict Yes.  
+
+This tree is interpretable: Young low-income → No; Older → Yes. Gini ensured balanced, purity-focused splits. In practice, use cross-validation to tune depth and avoid overfitting. This example highlights how recursive partitioning with Gini builds accurate, explainable models from data.
 
 #### Decision Tree Prediction Flow
 
@@ -157,31 +337,6 @@ flowchart TD
     style BRANCH2 fill:#10b98120,stroke:#10b981
     style LEAF fill:#16a34a20,stroke:#16a34a
     style OUTPUT fill:#16a34a40,stroke:#16a34a
-```
-
-### Tree Structure
-
-Decision Trees consist of hierarchical nodes that progressively refine the dataset:
-
-- **Root Node**: The top node containing the entire training dataset; first split is chosen here.
-- **Internal Nodes**: Non-leaf nodes representing decisions based on a feature threshold (e.g., "Age > 30?"). Each leads to two child nodes.
-- **Leaf Nodes**: Terminal nodes where splitting stops; store the prediction (majority class for classification, mean/median for regression).
-
-The tree's depth and branching reflect the complexity of decision boundaries.
-
-#### Components Visualization
-
-```mermaid
-graph LR
-    ROOT["Root Node<br/>Full Dataset<br/>Best Split: Feature X > Threshold"] -->|"Yes"| INTERNAL1["Internal Node<br/>Subset Data<br/>Next Split: Feature Y <= Value"]
-    ROOT -->|"No"| INTERNAL1
-    INTERNAL1 -->|"Yes"| LEAF1["Leaf Node<br/>Class A (Majority Vote)<br/>or Mean Value"]
-    INTERNAL1 -->|"No"| LEAF2["Leaf Node<br/>Class B"]
-    
-    style ROOT fill:#2563eb40,stroke:#2563eb,stroke-width:3px
-    style INTERNAL1 fill:#7c3aed20,stroke:#7c3aed
-    style LEAF1 fill:#16a34a20,stroke:#16a34a
-    style LEAF2 fill:#16a34a20,stroke:#16a34a
 ```
 
 ### Pruning and Regularization
@@ -377,6 +532,7 @@ flowchart TD
 | **Min Samples Split/Leaf** | As in decision trees, per tree | Prevents overfitting in individual trees |
 
 Tuning Strategies:
+
 1. **Grid Search**: Test combinations of n_estimators, max_features, max_depth.
 2. **N Estimators**: Start with 100, increase until OOB error stabilizes.
 3. **Max Features**: Tune based on problem dimensionality.
