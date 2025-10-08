@@ -48,7 +48,7 @@ graph LR
 Decision Trees build by recursively splitting the dataset:
 
 1. **Root Selection**: Choose the best feature to split the data at the root
-2. **Splitting Criteria**: For classification, use Gini impurity or entropy; for regression, mean squared error (MSE)
+2. **Splitting Criteria**: For classification, use Gini impurity or entropy; for regression, mean squared error (MSE) or mean absolute error (MAE)
 3. **Recursion**: Repeat splitting on subsets until stopping criteria (e.g., max depth)
 4. **Prediction**: For classification, majority class in leaf; for regression, mean value in leaf
 5. **Pruning**: Post-build trimming to reduce overfitting by removing unnecessary branches
