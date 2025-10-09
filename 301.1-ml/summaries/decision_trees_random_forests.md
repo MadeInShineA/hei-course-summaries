@@ -550,14 +550,14 @@ Splitting mirrors decision trees but uses random feature subsets at each node fo
 
 #### Out-of-Bag (OOB) Error Estimation
 
-OOB error provides an internal, unbiased estimate of model performance without needing a separate validation set. Since each tree is trained on a bootstrap sample (~63% unique data), the remaining ~37% OOB samples per tree are used for prediction.
+OOB error provides an internal, unbiased estimate of model performance without needing a separate validation set. Since each tree is trained on a bootstrap sample (~63% of the data), each training sample is left out of ~37% of the trees and serves as an OOB sample for those trees.
 
-- **Calculation**: For each tree, predict on its OOB samples and compute error (e.g., misclassification rate for classification, MSE for regression).
-- **Aggregation**: Average OOB errors across all trees to get overall OOB error.
-- **Advantages**: Efficient (no extra data split), approximates cross-validation; stabilizes as n_estimators increases.
-- **Example**: In a 100-tree forest, each sample is OOB in ~37 trees; its predictions are averaged for final OOB estimate.
+- **Calculation**: For each training sample, collect predictions only from the trees that did not include it during training, then aggregate those predictions (mean for regression, majority vote for classification) to form an OOB prediction for that sample.
+- **Aggregation**: Compute the error between each sample’s OOB prediction and its true label, then average these errors across all samples to obtain the overall OOB error.
+- **Advantages**: Efficient (no extra data split), approximates leave-one-out cross-validation, and stabilizes as n_estimators increases.
+- **Example**: In a 100-tree forest, each sample is OOB for ~37 trees; its final OOB prediction is based on the aggregated output of those trees—not the full forest.
 
-Individual trees may overfit, but ensemble averages errors for better performance.
+Note: While individual trees may overfit, the ensemble’s OOB estimate remains robust because predictions are made by trees that never saw the sample during training.
 
 ### Building, Prediction, and Visualization
 
