@@ -354,17 +354,11 @@ flowchart TD
 
 The culmination: Test the tuned model on unseen data to quantify generalization. This step validates the pipeline's effectiveness.
 
-### Comprehensive Assessment
+### Visualizations
 
-- **Predictions**: Output class labels or probabilities; benchmark against ground truth.
-- **Metrics**: Select based on problem needs, emphasizing imbalance handling.
-
-| Metric | Focus | When Preferred |
-|--------|-------|----------------|
-| **Accuracy** | Overall correctness | Balanced datasets |
-| **Precision/Recall** | Error types (FP/FN) | Cost-sensitive scenarios |
-| **F1-Score** | P/R harmony | Imbalanced classes |
-| **ROC-AUC** | Threshold-independent | Probabilistic models |
+- **Confusion Matrix**: Cross-tab of predictions vs. actuals; normalization aids interpretation.
+- **Confidence Intervals**: Indicate the reliability of an estimate (e.g., average accuracy, precision, etc.).
+- **ROC Curve**: Plots true/false positive rates; AUC measures overall discrimination.
 
 ### Confusion Matrix
 
@@ -382,15 +376,33 @@ A confusion matrix is a specific table layout that allows visualization of the p
 - **False Positives (FP)**: Incorrectly predicted as positive (Type I error)
 - **False Negatives (FN)**: Incorrectly predicted as negative (Type II error)
 
-**Example:**
+### Confidence Intervals
 
-```
-                    Actual Class
-                 Tuna  Codfish  Salmon
-Predicted  Tuna    15      4       7
-  Class   Codfish   3     20       4
-         Salmon     6      1      15
-```
+Confidence intervals quantify the uncertainty in model performance metrics:
+
+- A confidence interval describes the precision of the estimation of a parameter (e.g., mean accuracy)
+- The confidence interval indicates the reliability of an estimate
+- A large confidence interval is related to an uncertain estimate
+- Increasing the number of observations (n) reduces the width of the confidence interval
+- Result example: 90% ± 2% (i.e.: [88% - 92%])
+- General formula: $CI = \bar{X} \pm Z \times \frac{\sigma}{\sqrt{n}}$ where:
+  - $\bar{X}$ is the sample mean
+  - $Z$ is the Z-score corresponding to the desired confidence level
+  - $\sigma$ is the standard deviation
+  - $n$ is the sample size
+
+![Confidence Interval for Model Accuracy](../res/ml-pipeline/confidence_interval.png)
+
+### ROC Curve
+
+The Receiver Operating Characteristic (ROC) curve is a graphical representation of the diagnostic ability of a binary classifier system as its discrimination threshold is varied. It plots the True Positive Rate (TPR) against the False Positive Rate (FPR) at various threshold settings.
+
+- **True Positive Rate (TPR)** = $\frac{TP}{TP + FN}$ (also known as Sensitivity or Recall)
+- **False Positive Rate (FPR)** = $\frac{FP}{FP + TN}$ = $1 - \frac{TN}{TN + FP}$ = $1 - Specificity$
+
+The Area Under the Curve (AUC) provides an aggregate measure of performance across all classification thresholds. An AUC of 1.0 represents a perfect classifier, while 0.5 represents a random classifier.
+
+![ROC Curve](../res/ml-pipeline/roc_curve.png)
 
 ### Performance Indicators
 
@@ -409,32 +421,44 @@ Predicted  Tuna    15      4       7
 - **F1-Score** = $F_1 = 2 \times \frac{Precision \times Recall}{Precision + Recall}$ - Combines precision and recall in one metric
 - Most commonly used when β = 1
 
-#### Additional Metrics
+### Multi-Class Metrics Example
 
-- **Information Retrieval Interpretation**:
-  - Precision: Fraction of retrieved instances that are relevant
-  - Recall: Fraction of relevant instances that are retrieved
+```
+                    Actual Class
+                 Tuna  Codfish  Salmon
+Predicted  Tuna    15      4       7
+  Class   Codfish   3     20       4
+         Salmon     6      1      15
+```
 
-### Visualizations
+For multi-class classification, metrics like precision, recall, and F1-score are typically computed per class and then averaged (macro, micro, or weighted). Using the confusion matrix above:
 
-- **Confusion Matrix**: Cross-tab of predictions vs. actuals; normalization aids interpretation.
-- **ROC Curve**: Plots true/false positive rates; AUC measures overall discrimination.
-- **Confidence Intervals**: Indicate the reliability of an estimate (e.g., average accuracy, precision, etc.).
+- **Total samples**: 75
+- **Overall Accuracy**: (15 + 20 + 15) / 75 ≈ 0.667
 
-### Confidence Intervals
+**Per-Class Metrics:**
 
-Confidence intervals quantify the uncertainty in model performance metrics:
+For each class, we calculate TP, TN, FP, FN based on treating that class as positive and all others as negative.
 
-- A confidence interval describes the precision of the estimation of a parameter (e.g., mean accuracy)
-- The confidence interval indicates the reliability of an estimate
-- A large confidence interval is related to an uncertain estimate
-- Increasing the number of observations (n) reduces the width of the confidence interval
-- Result example: 90% ± 2% (i.e.: [88% - 92%])
-- General formula: $CI = \bar{X} \pm Z \times \frac{\sigma}{\sqrt{n}}$ where:
-  - $\bar{X}$ is the sample mean
-  - $Z$ is the Z-score corresponding to the desired confidence level
-  - $\sigma$ is the standard deviation
-  - $n$ is the sample size
+- **Tuna (Class 0)**:
+  - TP = 15, FP = 4 + 7 = 11, FN = 3 + 6 = 9, TN = 20 + 4 + 1 + 15 = 40
+  - Precision = $\frac{TP}{TP + FP} = \frac{15}{15 + 11} = \frac{15}{26} \approx 0.577$
+  - Recall = $\frac{TP}{TP + FN} = \frac{15}{15 + 9} = \frac{15}{24} = 0.625$
+  - F1-Score = $2 \times \frac{Precision \times Recall}{Precision + Recall} = 2 \times \frac{0.577 \times 0.625}{0.577 + 0.625} \approx 0.600$
+
+- **Codfish (Class 1)**:
+  - TP = 20, FP = 3 + 4 = 7, FN = 4 + 1 = 5, TN = 15 + 7 + 6 + 15 = 43
+  - Precision = $\frac{TP}{TP + FP} = \frac{20}{20 + 7} = \frac{20}{27} \approx 0.741$
+  - Recall = $\frac{TP}{TP + FN} = \frac{20}{20 + 5} = \frac{20}{25} = 0.800$
+  - F1-Score = $2 \times \frac{Precision \times Recall}{Precision + Recall} = 2 \times \frac{0.741 \times 0.800}{0.741 + 0.800} \approx 0.769$
+
+- **Salmon (Class 2)**:
+  - TP = 15, FP = 6 + 1 = 7, FN = 7 + 4 = 11, TN = 15 + 4 + 3 + 20 = 42
+  - Precision = $\frac{TP}{TP + FP} = \frac{15}{15 + 7} = \frac{15}{22} \approx 0.682$
+  - Recall = $\frac{TP}{TP + FN} = \frac{15}{15 + 11} = \frac{15}{26} \approx 0.577$
+  - F1-Score = $2 \times \frac{Precision \times Recall}{Precision + Recall} = 2 \times \frac{0.682 \times 0.577}{0.682 + 0.577} \approx 0.624$
+
+**Macro-Averaged F1-Score**: (0.600 + 0.769 + 0.624) / 3 ≈ 0.664
 
 ### Model Comparison
 
