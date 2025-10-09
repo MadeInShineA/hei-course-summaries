@@ -1,13 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn import svm, SVR, NuSVR
+import seaborn as sns
+from sklearn.svm import SVC, NuSVC, SVR, NuSVR
 from sklearn.datasets import make_classification, make_regression
 from sklearn.inspection import DecisionBoundaryDisplay
 
 
 # Generate sample data
 X, y = make_classification(
-    n_samples=100,
+    n_samples=50,
     n_features=2,
     n_redundant=0,
     n_informative=2,
@@ -15,49 +16,147 @@ X, y = make_classification(
     random_state=42,
 )
 
+# Add noise to make data not perfectly separable and more dispersed
+import numpy as np
+
+np.random.seed(42)
+X += np.random.normal(0, 1.5, X.shape)
+
 # Create figure and axis
 fig, ax = plt.subplots(figsize=(10, 8))
+sns.set_style("whitegrid")
 
 # Train SVM model
-clf = svm.SVC(kernel="linear", C=1.0)
+C_VALUE = 1
+clf = SVC(kernel="linear", C=C_VALUE)
 clf.fit(X, y)
 
-# Create a mesh to plot the decision boundary
-disp = DecisionBoundaryDisplay.from_estimator(
-    clf,
-    X,
-    plot_method="contour",
-    colors="k",
-    levels=[-1, 0, 1],
-    alpha=0.5,
-    linestyles=["--", "-", "--"],
-    ax=ax,
-)
+# Create mesh
+x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+xx, yy = np.meshgrid(np.linspace(x_min, x_max, 200), np.linspace(y_min, y_max, 200))
+Z = clf.decision_function(np.c_[xx.ravel(), yy.ravel()])
+Z = Z.reshape(xx.shape)
 
-# Plot the dataset
-scatter = ax.scatter(X[:, 0], X[:, 1], c=y, cmap=plt.cm.coolwarm, s=50)
+# Plot margin regions (removed for clarity)
+# ax.contourf(xx, yy, Z, levels=[-1, 1], colors=["lightblue"], alpha=0.2)
+
+# Plot decision boundary
+ax.contour(xx, yy, Z, levels=[0], colors="k", linewidths=2)
+
+# Plot margins
+ax.contour(xx, yy, Z, levels=[-1, 1], colors="k", linestyles="--", linewidths=1)
+
+# Plot data points
+sns.scatterplot(
+    x=X[:, 0], y=X[:, 1], hue=y, ax=ax, palette="coolwarm", s=30, legend=False
+)
 
 # Highlight support vectors
 ax.scatter(
     clf.support_vectors_[:, 0],
     clf.support_vectors_[:, 1],
-    s=200,
+    s=150,
     facecolors="none",
     edgecolors="k",
     linewidths=2,
-    label="Support Vectors",
 )
 
-# Add labels and title
+# Highlight margin violators
+decision_values = clf.decision_function(X)
+margin_violators = np.abs(decision_values) < 1
+ax.scatter(
+    X[margin_violators, 0],
+    X[margin_violators, 1],
+    s=100,
+    facecolors="none",
+    edgecolors="orange",
+    linewidths=2,
+)
+
+# Highlight misclassified points (not support vectors, outside margin)
+predictions = clf.predict(X)
+misclassified = predictions != y
+ax.scatter(
+    X[misclassified, 0],
+    X[misclassified, 1],
+    s=15,
+    marker="s",
+    c=y[misclassified],
+    cmap="coolwarm",
+    alpha=0.8,
+)
+
+# Add annotations
+# Margin width
+w_norm = np.linalg.norm(clf.coef_[0])
+margin_width = 2 / w_norm
+ax.text(
+    0.02,
+    0.98,
+    f"Margin Width: {margin_width:.2f}, C={C_VALUE}",
+    transform=ax.transAxes,
+    verticalalignment="top",
+    bbox=dict(boxstyle="round", facecolor="white", alpha=0.8),
+)
+
+# Number of support vectors and misclassified
+n_sv = len(clf.support_vectors_)
+n_mis = np.sum(predictions != y)
+ax.text(
+    0.02,
+    0.92,
+    f"Support Vectors: {n_sv}, Misclassified: {n_mis}",
+    transform=ax.transAxes,
+    verticalalignment="top",
+    bbox=dict(boxstyle="round", facecolor="white", alpha=0.8),
+)
+
+# Add legend
+from matplotlib.lines import Line2D
+from matplotlib import patches
+
+legend_elements = [
+    Line2D([0], [0], color="k", linewidth=2, label="Decision Boundary"),
+    Line2D([0], [0], color="k", linestyle="--", linewidth=1, label="Margins"),
+    Line2D(
+        [0],
+        [0],
+        marker="o",
+        color="w",
+        markerfacecolor="none",
+        markeredgecolor="k",
+        markersize=10,
+        label="Support Vectors",
+    ),
+    Line2D(
+        [0],
+        [0],
+        marker="o",
+        color="w",
+        markerfacecolor="none",
+        markeredgecolor="orange",
+        markersize=8,
+        label="Margin Violators",
+    ),
+    Line2D(
+        [0],
+        [0],
+        marker="s",
+        color="k",
+        markersize=8,
+        label="Misclassified",
+    ),
+]
+ax.legend(handles=legend_elements, loc="lower right")
+
+# Labels and title
 ax.set_xlabel("Feature 1")
 ax.set_ylabel("Feature 2")
-ax.set_title("SVM Decision Boundary with Support Vectors")
-ax.legend()
-
-# Add margins
+ax.set_title("SVM Decision Boundary with Margins, Regions, and Support Vectors")
 ax.grid(True, alpha=0.3)
 plt.tight_layout()
-plt.savefig("res/svm/svm_decision_boundary.png", dpi=150, bbox_inches="tight")
+plt.savefig("res/svm/svm_decision_boundary_margins.png", dpi=150, bbox_inches="tight")
 plt.show()
 
 # Now create a plot showing the effect of different kernels
@@ -87,7 +186,7 @@ for i, (title, kernel) in enumerate(zip(titles, ["linear", "poly", "rbf", "sigmo
     ax = sub[i // 2, i % 2]
 
     # Train SVM with specified kernel
-    clf = svm.SVC(kernel=kernel, gamma=1, C=1.0)
+    clf = SVC(kernel=kernel, gamma=1, C=1.0)
     clf.fit(X2, y2)
 
     # Plot decision boundary
@@ -144,7 +243,7 @@ for i, (C, title) in enumerate(zip(C_values, titles_C)):
     X3[-5:] += np.random.uniform(-1, 1, (5, 2))
 
     # Train SVM with specified C value
-    clf = svm.SVC(kernel="linear", C=C)
+    clf = SVC(kernel="linear", C=C)
     clf.fit(X3, y3)
 
     # Plot decision boundary
@@ -200,7 +299,7 @@ for i, (gamma, title) in enumerate(zip(gamma_values, titles_gamma)):
     ax = sub[i // 2, i % 2]
 
     # Train SVM with specified gamma value
-    clf = svm.SVC(kernel="rbf", gamma=gamma, C=1.0)
+    clf = SVC(kernel="rbf", gamma=gamma, C=1.0)
     clf.fit(X_gamma, y_gamma)
 
     # Plot decision boundary
@@ -263,7 +362,7 @@ for i, (C, gamma) in enumerate(
     ax = sub[i // 3, i % 3]
 
     # Train SVM with specified C and gamma values
-    clf = svm.SVC(kernel="rbf", C=C, gamma=gamma)
+    clf = SVC(kernel="rbf", C=C, gamma=gamma)
     clf.fit(X_complex, y_complex)
 
     # Plot decision boundary
@@ -331,7 +430,7 @@ for i, (degree, title) in enumerate(zip(degree_values, titles_degree)):
     ax = sub[i // 2, i % 2]
 
     # Train SVM with polynomial kernel of specified degree
-    clf = svm.SVC(kernel="poly", degree=degree, gamma="scale", C=1.0)
+    clf = SVC(kernel="poly", degree=degree, gamma="scale", C=1.0)
     clf.fit(X_poly, y_poly)
 
     # Plot decision boundary

@@ -113,7 +113,7 @@ Where $C$ controls the trade-off between maximizing margin and minimizing classi
 
 The following plot shows an SVM decision boundary with support vectors highlighted:
 
-![SVM Decision Boundary with Support Vectors](res/svm/svm_decision_boundary.png)
+![SVM Decision Boundary with Support Vectors](../res/svm/svm_decision_boundary_margins.png)
 
 ### The Dual Problem
 
@@ -141,7 +141,7 @@ For classification tasks with a soft margin parameter $C$:
 Uses a parameter $\nu$ instead of $C$:
 
 - $\nu$ represents the upper bound on the fraction of training errors
-- Directly controls the number of support vectors
+- Directly controls the number of support vectors (lower bound of the fraction of support vectors)
 
 ### 3. Epsilon-SVR (Regression)
 
@@ -174,7 +174,7 @@ The following table summarizes the key differences between various SVM variants:
 
 The following visualization compares different SVM variants to illustrate how parameter choices affect the decision boundary and the number of support vectors:
 
-![Comparison of Different SVM Variants](res/svm/svm_variants_comparison.png)
+![Comparison of Different SVM Variants](../res/svm/svm_variants_comparison.png)
 
 ---
 
@@ -230,7 +230,7 @@ $K(\mathbf{x_i}, \mathbf{x_j}) = \tanh(\gamma \mathbf{x_i} \cdot \mathbf{x_j} + 
 
 The following plot compares different SVM kernels on the same dataset:
 
-![Comparison of Different SVM Kernels](res/svm/svm_kernels_comparison.png)
+![Comparison of Different SVM Kernels](../res/svm/svm_kernels_comparison.png)
 
 ---
 
@@ -247,7 +247,7 @@ The C parameter in SVM controls the trade-off between achieving a low training e
 
 Visualization of the effect of the different C parameter values on the SVM decision boundary:
 
-![Effect of C Parameter on SVM Decision Boundary](res/svm/svm_c_parameter_effect.png)
+![Effect of C Parameter on SVM Decision Boundary](../res/svm/svm_c_parameter_effect.png)
 
 ### Gamma Parameter (Kernel Coefficient)
 
@@ -260,7 +260,7 @@ The gamma parameter controls how far the influence of a single training example 
 
 The following plot illustrates the effect of different gamma values on the RBF kernel:
 
-![Effect of Gamma Parameter on SVM Decision Boundary](res/svm/svm_gamma_parameter_effect.png)
+![Effect of Gamma Parameter on SVM Decision Boundary](../res/svm/svm_gamma_parameter_effect.png)
 
 ### Degree Parameter (Polynomial Kernel)
 
@@ -273,7 +273,7 @@ The degree parameter $d$ controls the flexibility of the decision boundary:
 
 The following visualization demonstrates the effect of different polynomial degrees on the SVM decision boundary:
 
-![Effect of Polynomial Degree Parameter on SVM Decision Boundary](res/svm/svm_polynomial_degree_effect.png)
+![Effect of Polynomial Degree Parameter on SVM Decision Boundary](../res/svm/svm_polynomial_degree_effect.png)
 
 ### Parameter Interactions
 
@@ -292,7 +292,7 @@ Understanding these interactions is crucial for effective hyperparameter tuning.
 
 The following visualization demonstrates how different combinations of C and gamma parameters affect model complexity:
 
-![Effect of C and Gamma Parameters on SVM Decision Boundary](res/svm/svm_c_and_gamma_parameter_effect.png)
+![Effect of C and Gamma Parameters on SVM Decision Boundary](../res/svm/svm_c_and_gamma_parameter_effect.png)
 
 #### Parameter Relationships
 
