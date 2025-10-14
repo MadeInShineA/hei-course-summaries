@@ -87,6 +87,8 @@ Now that we have a foundational understanding of what neural networks are and ho
 | **ReLU** | $\max(0,x)$ | Most common, avoids vanishing gradient |
 | **Softmax** | $\frac{\exp(x_i)}{\sum \exp(x_j)}$ | Multi-class classification |
 
+Activation functions introduce non-linearity to each neuron's output, enabling the network to learn complex, non-linear patterns in data. Without them, the network would only perform linear transformations, severely limiting its representational power.
+
 #### Neural Network Architecture Visualization
 
 ```mermaid
