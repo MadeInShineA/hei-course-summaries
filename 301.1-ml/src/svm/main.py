@@ -226,30 +226,40 @@ titles_C = [
     "C = 100 (Hard Margin)",
 ]
 
+# Create dataset with some noise (same for all C values)
+X3, y3 = make_classification(
+    n_samples=100,
+    n_features=2,
+    n_redundant=0,
+    n_informative=2,
+    n_clusters_per_class=1,
+    random_state=42,
+)
+
+# Add some noise to create overlapping classes
+X3[-5:] += np.random.uniform(-1, 1, (5, 2))
+
+# Create mesh for margins
+x_min, x_max = X3[:, 0].min() - 1, X3[:, 0].max() + 1
+y_min, y_max = X3[:, 1].min() - 1, X3[:, 1].max() + 1
+xx, yy = np.meshgrid(np.linspace(x_min, x_max, 200), np.linspace(y_min, y_max, 200))
+
 for i, (C, title) in enumerate(zip(C_values, titles_C)):
     ax = sub[i // 2, i % 2]
-
-    # Create dataset with some noise
-    X3, y3 = make_classification(
-        n_samples=100,
-        n_features=2,
-        n_redundant=0,
-        n_informative=2,
-        n_clusters_per_class=1,
-        random_state=42,
-    )
-
-    # Add some noise to create overlapping classes
-    X3[-5:] += np.random.uniform(-1, 1, (5, 2))
 
     # Train SVM with specified C value
     clf = SVC(kernel="linear", C=C)
     clf.fit(X3, y3)
 
+    # Compute decision function for margins
+    Z = clf.decision_function(np.c_[xx.ravel(), yy.ravel()])
+    Z = Z.reshape(xx.shape)
+
     # Plot decision boundary
-    disp = DecisionBoundaryDisplay.from_estimator(
-        clf, X3, plot_method="contour", levels=[0], alpha=0.4, ax=ax, colors=["k"]
-    )
+    ax.contour(xx, yy, Z, levels=[0], colors="k", linewidths=2)
+
+    # Plot margins
+    ax.contour(xx, yy, Z, levels=[-1, 1], colors="k", linestyles="--", linewidths=1)
 
     # Plot dataset
     ax.scatter(X3[:, 0], X3[:, 1], c=y3, cmap=plt.cm.coolwarm, s=50)
