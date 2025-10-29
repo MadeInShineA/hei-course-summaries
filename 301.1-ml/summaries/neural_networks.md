@@ -82,12 +82,21 @@ Now that we have a foundational understanding of what neural networks are and ho
 
 ### 4. Activation Functions
 
+#### Hidden Layer Activation Functions
+
 | Function | Formula | Use Case |
 |----------|---------|----------|
-| **Sigmoid** | $\sigma(x) = \frac{1}{1+e^{-x}}$ | Binary classification, outputs in (0,1) |
-| **Tanh** | $\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$ | Zero-centered outputs, (-1,1) |
-| **ReLU** | $\max(0,x)$ | Most common, avoids vanishing gradient |
-| **Softmax** | $\frac{\exp(x_i)}{\sum \exp(x_j)}$ | Multi-class classification |
+| **Sigmoid** | $\sigma(x) = \frac{1}{1+e^{-x}}$ | Introduces non-linearity, outputs in (0,1) |
+| **Tanh** | $\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$ | Zero-centered outputs, (-1,1), avoids vanishing gradient better than sigmoid |
+| **ReLU** | $\max(0,x)$ | Most common, avoids vanishing gradient, computationally efficient |
+
+#### Output Layer Activation Functions
+
+| Function | Formula | Use Case |
+|----------|---------|----------|
+| **Linear** | $f(x) = x$ | Regression tasks, unbounded outputs |
+| **Sigmoid** | $\sigma(x) = \frac{1}{1+e^{-x}}$ | Binary/multi-label classification, outputs probability in (0,1) |
+| **Softmax** | $\frac{\exp(x_i)}{\sum \exp(x_j)}$ | Multi-class classification, outputs probability distribution |
 
 Activation functions introduce non-linearity to each neuron's output, enabling the network to learn complex, non-linear patterns in data. Without them, the network would only perform linear transformations, severely limiting its representational power.
 
