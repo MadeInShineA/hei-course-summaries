@@ -13,9 +13,10 @@ This summary provides a comprehensive overview of neural networks, covering thei
 5. [Training Process](#training-process)
 6. [Optimization Algorithms](#optimization-algorithms)
 7. [Regularization Techniques](#regularization-techniques)
-8. [Parameters and Tuning](#parameters-and-tuning)
-9. [Applications and Benefits](#applications-and-benefits)
-10. [Key Takeaways](#key-takeaways)
+8. [Evaluation Metrics](#evaluation-metrics)
+9. [Parameters and Tuning](#parameters-and-tuning)
+10. [Applications and Benefits](#applications-and-benefits)
+11. [Key Takeaways](#key-takeaways)
 
 ---
 
@@ -126,9 +127,15 @@ graph LR
 
 ### 5. Loss Functions
 
-- **Mean Squared Error (MSE)**: For regression tasks
-- **Cross-Entropy Loss**: For classification tasks
-- **Purpose**: Measures the difference between predicted and actual values
+Loss functions measure the difference between predicted and actual values, guiding the optimization process during training. They quantify how well the model performs and are minimized through gradient descent.
+
+| Loss Function | Formula | Use Case |
+|---------------|---------|----------|
+| **Mean Squared Error (MSE)** | $\frac{1}{n} \sum (y_i - \hat{y}_i)^2$ | Regression tasks |
+| **Mean Absolute Error (MAE)** | $\frac{1}{n} \sum \|y_i - \hat{y}_i\|$ | Regression tasks (less sensitive to outliers) |
+| **Binary Cross Entropy (BCE)** | $-\frac{1}{n} \sum [y_i \log(\hat{y}_i) + (1-y_i) \log(1-\hat{y}_i)]$ | Binary classification |
+| **Binary Cross Entropy with Logits** | BCE + Sigmoid in one function | Binary/multi-label classification (numerically stable) |
+| **Categorical Cross Entropy** | $-\frac{1}{n} \sum y_i \log(\hat{y}_i)$ | Multi-class classification |
 
 ---
 
@@ -147,7 +154,9 @@ Data flows from input to output through the network:
 ### Mathematical Representation
 
 For a single neuron:
+
 $z = \sum (w_i \cdot x_i) + b$
+
 $a = \text{activation}(z)$
 
 Where:
@@ -195,21 +204,6 @@ flowchart TD
     style G fill:#0ea5e920,stroke:#0ea5e9,stroke-width:2px
     style H fill:#16a34a40,stroke:#16a34a,stroke-width:2px
 ```
-
-### Key Training Concepts
-
-| Concept | Description | Purpose |
-|---------|-------------|---------|
-| **Epoch** | One complete pass through the training data | Ensure all data is used for learning |
-| **Batch** | Subset of training data processed together | Balance computational efficiency and gradient accuracy |
-| **Learning Rate** | Step size for weight updates | Control how quickly the model learns |
-| **Overfitting** | Model performs well on training but poorly on new data | Need regularization techniques |
-
-### Training Challenges
-
-- **Vanishing Gradients**: Gradients become very small, slowing learning
-- **Exploding Gradients**: Gradients become very large, causing instability
-- **Local Minima**: Optimization gets stuck in suboptimal solutions
 
 ---
 
@@ -290,11 +284,15 @@ Adam computes individual adaptive learning rates by maintaining running averages
 
 The algorithm updates parameters using:
 
-- $m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t$
-- $v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2$
-- $\hat{m}_t = \frac{m_t}{1 - \beta_1^t}$
-- $\hat{v}_t = \frac{v_t}{1 - \beta_2^t}$
-- $\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\hat{v}_t} + \epsilon} \hat{m}_t$
+$m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t$
+
+$v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2$
+
+$\hat{m}_t = \frac{m_t}{1 - \beta_1^t}$
+
+$\hat{v}_t = \frac{v_t}{1 - \beta_2^t}$
+
+$\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\hat{v}_t} + \epsilon} \hat{m}_t$
 
 Where:
 
@@ -340,6 +338,23 @@ Where:
 | **Default Choice** | No | Yes for most tasks |
 | **Tuning Required** | High | Low |
 | **Best For** | Simple models, large data, generalization | Complex models, sparse data, quick results |
+
+---
+
+### Key Training Concepts
+
+| Concept | Description | Purpose |
+|---------|-------------|---------|
+| **Epoch** | One complete pass through the training data | Ensure all data is used for learning |
+| **Batch** | Subset of training data processed together | Balance computational efficiency and gradient accuracy |
+| **Learning Rate** | Step size for weight updates | Control how quickly the model learns |
+| **Overfitting** | Model performs well on training but poorly on new data | Need regularization techniques |
+
+### Training Challenges
+
+- **Vanishing Gradients**: Gradients become very small, slowing learning
+- **Exploding Gradients**: Gradients become very large, causing instability
+- **Local Minima**: Optimization gets stuck in suboptimal solutions
 
 ---
 
@@ -407,6 +422,39 @@ Regularization helps achieve the optimal balance between bias and variance:
 
 ---
 
+## <a name="evaluation-metrics"></a>Evaluation Metrics
+
+Evaluation metrics assess model performance on validation/test data, providing insights beyond training loss. They help determine how well the model generalizes to unseen data.
+
+### Regression Metrics
+
+| Metric | Formula | Description |
+|--------|---------|-------------|
+| **Mean Absolute Error (MAE)** | $\frac{1}{n} \sum \|y_i - \hat{y}_i\|$ | Average absolute prediction error |
+| **Mean Squared Error (MSE)** | $\frac{1}{n} \sum (y_i - \hat{y}_i)^2$ | Average squared prediction error (penalizes large errors) |
+| **Root Mean Squared Error (RMSE)** | $\sqrt{\frac{1}{n} \sum (y_i - \hat{y}_i)^2}$ | Square root of MSE (same units as target) |
+| **R² Score** | $1 - \frac{\sum (y_i - \hat{y}_i)^2}{\sum (y_i - \bar{y})^2}$ | Proportion of variance explained (0-1, higher is better) |
+
+### Classification Metrics
+
+| Metric | Formula | Description |
+|--------|---------|-------------|
+| **Accuracy** | $\frac{TP + TN}{TP + TN + FP + FN}$ | Proportion of correct predictions |
+| **Precision** | $\frac{TP}{TP + FP}$ | True positives over predicted positives |
+| **Recall (Sensitivity)** | $\frac{TP}{TP + FN}$ | True positives over actual positives |
+| **F1-Score** | $2 \cdot \frac{Precision \cdot Recall}{Precision + Recall}$ | Harmonic mean of precision and recall |
+| **AUC-ROC** | Area under ROC curve | Measures discrimination ability (0.5-1.0) |
+
+### Multi-label Classification Metrics
+
+| Metric | Description |
+|--------|-------------|
+| **Hamming Loss** | Fraction of labels incorrectly predicted |
+| **Subset Accuracy** | Exact match of all labels |
+| **Macro/Micro F1** | F1 averaged across labels (macro) or globally (micro) |
+
+---
+
 With a solid understanding of optimization algorithms and regularization techniques, we can now explore the various parameters and tuning strategies that optimize neural network performance.
 
 ## <a name="parameters-and-tuning"></a>Parameters and Tuning
@@ -445,7 +493,7 @@ With a solid understanding of optimization algorithms and regularization techniq
 
 With knowledge of how to build and train neural networks, let's explore their real-world applications and the advantages they offer over traditional machine learning approaches.
 
-## <a name="applications-and-benefits"></a>Applications and Benefits
+## <a name="applications-and-benefits"></a>Applications and Benefits of Neural Networks
 
 ### Effectiveness
 
@@ -516,7 +564,7 @@ To wrap up our comprehensive exploration of neural networks, here are the key ta
 | **Hierarchical Learning** | Learn simple to complex features layer by layer |
 | **Distributed Representation** | Knowledge distributed across network parameters |
 
-### 2. Architecture Design ⚙️
+### 2. Architecture Design
 
 | Consideration | Guideline |
 |----------------|-----------|
@@ -525,7 +573,7 @@ To wrap up our comprehensive exploration of neural networks, here are the key ta
 | **Activation Choice** | ReLU for hidden layers, softmax for classification |
 | **Regularization** | Use dropout and batch norm for robustness |
 
-### 3. Best Practices ✅
+### 3. Best Practices
 
 - **Data Preprocessing**: Normalize inputs, handle missing values
 - **Monitor Training**: Track loss curves, validation performance
@@ -541,7 +589,7 @@ To wrap up our comprehensive exploration of neural networks, here are the key ta
 - **When Feature Engineering** is difficult or impossible
 - **Scalable Problems** with available computational resources
 
-### 5. Performance Considerations ⚖️
+### 5. Performance Considerations
 
 - **Training Time**: Can take hours to days depending on network size
 - **Memory Usage**: Large networks require significant GPU memory
