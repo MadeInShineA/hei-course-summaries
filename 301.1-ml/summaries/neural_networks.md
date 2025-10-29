@@ -11,9 +11,11 @@ This summary provides a comprehensive overview of neural networks, covering thei
 3. [Key Components](#key-components)
 4. [How Neural Networks Work](#how-neural-networks-work)
 5. [Training Process](#training-process)
-6. [Parameters and Tuning](#parameters-and-tuning)
-7. [Applications and Benefits](#applications-and-benefits)
-8. [Key Takeaways](#key-takeaways)
+6. [Optimization Algorithms](#optimization-algorithms)
+7. [Regularization Techniques](#regularization-techniques)
+8. [Parameters and Tuning](#parameters-and-tuning)
+9. [Applications and Benefits](#applications-and-benefits)
+10. [Key Takeaways](#key-takeaways)
 
 ---
 
@@ -202,7 +204,199 @@ flowchart TD
 
 ---
 
-Once we understand the training mechanics, the next step is mastering the configuration and tuning of neural network parameters to achieve optimal performance.
+Now that we have explored the basic training process, let's delve into the optimization algorithms that efficiently train neural networks.
+
+## <a name="optimization-algorithms"></a>Optimization Algorithms
+
+### Stochastic Gradient Descent (SGD)
+
+Stochastic Gradient Descent is the foundational optimization algorithm for training neural networks, using random subsets of data to compute gradients and update parameters iteratively.
+
+#### How SGD Works
+
+SGD approximates the true gradient using a small random sample (mini-batch) instead of the entire dataset, enabling efficient training on large-scale problems:
+
+1. **Mini-batch Selection** 🎲: Randomly sample m examples from the training set
+2. **Gradient Computation** 📉: Calculate average gradient over the mini-batch
+3. **Parameter Update** 🔄: Update parameters using the computed gradient
+4. **Iteration** 🔁: Repeat with new mini-batches until convergence
+
+#### Mathematical Formulation
+
+For a mini-batch $B$ of size $m$:
+
+$\theta_{t+1} = \theta_t - \eta \cdot \frac{1}{m} \sum_{i \in B} \nabla_\theta L(f(x^{(i)}; \theta), y^{(i)})$
+
+Where:
+- $\theta_t$: Parameters at step t
+- $\eta$: Learning rate (step size)
+- $\nabla_\theta L$: Gradient of loss with respect to parameters
+- $f(x; \theta)$: Network prediction function
+
+#### Advantages
+
+- **Scalability** 📊: Handles massive datasets efficiently
+- **Memory Efficiency** 🧠: Processes data in chunks, reducing memory requirements
+- **Generalization** 🎯: Stochastic noise acts as implicit regularization
+- **Parallelization** ⚡: Independent mini-batch processing enables GPU acceleration
+
+#### Disadvantages
+
+- **Noisy Updates** 🎲: High variance can cause unstable convergence
+- **Learning Rate Sensitivity** 📏: Requires careful tuning; too high causes divergence, too low slows training
+- **Plateau Trapping** 🕳️: May get stuck in sharp local minima or saddle points
+- **Oscillations** 🌊: Can oscillate around optima without momentum
+
+#### Variants and Extensions
+
+| Variant | Key Feature | Advantages | Use Case |
+|---------|-------------|------------|----------|
+| **SGD with Momentum** | Accumulates past gradients with momentum term | Faster convergence, reduces oscillations | General neural network training |
+| **Nesterov Momentum** | Looks ahead before updating | Better convergence properties | When momentum is needed |
+| **RMSprop** | Adaptive learning rates using gradient RMS | Handles varying gradient scales | Recurrent networks, non-stationary objectives |
+| **Adagrad** | Accumulates squared gradients | Adapts to parameter frequencies | Sparse features, NLP tasks |
+
+#### When to Use SGD
+
+- **Large Datasets** 📊: When full-batch gradient descent is computationally infeasible
+- **Online Learning** 🌐: For streaming data or continuous learning scenarios
+- **Simple Problems** 🎯: When computational resources are limited
+- **Baseline Comparison** 📈: As a reference for evaluating advanced optimizers
+
+### Adam Optimizer
+
+Adam (Adaptive Moment Estimation) is an adaptive optimization algorithm that combines momentum and RMSprop, automatically adjusting learning rates for each parameter based on estimates of first and second moments of gradients.
+
+#### How Adam Works
+
+Adam computes individual adaptive learning rates by maintaining running averages of both the gradients (first moment) and the squared gradients (second moment):
+
+1. **Moment Calculation** 📊: Update biased first and second moment estimates
+2. **Bias Correction** ⚖️: Correct initial bias in moment estimates
+3. **Adaptive Update** 📏: Scale learning rate by square root of second moment
+4. **Parameter Update** 🔄: Apply momentum-enhanced gradient step
+
+#### Mathematical Formulation
+
+The algorithm updates parameters using:
+
+$m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t$
+$v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2$
+$\hat{m}_t = \frac{m_t}{1 - \beta_1^t}$
+$\hat{v}_t = \frac{v_t}{1 - \beta_2^t}$
+$\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\hat{v}_t} + \epsilon} \hat{m}_t$
+
+Where:
+- $m_t, v_t$: Biased first and second moment estimates
+- $\hat{m}_t, \hat{v}_t$: Bias-corrected moment estimates
+- $\beta_1 = 0.9, \beta_2 = 0.999$: Exponential decay rates
+- $\epsilon = 10^{-8}$: Numerical stability constant
+
+#### Advantages
+
+- **Adaptive Learning Rates** 📏: Automatically adjusts step sizes per parameter
+- **Momentum Integration** 🚀: Combines benefits of momentum for faster convergence
+- **Hyperparameter Robustness** 🎯: Works well with default settings (η=0.001, β₁=0.9, β₂=0.999)
+- **Memory Efficient** 🧠: Requires storage for only two moments per parameter
+- **Sparse Gradient Handling** 🔄: Effective for sparse data and embeddings
+
+#### Disadvantages
+
+- **Potential Overfitting** 🎯: May generalize worse than SGD on some tasks due to adaptive rates
+- **Memory Usage** 💾: Higher memory footprint than basic SGD
+- **Convergence Issues** 📉: Can converge to suboptimal solutions in some cases
+- **Less Interpretability** ❓: Complex adaptive behavior harder to understand
+
+#### When to Use Adam
+
+- **Default Optimizer** 🎯: Excellent first choice for most deep learning tasks
+- **Sparse Data** 🔍: Particularly effective for NLP and recommendation systems
+- **Large-Scale Training** 📊: Scales well to big datasets and complex models
+- **Transfer Learning** 🌐: Good for fine-tuning pre-trained models
+- **Rapid Prototyping** ⚡: When you want robust performance without extensive tuning
+
+#### SGD vs Adam Comparison
+
+| Aspect | SGD | Adam |
+|--------|-----|------|
+| **Convergence Speed** | Slower, may oscillate | Faster, smoother convergence |
+| **Hyperparameter Sensitivity** | High (learning rate critical) | Low (robust defaults) |
+| **Memory Usage** | Low | Moderate (stores moments) |
+| **Generalization** | Often better on test data | May overfit more easily |
+| **Computational Cost** | Lower per iteration | Higher per iteration |
+| **Sparse Gradients** | Good with momentum variants | Excellent |
+| **Large Datasets** | Excellent scalability | Good scalability |
+| **Default Choice** | No | Yes for most tasks |
+| **Tuning Required** | High | Low |
+| **Best For** | Simple models, large data, generalization | Complex models, sparse data, quick results |
+
+---
+
+With optimization algorithms covered, let's explore regularization techniques that prevent overfitting and improve generalization.
+
+## <a name="regularization-techniques"></a>Regularization Techniques
+
+Regularization prevents overfitting by adding constraints to the learning process, ensuring the model generalizes well to unseen data.
+
+#### L1 and L2 Regularization
+
+- **L1 Regularization (Lasso)** 📏: Adds penalty $\lambda \sum |w_i|$ to loss function
+  - Encourages sparsity (many weights become zero)
+  - Useful for feature selection
+- **L2 Regularization (Ridge)** 📐: Adds penalty $\lambda \sum w_i^2$ to loss function
+  - Prevents large weights, smooths the model
+  - Most commonly used regularization
+
+#### Dropout
+
+- **Mechanism** 🎲: Randomly "drops out" neurons during training with probability $p$
+- **Effect** 🛡️: Forces network to learn redundant representations
+- **Implementation** ⚙️: Applied after activation functions in hidden layers
+- **Typical Values** 📊: Dropout rate 0.2-0.5 for hidden layers, 0.0 for input/output
+
+#### Other Regularization Methods
+
+| Technique | Description | When to Use |
+|-----------|-------------|-------------|
+| **Early Stopping** ⏹️ | Stop training when validation loss increases | Prevents overfitting without modifying loss |
+| **Batch Normalization** 📊 | Normalizes layer inputs during training | Stabilizes training, acts as implicit regularization |
+| **Data Augmentation** 🔄 | Artificially increases dataset through transformations | Particularly effective for image data |
+| **Weight Decay** 📉 | Gradually reduces learning rate over time | Combines with L2 regularization |
+
+#### Regularization in Practice
+
+```mermaid
+graph TD
+    A[Training Data] --> B[Model Training]
+    B --> C{Overfitting<br/>Detected?}
+    C -->|Yes| D[Apply Regularization]
+    C -->|No| E[Continue Training]
+    D --> F[L1/L2 Regularization]
+    D --> G[Dropout]
+    D --> H[Early Stopping]
+    F --> I[Evaluate on Validation]
+    G --> I
+    H --> I
+    I --> J{Performance<br/>Improved?}
+    J -->|Yes| K[Deploy Model]
+    J -->|No| L[Tune Regularization<br/>Parameters]
+
+    style A fill:#2563eb20,stroke:#2563eb,stroke-width:2px
+    style D fill:#d9770620,stroke:#d97706,stroke-width:2px
+    style K fill:#16a34a20,stroke:#16a34a,stroke-width:2px
+```
+
+### Balancing Bias and Variance
+
+Regularization helps achieve the optimal balance between bias and variance:
+
+- **High Bias (Underfitting)**: Model too simple, poor training performance
+- **High Variance (Overfitting)**: Model too complex, poor generalization
+- **Regularization**: Reduces variance while maintaining low bias
+
+---
+
+With a solid understanding of optimization algorithms and regularization techniques, we can now explore the various parameters and tuning strategies that optimize neural network performance.
 
 ## <a name="parameters-and-tuning"></a>Parameters and Tuning
 
