@@ -50,11 +50,11 @@ In classification tasks:
 
 #### Example
 
-For image classification (e.g., MNIST digits):
+For tabular data classification (e.g., Iris dataset):
 
-- Input: 28x28 pixel image flattened to 784 values
-- Hidden layers: Learn edges, shapes, and patterns
-- Output: 10 probabilities (one for each digit 0-9)
+- Input: 4 features (sepal length, sepal width, petal length, petal width)
+- Hidden layers: Learn combinations of input features
+- Output: 3 probabilities (one for each species)
 
 ---
 
@@ -228,6 +228,7 @@ For a mini-batch $B$ of size $m$:
 $\theta_{t+1} = \theta_t - \eta \cdot \frac{1}{m} \sum_{i \in B} \nabla_\theta L(f(x^{(i)}; \theta), y^{(i)})$
 
 Where:
+
 - $\theta_t$: Parameters at step t
 - $\eta$: Learning rate (step size)
 - $\nabla_\theta L$: Gradient of loss with respect to parameters
@@ -280,13 +281,14 @@ Adam computes individual adaptive learning rates by maintaining running averages
 
 The algorithm updates parameters using:
 
-$m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t$
-$v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2$
-$\hat{m}_t = \frac{m_t}{1 - \beta_1^t}$
-$\hat{v}_t = \frac{v_t}{1 - \beta_2^t}$
-$\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\hat{v}_t} + \epsilon} \hat{m}_t$
+- $m_t = \beta_1 m_{t-1} + (1 - \beta_1) g_t$
+- $v_t = \beta_2 v_{t-1} + (1 - \beta_2) g_t^2$
+- $\hat{m}_t = \frac{m_t}{1 - \beta_1^t}$
+- $\hat{v}_t = \frac{v_t}{1 - \beta_2^t}$
+- $\theta_{t+1} = \theta_t - \frac{\eta}{\sqrt{\hat{v}_t} + \epsilon} \hat{m}_t$
 
 Where:
+
 - $m_t, v_t$: Biased first and second moment estimates
 - $\hat{m}_t, \hat{v}_t$: Bias-corrected moment estimates
 - $\beta_1 = 0.9, \beta_2 = 0.999$: Exponential decay rates
