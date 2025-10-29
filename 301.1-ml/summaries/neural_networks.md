@@ -33,20 +33,20 @@ Neural Networks (NNs) are computational models inspired by the structure and fun
 
 Neural networks process information through interconnected layers of neurons:
 
-1. **Input Layer** 📥: Receives raw input data (features)
-2. **Hidden Layers** 🧠: Process and transform the input through weighted connections
-3. **Output Layer** 📤: Produces the final prediction or classification
-4. **Forward Pass** ➡️: Data flows from input to output through the network
-5. **Backpropagation** ⬅️: Error gradients flow backward to update weights
-6. **Training** 🔄: Iterative process of forward pass and backpropagation
+1. **Input Layer**: Receives raw input data (features)
+2. **Hidden Layers**: Process and transform the input through weighted connections
+3. **Output Layer**: Produces the final prediction or classification
+4. **Forward Pass**: Data flows from input to output through the network
+5. **Backpropagation**: Error gradients flow backward to update weights
+6. **Training**: Iterative process of forward pass and backpropagation
 
 ### Neural Networks in Classification Problems
 
 In classification tasks:
 
-- **Input Features** 📊: Raw data like pixel values, text embeddings, or numerical features
-- **Hidden Representations** 🔍: Learned features that capture patterns in the data
-- **Output Probabilities** 🎯: Probability distributions over classes for decision making
+- **Input Features**: Raw data like pixel values, text embeddings, or numerical features
+- **Hidden Representations**: Learned features that capture patterns in the data
+- **Output Probabilities**: Probability distributions over classes for decision making
 
 #### Example
 
@@ -64,21 +64,21 @@ Now that we have a foundational understanding of what neural networks are and ho
 
 ### 1. Neurons (Nodes)
 
-- **Artificial Neuron** 🧠: Basic computational unit that receives inputs, applies weights, and produces output
-- **Activation Function** ⚡: Non-linear transformation applied to the weighted sum
-- **Bias Term** ➕: Additional parameter to shift the activation function
+- **Artificial Neuron**: Basic computational unit that receives inputs, applies weights, and produces output
+- **Activation Function**: Non-linear transformation applied to the weighted sum
+- **Bias Term**: Additional parameter to shift the activation function
 
 ### 2. Layers
 
-- **Input Layer** 📥: First layer that receives the raw input data
-- **Hidden Layers** 🔍: Intermediate layers that learn representations
-- **Output Layer** 📤: Final layer that produces predictions
+- **Input Layer**: First layer that receives the raw input data
+- **Hidden Layers**: Intermediate layers that learn representations
+- **Output Layer**: Final layer that produces predictions
 
 ### 3. Connections and Weights
 
-- **Synapses** 🔗: Connections between neurons with associated weights
-- **Weight Matrix** 📋: Collection of all weights between layers
-- **Parameters** ⚙️: Weights and biases that are learned during training
+- **Synapses**: Connections between neurons with associated weights
+- **Weight Matrix**: Collection of all weights between layers
+- **Parameters**: Weights and biases that are learned during training
 
 ### 4. Activation Functions
 
@@ -131,9 +131,9 @@ With a solid grasp of the fundamental components, we can now explore how neural 
 
 Data flows from input to output through the network:
 
-1. **Weighted Sum** ➕: Each neuron computes weighted sum of inputs plus bias
-2. **Activation** ⚡: Apply activation function to the weighted sum
-3. **Layer-by-Layer** 📈: Process continues through each layer until output
+1. **Weighted Sum**: Each neuron computes weighted sum of inputs plus bias
+2. **Activation**: Apply activation function to the weighted sum
+3. **Layer-by-Layer**: Process continues through each layer until output
 
 ### Mathematical Representation
 
@@ -153,10 +153,10 @@ Where:
 
 Error gradients flow backward to update weights:
 
-1. **Compute Loss** 📊: Calculate loss between prediction and target
-2. **Gradient Calculation** 📉: Compute partial derivatives of loss w.r.t. parameters
-3. **Weight Update** 🔄: Update weights using gradient descent
-4. **Chain Rule** ⛓️: Propagate gradients backward through the network
+1. **Compute Loss**: Calculate loss between prediction and target
+2. **Gradient Calculation**: Compute partial derivatives of loss w.r.t. parameters
+3. **Weight Update**: Update weights using gradient descent
+4. **Chain Rule**: Propagate gradients backward through the network
 
 ---
 
@@ -198,9 +198,9 @@ flowchart TD
 
 ### Training Challenges
 
-- **Vanishing Gradients** 📉: Gradients become very small, slowing learning
-- **Exploding Gradients** 📈: Gradients become very large, causing instability
-- **Local Minima** 🕳️: Optimization gets stuck in suboptimal solutions
+- **Vanishing Gradients**: Gradients become very small, slowing learning
+- **Exploding Gradients**: Gradients become very large, causing instability
+- **Local Minima**: Optimization gets stuck in suboptimal solutions
 
 ---
 
@@ -216,10 +216,10 @@ Stochastic Gradient Descent is the foundational optimization algorithm for train
 
 SGD approximates the true gradient using a small random sample (mini-batch) instead of the entire dataset, enabling efficient training on large-scale problems:
 
-1. **Mini-batch Selection** 🎲: Randomly sample m examples from the training set
-2. **Gradient Computation** 📉: Calculate average gradient over the mini-batch
-3. **Parameter Update** 🔄: Update parameters using the computed gradient
-4. **Iteration** 🔁: Repeat with new mini-batches until convergence
+1. **Mini-batch Selection**: Randomly sample m examples from the training set
+2. **Gradient Computation**: Calculate average gradient over the mini-batch
+3. **Parameter Update**: Update parameters using the computed gradient
+4. **Iteration**: Repeat with new mini-batches until convergence
 
 #### Mathematical Formulation
 
@@ -236,17 +236,17 @@ Where:
 
 #### Advantages
 
-- **Scalability** 📊: Handles massive datasets efficiently
-- **Memory Efficiency** 🧠: Processes data in chunks, reducing memory requirements
-- **Generalization** 🎯: Stochastic noise acts as implicit regularization
-- **Parallelization** ⚡: Independent mini-batch processing enables GPU acceleration
+- **Scalability**: Handles massive datasets efficiently
+- **Memory Efficiency**: Processes data in chunks, reducing memory requirements
+- **Generalization**: Stochastic noise acts as implicit regularization
+- **Parallelization**: Independent mini-batch processing enables GPU acceleration
 
 #### Disadvantages
 
-- **Noisy Updates** 🎲: High variance can cause unstable convergence
-- **Learning Rate Sensitivity** 📏: Requires careful tuning; too high causes divergence, too low slows training
-- **Plateau Trapping** 🕳️: May get stuck in sharp local minima or saddle points
-- **Oscillations** 🌊: Can oscillate around optima without momentum
+- **Noisy Updates**: High variance can cause unstable convergence
+- **Learning Rate Sensitivity**: Requires careful tuning; too high causes divergence, too low slows training
+- **Plateau Trapping**: May get stuck in sharp local minima or saddle points
+- **Oscillations**: Can oscillate around optima without momentum
 
 #### Variants and Extensions
 
@@ -259,10 +259,10 @@ Where:
 
 #### When to Use SGD
 
-- **Large Datasets** 📊: When full-batch gradient descent is computationally infeasible
-- **Online Learning** 🌐: For streaming data or continuous learning scenarios
-- **Simple Problems** 🎯: When computational resources are limited
-- **Baseline Comparison** 📈: As a reference for evaluating advanced optimizers
+- **Large Datasets**: When full-batch gradient descent is computationally infeasible
+- **Online Learning**: For streaming data or continuous learning scenarios
+- **Simple Problems**: When computational resources are limited
+- **Baseline Comparison**: As a reference for evaluating advanced optimizers
 
 ### Adam Optimizer
 
@@ -272,10 +272,10 @@ Adam (Adaptive Moment Estimation) is an adaptive optimization algorithm that com
 
 Adam computes individual adaptive learning rates by maintaining running averages of both the gradients (first moment) and the squared gradients (second moment):
 
-1. **Moment Calculation** 📊: Update biased first and second moment estimates
-2. **Bias Correction** ⚖️: Correct initial bias in moment estimates
-3. **Adaptive Update** 📏: Scale learning rate by square root of second moment
-4. **Parameter Update** 🔄: Apply momentum-enhanced gradient step
+1. **Moment Calculation**: Update biased first and second moment estimates
+2. **Bias Correction**: Correct initial bias in moment estimates
+3. **Adaptive Update**: Scale learning rate by square root of second moment
+4. **Parameter Update**: Apply momentum-enhanced gradient step
 
 #### Mathematical Formulation
 
@@ -296,26 +296,26 @@ Where:
 
 #### Advantages
 
-- **Adaptive Learning Rates** 📏: Automatically adjusts step sizes per parameter
-- **Momentum Integration** 🚀: Combines benefits of momentum for faster convergence
-- **Hyperparameter Robustness** 🎯: Works well with default settings (η=0.001, β₁=0.9, β₂=0.999)
-- **Memory Efficient** 🧠: Requires storage for only two moments per parameter
-- **Sparse Gradient Handling** 🔄: Effective for sparse data and embeddings
+- **Adaptive Learning Rates**: Automatically adjusts step sizes per parameter
+- **Momentum Integration**: Combines benefits of momentum for faster convergence
+- **Hyperparameter Robustness**: Works well with default settings (η=0.001, β₁=0.9, β₂=0.999)
+- **Memory Efficient**: Requires storage for only two moments per parameter
+- **Sparse Gradient Handling**: Effective for sparse data and embeddings
 
 #### Disadvantages
 
-- **Potential Overfitting** 🎯: May generalize worse than SGD on some tasks due to adaptive rates
-- **Memory Usage** 💾: Higher memory footprint than basic SGD
-- **Convergence Issues** 📉: Can converge to suboptimal solutions in some cases
-- **Less Interpretability** ❓: Complex adaptive behavior harder to understand
+- **Potential Overfitting**: May generalize worse than SGD on some tasks due to adaptive rates
+- **Memory Usage**: Higher memory footprint than basic SGD
+- **Convergence Issues**: Can converge to suboptimal solutions in some cases
+- **Less Interpretability**: Complex adaptive behavior harder to understand
 
 #### When to Use Adam
 
-- **Default Optimizer** 🎯: Excellent first choice for most deep learning tasks
-- **Sparse Data** 🔍: Particularly effective for NLP and recommendation systems
-- **Large-Scale Training** 📊: Scales well to big datasets and complex models
-- **Transfer Learning** 🌐: Good for fine-tuning pre-trained models
-- **Rapid Prototyping** ⚡: When you want robust performance without extensive tuning
+- **Default Optimizer**: Excellent first choice for most deep learning tasks
+- **Sparse Data**: Particularly effective for NLP and recommendation systems
+- **Large-Scale Training**: Scales well to big datasets and complex models
+- **Transfer Learning**: Good for fine-tuning pre-trained models
+- **Rapid Prototyping**: When you want robust performance without extensive tuning
 
 #### SGD vs Adam Comparison
 
@@ -342,28 +342,28 @@ Regularization prevents overfitting by adding constraints to the learning proces
 
 #### L1 and L2 Regularization
 
-- **L1 Regularization (Lasso)** 📏: Adds penalty $\lambda \sum |w_i|$ to loss function
+- **L1 Regularization (Lasso)**: Adds penalty $\lambda \sum |w_i|$ to loss function
   - Encourages sparsity (many weights become zero)
   - Useful for feature selection
-- **L2 Regularization (Ridge)** 📐: Adds penalty $\lambda \sum w_i^2$ to loss function
+- **L2 Regularization (Ridge)**: Adds penalty $\lambda \sum w_i^2$ to loss function
   - Prevents large weights, smooths the model
   - Most commonly used regularization
 
 #### Dropout
 
-- **Mechanism** 🎲: Randomly "drops out" neurons during training with probability $p$
-- **Effect** 🛡️: Forces network to learn redundant representations
-- **Implementation** ⚙️: Applied after activation functions in hidden layers
-- **Typical Values** 📊: Dropout rate 0.2-0.5 for hidden layers, 0.0 for input/output
+- **Mechanism**: Randomly "drops out" neurons during training with probability $p$
+- **Effect**: Forces network to learn redundant representations
+- **Implementation**: Applied after activation functions in hidden layers
+- **Typical Values**: Dropout rate 0.2-0.5 for hidden layers, 0.0 for input/output
 
 #### Other Regularization Methods
 
 | Technique | Description | When to Use |
 |-----------|-------------|-------------|
-| **Early Stopping** ⏹️ | Stop training when validation loss increases | Prevents overfitting without modifying loss |
-| **Batch Normalization** 📊 | Normalizes layer inputs during training | Stabilizes training, acts as implicit regularization |
-| **Data Augmentation** 🔄 | Artificially increases dataset through transformations | Particularly effective for image data |
-| **Weight Decay** 📉 | Gradually reduces learning rate over time | Combines with L2 regularization |
+| **Early Stopping** | Stop training when validation loss increases | Prevents overfitting without modifying loss |
+| **Batch Normalization** | Normalizes layer inputs during training | Stabilizes training, acts as implicit regularization |
+| **Data Augmentation** | Artificially increases dataset through transformations | Particularly effective for image data |
+| **Weight Decay** | Gradually reduces learning rate over time | Combines with L2 regularization |
 
 #### Regularization in Practice
 
@@ -406,24 +406,24 @@ With a solid understanding of optimization algorithms and regularization techniq
 
 | Parameter | Description | Impact |
 |-----------|-------------|--------|
-| **Number of Layers** 📚 | Depth of the network | Deeper networks can learn more complex patterns |
-| **Neurons per Layer** 🧠 | Width of each layer | More neurons increase capacity but risk overfitting |
-| **Activation Functions** ⚡ | Non-linearity applied at each neuron | Affects gradient flow and expressiveness |
+| **Number of Layers** | Depth of the network | Deeper networks can learn more complex patterns |
+| **Neurons per Layer** | Width of each layer | More neurons increase capacity but risk overfitting |
+| **Activation Functions** | Non-linearity applied at each neuron | Affects gradient flow and expressiveness |
 
 ### Training Parameters
 
 | Parameter | Description | Tuning Guidelines |
 |-----------|-------------|-------------------|
-| **Learning Rate** 📏 | Step size for gradient descent | Start with 0.001-0.01, use learning rate schedules |
-| **Batch Size** 📦 | Number of samples per gradient update | 32-256 common, larger for stability |
-| **Epochs** 🔄 | Number of training iterations | Monitor validation loss, use early stopping |
-| **Optimizer** 🎯 | Algorithm for gradient descent | Adam, SGD, RMSprop - Adam often best default |
+| **Learning Rate** | Step size for gradient descent | Start with 0.001-0.01, use learning rate schedules |
+| **Batch Size** | Number of samples per gradient update | 32-256 common, larger for stability |
+| **Epochs** | Number of training iterations | Monitor validation loss, use early stopping |
+| **Optimizer** | Algorithm for gradient descent | Adam, SGD, RMSprop - Adam often best default |
 
 ### Regularization Techniques
 
-- **Dropout** 🎲: Randomly drop neurons during training to prevent overfitting
-- **L2 Regularization** 📏: Add penalty term to loss for large weights
-- **Batch Normalization** 📊: Normalize layer inputs to stabilize training
+- **Dropout**: Randomly drop neurons during training to prevent overfitting
+- **L2 Regularization**: Add penalty term to loss for large weights
+- **Batch Normalization**: Normalize layer inputs to stabilize training
 
 ### Hyperparameter Tuning Strategies
 
@@ -442,17 +442,17 @@ With knowledge of how to build and train neural networks, let's explore their re
 
 | Application Domain | Benefit | Key Advantage |
 |--------------------|---------|---------------|
-| **Computer Vision** 👁️ | Image classification, object detection | Learn hierarchical features automatically |
-| **Natural Language Processing** 💬 | Text classification, translation | Capture semantic and syntactic patterns |
-| **Time Series** 📈 | Forecasting, anomaly detection | Model temporal dependencies |
-| **Reinforcement Learning** 🎮 | Game playing, robotics | Learn optimal policies |
+| **Computer Vision** | Image classification, object detection | Learn hierarchical features automatically |
+| **Natural Language Processing** | Text classification, translation | Capture semantic and syntactic patterns |
+| **Time Series** | Forecasting, anomaly detection | Model temporal dependencies |
+| **Reinforcement Learning** | Game playing, robotics | Learn optimal policies |
 
 ### Advantages
 
-- **Feature Learning** 🔍: Automatically learn relevant features from raw data
-- **Scalability** 📊: Handle large datasets with appropriate hardware
-- **Flexibility** 🔧: Adaptable to various problem types with architecture changes
-- **Non-linearity** 📈: Model complex, non-linear relationships
+- **Feature Learning**: Automatically learn relevant features from raw data
+- **Scalability**: Handle large datasets with appropriate hardware
+- **Flexibility**: Adaptable to various problem types with architecture changes
+- **Non-linearity**: Model complex, non-linear relationships
 
 #### Learning Process Visualization
 
@@ -478,10 +478,10 @@ flowchart TD
 
 ### Disadvantages
 
-- **Computational Cost** 💻: Require significant computational resources
-- **Data Hungry** 📊: Need large amounts of labeled data for training
-- **Black Box Nature** ❓: Difficult to interpret internal decision-making
-- **Hyperparameter Sensitivity** ⚙️: Performance depends on careful parameter tuning
+- **Computational Cost**: Require significant computational resources
+- **Data Hungry**: Need large amounts of labeled data for training
+- **Black Box Nature**: Difficult to interpret internal decision-making
+- **Hyperparameter Sensitivity**: Performance depends on careful parameter tuning
 
 ### Real-World Applications
 
@@ -496,9 +496,9 @@ flowchart TD
 
 To wrap up our comprehensive exploration of neural networks, here are the key takeaways and best practices to guide your implementation and deepen your understanding.
 
-## <a name="key-takeaways"></a>Key Takeaways 🎯
+## <a name="key-takeaways"></a>Key Takeaways
 
-### 1. Core Principles 🧠
+### 1. Core Principles
 
 | Principle | Description |
 |-----------|-------------|
@@ -518,13 +518,13 @@ To wrap up our comprehensive exploration of neural networks, here are the key ta
 
 ### 3. Best Practices ✅
 
-- 📊 **Data Preprocessing**: Normalize inputs, handle missing values
-- 🔍 **Monitor Training**: Track loss curves, validation performance
-- 🛑 **Early Stopping**: Stop when validation loss stops improving
-- 📈 **Learning Rate Scheduling**: Decrease learning rate over time
-- 🌐 **Transfer Learning**: Use pre-trained models when possible
+- **Data Preprocessing**: Normalize inputs, handle missing values
+- **Monitor Training**: Track loss curves, validation performance
+- **Early Stopping**: Stop when validation loss stops improving
+- **Learning Rate Scheduling**: Decrease learning rate over time
+- **Transfer Learning**: Use pre-trained models when possible
 
-### 4. When to Use Neural Networks 🎯
+### 4. When to Use Neural Networks
 
 - **Complex Patterns** in high-dimensional data
 - **Large Datasets** where traditional methods struggle
@@ -539,11 +539,11 @@ To wrap up our comprehensive exploration of neural networks, here are the key ta
 - **Inference Speed**: Trade-off between accuracy and computational cost
 - **Scalability**: Performance improves with more data and parameters
 
-### 6. Advanced Techniques 🚀
+### 6. Advanced Techniques
 
 - **Convolutional NNs**: Specialized for image data with spatial hierarchies
 - **Recurrent NNs**: Handle sequential data with memory of previous inputs
 - **Transformer Architecture**: Attention-based models for sequence tasks
 - **Generative Adversarial Networks**: Generate new data samples
 
-Neural Networks represent a powerful paradigm in machine learning, capable of learning complex patterns from data through layered computational graphs. They form the foundation of modern deep learning and continue to drive advances in artificial intelligence across numerous domains. 🧠
+Neural Networks represent a powerful paradigm in machine learning, capable of learning complex patterns from data through layered computational graphs. They form the foundation of modern deep learning and continue to drive advances in artificial intelligence across numerous domains.

@@ -25,20 +25,20 @@ Genetic Algorithms (GAs) are a class of evolutionary algorithms inspired by the 
 
 Genetic algorithms follow a systematic approach to problem-solving:
 
-1. **Initialization** 🧬: Creating a population of random "guesses" (candidate solutions)
-2. **Evaluation** 📊: Evaluating each guess against the hidden sentence using fitness functions
-3. **Selection** 🏆: Selecting the best performers to "breed" based on their fitness
-4. **Crossover** 🔀: Creating new guesses by combining parts of two parent solutions
-5. **Mutation** 🧬: Introducing random changes to maintain diversity
-6. **Replacement** 🔁: Forming a new generation and repeating the process
+1. **Initialization**: Creating a population of random "guesses" (candidate solutions)
+2. **Evaluation**: Evaluating each guess against the hidden sentence using fitness functions
+3. **Selection**: Selecting the best performers to "breed" based on their fitness
+4. **Crossover**: Creating new guesses by combining parts of two parent solutions
+5. **Mutation**: Introducing random changes to maintain diversity
+6. **Replacement**: Forming a new generation and repeating the process
 
 ### Genetic Algorithms in Mastermind Problem
 
 In the Mastermind puzzle:
 
-- **Correct Position** 🟢: A character that matches both the value and position in the hidden sentence
-- **Correct Character** 🟡: A character that exists in the hidden sentence but is in the wrong position
-- **Fitness Calculation** 📈: Optimizing for both metrics, with higher weight on correct positions
+- **Correct Position**: A character that matches both the value and position in the hidden sentence
+- **Correct Character**: A character that exists in the hidden sentence but is in the wrong position
+- **Fitness Calculation**: Optimizing for both metrics, with higher weight on correct positions
 
 #### Example
 
@@ -65,14 +65,14 @@ If the hidden sentence is "**hello**" and we guess "**world**":
 
 ### 3. Selection Mechanism
 
-- **Tournament Selection** 🏟️: Competing individuals in small groups to select parents
+- **Tournament Selection**: Competing individuals in small groups to select parents
 - **Roulette Wheel**: Probability-proportional selection based on fitness
 - **Rank-based**: Selection based on relative ranking rather than absolute fitness
 
 ### 4. Genetic Operators
 
-- **Crossover (Recombination)** 🔀: Combining traits from two parent solutions
-- **Mutation** 🧬: Randomly altering genes to maintain diversity in the population
+- **Crossover (Recombination)**: Combining traits from two parent solutions
+- **Mutation**: Randomly altering genes to maintain diversity in the population
 
 #### Genetic Operators Visualization
 
@@ -104,9 +104,9 @@ flowchart TD
 
 ### 5. Population Management
 
-- **Population Size** 👥: Number of individuals maintained in each generation
-- **Diversity Monitoring** 🌈: Tracking how varied the population remains
-- **Elitism** 👑: Preserving best solutions across generations
+- **Population Size**: Number of individuals maintained in each generation
+- **Diversity Monitoring**: Tracking how varied the population remains
+- **Elitism**: Preserving best solutions across generations
 
 ---
 
@@ -160,16 +160,16 @@ flowchart TD
 
 | Parameter | Description | Impact |
 |-----------|-------------|--------|
-| **Population Size** 👥 | Number of individuals in each generation | Larger populations increase diversity but require more computational resources |
-| **Generations** 🔄 | Maximum number of generations to run | Algorithm may converge before reaching this limit |
+| **Population Size** | Number of individuals in each generation | Larger populations increase diversity but require more computational resources |
+| **Generations** | Maximum number of generations to run | Algorithm may converge before reaching this limit |
 
 ### Genetic Operators
 
 | Parameter | Description | Impact |
 |-----------|-------------|--------|
-| **Crossover Probability** 🔀 | Chance that two parent solutions will combine | Higher values increase exploration |
-| **Mutation Probability** 🧬 | Chance that a gene will be randomly changed | Higher values increase diversity |
-| **Tournament Size** 🏟️ | Number of individuals competing in each selection tournament | Larger tournaments favor stronger individuals |
+| **Crossover Probability** | Chance that two parent solutions will combine | Higher values increase exploration |
+| **Mutation Probability** | Chance that a gene will be randomly changed | Higher values increase diversity |
+| **Tournament Size** | Number of individuals competing in each selection tournament | Larger tournaments favor stronger individuals |
 
 ### Parameter Tuning Strategies
 
@@ -186,9 +186,9 @@ flowchart TD
 
 | Application Domain | Benefit | Key Advantage |
 |--------------------|---------|---------------|
-| **Large Search Spaces** ⚡ | Effective for spaces where brute force is infeasible | Avoids exponential complexity |
-| **Multi-objective Optimization** 📊 | Can optimize multiple criteria simultaneously | Handles complex trade-offs |
-| **Non-linear Problems** 📈 | Work well when the solution landscape is non-linear | No gradient required |
+| **Large Search Spaces** | Effective for spaces where brute force is infeasible | Avoids exponential complexity |
+| **Multi-objective Optimization** | Can optimize multiple criteria simultaneously | Handles complex trade-offs |
+| **Non-linear Problems** | Work well when the solution landscape is non-linear | No gradient required |
 
 ### Advantages
 
@@ -248,9 +248,9 @@ flowchart TD
 
 ---
 
-## <a name="key-takeaways"></a>Key Takeaways 🎯
+## <a name="key-takeaways"></a>Key Takeaways
 
-### 1. Core Principles 🧠
+### 1. Core Principles
 
 | Principle | Description |
 |-----------|-------------|
@@ -259,7 +259,7 @@ flowchart TD
 | **Genetic variation** | Crossover and mutation maintain diversity |
 | **Fitness-driven evolution** | Solutions improve over time based on performance |
 
-### 2. Algorithm Parameters ⚙️
+### 2. Algorithm Parameters
 
 | Parameter | Tuning Guideline |
 |-----------|------------------|
@@ -268,15 +268,15 @@ flowchart TD
 | **Crossover Rate** | High (0.6-0.9) to promote exploration |
 | **Selection Pressure** | Moderate to balance exploration and exploitation |
 
-### 3. Best Practices ✅
+### 3. Best Practices
 
-- 🔍 **Problem-specific encoding**: Design representations that work well with genetic operators
-- 📊 **Effective fitness functions**: Design functions that guide evolution toward good solutions
-- 🌈 **Maintain diversity**: Monitor and preserve genetic diversity to avoid premature convergence
-- 🔄 **Elitism**: Preserve the best solutions across generations to ensure quality
-- 📈 **Parameter adaptation**: Consider adjusting parameters dynamically during evolution
+- **Problem-specific encoding**: Design representations that work well with genetic operators
+- **Effective fitness functions**: Design functions that guide evolution toward good solutions
+- **Maintain diversity**: Monitor and preserve genetic diversity to avoid premature convergence
+- **Elitism**: Preserve the best solutions across generations to ensure quality
+- **Parameter adaptation**: Consider adjusting parameters dynamically during evolution
 
-### 4. When to Use GAs 🎯
+### 4. When to Use GAs
 
 - **Complex optimization problems** where classical methods struggle
 - **Problems with multiple objectives** that need trade-offs
@@ -284,18 +284,18 @@ flowchart TD
 - **Combinatorial problems** such as scheduling or routing
 - **When you need a "good enough" solution quickly** rather than the absolute best
 
-### 5. Performance Considerations ⚖️
+### 5. Performance Considerations
 
 - **Execution time**: GAs can be computationally intensive but often find good solutions relatively quickly
 - **Solution quality**: Trade-off between run time and solution quality
 - **Convergence monitoring**: Track diversity and fitness improvement to detect convergence
 - **Scalability**: Performance typically scales with population size and complexity of fitness function
 
-### 6. Advanced Techniques 🚀
+### 6. Advanced Techniques
 
 - **Multi-objective GAs**: Methods like NSGA-II for problems with multiple competing objectives
 - **Interactive GAs**: Human-in-the-loop evolution for problems involving subjective evaluation
 - **Parallel GAs**: Distribute evolution across multiple processors or computers
 - **Hybrid approaches**: Combine GAs with local search methods for improved performance
 
-Genetic Algorithms provide a powerful and flexible approach to optimization problems, inspired by natural evolution principles. They excel in complex search spaces where traditional methods may struggle, making them valuable tools in the machine learning and optimization toolkit. 🧬
+Genetic Algorithms provide a powerful and flexible approach to optimization problems, inspired by natural evolution principles. They excel in complex search spaces where traditional methods may struggle, making them valuable tools in the machine learning and optimization toolkit.

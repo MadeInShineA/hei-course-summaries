@@ -34,10 +34,10 @@ Machine Learning is a field of study that gives computers the ability to learn w
 
 Machine learning is pervasive in modern applications:
 
-- 🚗 **Self-driving cars** - Navigation and obstacle detection
-- 🧠 **Large Language Models** - Natural language understanding and generation
-- 🛡️ **Intrusion detection** - Cybersecurity threat identification
-- 📈 **Stock market prediction** - Financial market analysis
+- **Self-driving cars** - Navigation and obstacle detection
+- **Large Language Models** - Natural language understanding and generation
+- **Intrusion detection** - Cybersecurity threat identification
+- **Stock market prediction** - Financial market analysis
 
 ### The ML Lifecycle
 
@@ -121,7 +121,7 @@ $\boldsymbol{\theta}^* = \arg\min_{\boldsymbol{\theta} \in \Theta} J(\boldsymbol
 
 ## <a name="model-evaluation"></a>Model Evaluation
 
-### Train-Validation-Test Split 📊
+### Train-Validation-Test Split
 
 The best practice in ML is to split the data into:
 
@@ -133,7 +133,7 @@ The best practice in ML is to split the data into:
 
 **Key principle**: Test data is sacred - it's never touched during model training and selection!
 
-### Overfitting vs. Underfitting 🎯
+### Overfitting vs. Underfitting
 
 #### Overfitting - The Complex Model Trap
 
@@ -161,7 +161,7 @@ The systematic approach to finding the best model:
 3. **Compare performance** - Evaluate on validation set
 4. **Select best model** - Choose based on validation performance
 
-### Bias-Variance Tradeoff 📈
+### Bias-Variance Tradeoff
 
 The fundamental trade-off in ML model design:
 
@@ -177,7 +177,7 @@ The fundamental trade-off in ML model design:
 
 No single model works best for all problems - context matters!
 
-### Regularization 🛡️
+### Regularization
 
 Regularization adds a penalty term to the loss function to constrain model complexity:
 
@@ -197,7 +197,7 @@ Where:
 | **L1 (Lasso)** | $J_{\text{Lasso}}(\boldsymbol {\theta}) = J_{\text{original}}(\boldsymbol{\theta}) + \lambda \sum \lvert \theta_j \rvert$ | Can zero out coefficients (feature selection) |
 | **Elastic Net** | $J_{Ellastic\_net}(\boldsymbol {\theta}) = J_{\text{original}}(\boldsymbol{\theta}) + \lambda_1 \sum_{j=1}^{p} \|\beta_j\| + \lambda_2 \sum_{j=1}^{p} \beta_j^2$ | Combines the benefits of L1 and L2; it both shrinks coefficients (like Ridge) and can set some to exactly zero (like Lasso) |
 
-### Residuals Analysis 🔍
+### Residuals Analysis
 
 Residuals are the part of the data that is not captured by the model:
 $r_i := y_i - \hat{y}_i$
@@ -318,9 +318,9 @@ flowchart TD
 
 ---
 
-## <a name="key-takeaways"></a>Key Takeaways 🎯
+## <a name="key-takeaways"></a>Key Takeaways
 
-### 1. ML Workflow 🔄
+### 1. ML Workflow
 
 | Step | Purpose |
 |------|---------|
@@ -333,7 +333,7 @@ flowchart TD
 | **Testing** | Evaluate final performance on test data |
 | **Analysis** | Interpret results and diagnose model behavior |
 
-### 2. Critical Concepts 🧠
+### 2. Critical Concepts
 
 | Concept | Description |
 |---------|-------------|
@@ -343,7 +343,7 @@ flowchart TD
 | **Bias-Variance Tradeoff** | Balance between model simplicity and complexity |
 | **Cross-validation** | Robust method for model evaluation |
 
-### 3. Evaluation Metrics 📊
+### 3. Evaluation Metrics
 
 | Metric | Purpose |
 |--------|---------|
@@ -352,34 +352,34 @@ flowchart TD
 | **MAE (Mean Absolute Error)** | Average absolute prediction error |
 | **Residual Analysis** | Essential for understanding model performance |
 
-### 4. Best Practices ✅
+### 4. Best Practices
 
-- 🔒 **Always split data** before preprocessing to avoid leakage
-- 📐 **Use separate splits** for training, validation and testing
-- ⚡ **Feature engineering** creates more meaningful inputs
-- 🛡️ **Regularize models** to prevent overfitting
-- 🔍 **Analyze residuals** to understand model limitations
-- 🔄 **Iterate** based on empirical results
+- **Always split data** before preprocessing to avoid leakage
+- **Use separate splits** for training, validation and testing
+- **Feature engineering** creates more meaningful inputs
+- **Regularize models** to prevent overfitting
+- **Analyze residuals** to understand model limitations
+- **Iterate** based on empirical results
 
-### 5. Linear Regression Insights 📈
+### 5. Linear Regression Insights
 
 - **Simple but powerful**: Excellent baseline for regression problems
 - **Sensitive to outliers**: Consider robust alternatives like L1 loss
 - **Interpretable**: Coefficients show feature-target relationships
 - **Best when linear**: Works optimally when relationships are approximately linear
 
-### 6. Feature Importance 🎯
+### 6. Feature Importance
 
 - **Domain knowledge**: Guides effective feature selection
 - **Correlation analysis**: Identifies important variables
 - **Feature engineering**: Creates more predictive inputs
 - **Regularization**: Performs automatic feature selection
 
-### 7. Model Complexity ⚖️
+### 7. Model Complexity
 
 - **Start simple**: Use basic models as baselines
 - **Increase carefully**: Only if justified by performance improvement
 - **Balance interpretability**: With predictive performance
 - **Beware of curse**: High-dimensional spaces create challenges
 
-This comprehensive approach to machine learning ensures systematic model development with proper evaluation and validation, leading to more reliable and generalizable results. 🚀
+This comprehensive approach to machine learning ensures systematic model development with proper evaluation and validation, leading to more reliable and generalizable results.

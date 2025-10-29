@@ -491,15 +491,15 @@ flowchart TD
 
 ---
 
-## <a name="key-takeaways"></a>Key Takeaways 🎯
+## <a name="key-takeaways"></a>Key Takeaways
 
-### 1. Pipeline Principles 🔄
+### 1. Pipeline Principles
 
 - **Logical Progression**: Each stage builds on the previous, with iteration for refinement.
 - **Leakage Prevention**: Strict train/test isolation; CV for internal validation.
 - **Type-Aware Handling**: Distinct strategies for numerical vs. categorical data.
 
-### 2. Core Concepts 🧠
+### 2. Core Concepts
 
 | Concept | Essence |
 |---------|---------|
@@ -511,18 +511,18 @@ flowchart TD
 | **Class Imbalance** | Important to address skewed training sets that can bias models |
 | **Feature Scaling** | Critical for distance-based algorithms to ensure all features contribute fairly |
 
-### 3. Best Practices ✅
+### 3. Best Practices
 
-- 🔍 **Iterate Proactively**: Re-explore after major changes.
-- 🛡️ **Stratify Always**: Preserve distributions in splits/CV.
-- ⚡ **CV Integration**: Essential for small data; nested for thorough tuning.
-- 📊 **Multi-Faceted Eval**: Combine metrics/visuals for complete picture.
-- 🔄 **Benchmark Models**: Compare (e.g., K-NN/SVM) to validate choices.
-- 🚀 **Scale Concepts**: Adapt to regression by metric swaps (e.g., MSE).
-- ⚖️ **Handle Imbalanced Data**: Apply resampling or cost-sensitive learning when classes are skewed.
-- 📏 **Normalize Features**: Apply scaling techniques for distance-based algorithms to work properly.
+- **Iterate Proactively**: Re-explore after major changes.
+- **Stratify Always**: Preserve distributions in splits/CV.
+- **CV Integration**: Essential for small data; nested for thorough tuning.
+- **Multi-Faceted Eval**: Combine metrics/visuals for complete picture.
+- **Benchmark Models**: Compare (e.g., K-NN/SVM) to validate choices.
+- **Scale Concepts**: Adapt to regression by metric swaps (e.g., MSE).
+- **Handle Imbalanced Data**: Apply resampling or cost-sensitive learning when classes are skewed.
+- **Normalize Features**: Apply scaling techniques for distance-based algorithms to work properly.
 
-### 4. Model Philosophy 📈
+### 4. Model Philosophy
 
 - **Baselines First**: Simple models (K-NN) test assumptions before complexity.
 - **Robust Selection**: SVM's structure aids noisy/high-dim data.
@@ -530,13 +530,13 @@ flowchart TD
 - **Cross-Validation**: Essential for model selection and hyperparameter tuning.
 - **Diagnose Overfitting/Underfitting**: Use learning curves to identify high variance vs high bias.
 
-### 5. Performance Assessment 📊
+### 5. Performance Assessment
 
 - **Comprehensive Metrics**: Use accuracy, precision, recall, F1-score depending on the problem.
 - **Confusion Matrix**: Essential for understanding model behavior across classes.
 - **Confidence Intervals**: Quantify uncertainty in model performance estimates.
 
-This streamlined workflow promotes efficient, reproducible ML development. From exploration's insights to evaluation's validation, it equips practitioners for scalable classification tasks – extensible to regression or beyond. 🚀
+This streamlined workflow promotes efficient, reproducible ML development. From exploration's insights to evaluation's validation, it equips practitioners for scalable classification tasks – extensible to regression or beyond.
 
 ---
 

@@ -26,11 +26,11 @@ Support Vector Machines (SVMs) are powerful supervised machine learning algorith
 
 SVMs follow a systematic approach to classification:
 
-1. **Data preparation** 📊: Preparing training data with features and labels
-2. **Hyperplane identification** 🔍: Finding the optimal separating hyperplane
-3. **Margin maximization** 📈: Creating the largest possible gap between classes
-4. **Support vector selection** 🎯: Identifying the critical data points that define the boundary
-5. **Classification** 🧠: Using the trained model to predict new data points
+1. **Data preparation**: Preparing training data with features and labels
+2. **Hyperplane identification**: Finding the optimal separating hyperplane
+3. **Margin maximization**: Creating the largest possible gap between classes
+4. **Support vector selection**: Identifying the critical data points that define the boundary
+5. **Classification**: Using the trained model to predict new data points
 
 #### SVM Workflow
 
@@ -355,10 +355,10 @@ flowchart TD
 
 | Application Domain | Benefit | Key Advantage |
 |-------------------|---------|---------------|
-| **Image Classification** 📸 | Effective for high-dimensional data | Handles complex visual patterns |
-| **Text Classification** 📚 | Works well with sparse high-dimensional vectors | Robust with bag-of-words representations |
-| **Bioinformatics** 🧬 | Excels in high-dimensional gene expression data | Strong generalization with limited samples |
-| **Handwriting Recognition** ✍️ | Robust to variations in writing styles | Effective with pixel-level features |
+| **Image Classification** | Effective for high-dimensional data | Handles complex visual patterns |
+| **Text Classification** | Works well with sparse high-dimensional vectors | Robust with bag-of-words representations |
+| **Bioinformatics** | Excels in high-dimensional gene expression data | Strong generalization with limited samples |
+| **Handwriting Recognition** | Robust to variations in writing styles | Effective with pixel-level features |
 
 ### Advantages
 
@@ -389,9 +389,9 @@ SVMs can also be used for regression tasks.
 
 ---
 
-## <a name="key-takeaways"></a>Key Takeaways 🎯
+## <a name="key-takeaways"></a>Key Takeaways
 
-### 1. Core Principles 🧠
+### 1. Core Principles
 
 | Principle | Description |
 |-----------|-------------|
@@ -400,7 +400,7 @@ SVMs can also be used for regression tasks.
 | **Kernel trick** | Enables SVMs to handle non-linear problems by mapping to higher dimensions |
 | **Convex optimization** | SVMs solve a convex optimization problem ensuring a global optimum |
 
-### 2. Algorithm Parameters ⚙️
+### 2. Algorithm Parameters
 
 | Parameter | Tuning Guideline |
 |-----------|------------------|
@@ -409,15 +409,15 @@ SVMs can also be used for regression tasks.
 | **Kernel selection** | Linear for high-dimensional data, RBF for complex non-linear patterns |
 | **Feature scaling** | Always scale features before training SVM models |
 
-### 3. Best Practices ✅
+### 3. Best Practices
 
-- 📊 **Feature scaling**: Always normalize or standardize features as SVMs are sensitive to feature scales
-- 🔍 **Cross-validation**: Use k-fold CV to evaluate performance and tune hyperparameters
-- 🧪 **Start simple**: Begin with linear kernel and simple parameters before trying complex kernels
-- 📈 **Handle imbalanced data**: Use class weights or stratified sampling if dataset is imbalanced
-- 🧩 **Optimize hyperparameters**: Use grid search or randomized search for optimal parameter combinations
+- **Feature scaling**: Always normalize or standardize features as SVMs are sensitive to feature scales
+- **Cross-validation**: Use k-fold CV to evaluate performance and tune hyperparameters
+- **Start simple**: Begin with linear kernel and simple parameters before trying complex kernels
+- **Handle imbalanced data**: Use class weights or stratified sampling if dataset is imbalanced
+- **Optimize hyperparameters**: Use grid search or randomized search for optimal parameter combinations
 
-### 4. When to Use SVMs 🎯
+### 4. When to Use SVMs
 
 - **High-dimensional data** where the number of features is greater than the number of samples
 - **Clear margin of separation** between classes exists in some transformed feature space
@@ -425,18 +425,18 @@ SVMs can also be used for regression tasks.
 - **When you need a classifier that is guaranteed to find the global optimum**
 - **When you want memory-efficient storage of the model** (only support vectors are stored)
 
-### 5. Performance Considerations ⚖️
+### 5. Performance Considerations
 
 - **Training time**: Can be slow for large datasets due to quadratic complexity
 - **Memory usage**: Memory efficient at prediction time (only support vectors stored)
 - **Prediction speed**: Fast once trained, as only support vectors are used
 - **Scalability**: May not scale well to very large datasets (with millions of samples)
 
-### 6. Advanced Techniques 🚀
+### 6. Advanced Techniques
 
 - **Multi-class SVM**: One-vs-one or One-vs-all strategies for multi-class problems
 - **Ensemble methods**: Combining multiple SVMs for improved performance
 - **Feature selection**: Using SVM weights to identify important features
 - **Anomaly detection**: One-class SVM for identifying outliers
 
-Support Vector Machines provide a powerful and theoretically grounded approach to both classification and regression problems. Their effectiveness in high-dimensional spaces, particularly in text classification and image recognition, makes them valuable tools in the machine learning toolkit. However, their computational complexity and sensitivity to parameter choices mean they're best used after understanding the data characteristics and problem requirements. 🧠
+Support Vector Machines provide a powerful and theoretically grounded approach to both classification and regression problems. Their effectiveness in high-dimensional spaces, particularly in text classification and image recognition, makes them valuable tools in the machine learning toolkit. However, their computational complexity and sensitivity to parameter choices mean they're best used after understanding the data characteristics and problem requirements.
