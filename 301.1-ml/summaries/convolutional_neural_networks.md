@@ -176,7 +176,8 @@ Each output value = sum of element-wise products + bias
 ### Mathematical Representation
 
 For a 2D convolution:
-$(O)_{i,j} = \sum_m \sum_n (I)_{i+m,j+n} \cdot (K)_{m,n} + b$
+
+$O_{i,j} = \sum_{m} \sum_{n} I_{i+m,\,j+n} \cdot K_{m,n} + b$
 
 Where:
 
