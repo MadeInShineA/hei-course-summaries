@@ -355,7 +355,7 @@ flowchart TD
 - **Vanishing/Exploding Gradients**: Deep architectures can suffer from gradient issues; mitigated by careful initialization and normalization
 - **Overfitting on Limited Data**: High parameter count requires large datasets; data augmentation and regularization are crucial
 - **Memory Constraints**: Large feature maps and deep networks require significant GPU memory
-- **Computational Intensity**: Convolution operations are expensive; efficient implementations needed for real-time training
+- **Computational Intensity** 💻: Convolution operations are expensive; efficient implementations needed for real-time training
 
 ---
 

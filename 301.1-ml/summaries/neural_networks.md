@@ -387,29 +387,57 @@ Regularization prevents overfitting by adding constraints to the learning proces
 | **Early Stopping** | Stop training when validation loss increases | Prevents overfitting without modifying loss |
 | **Batch Normalization** | Normalizes layer inputs during training | Stabilizes training, acts as implicit regularization |
 | **Data Augmentation** | Artificially increases dataset through transformations | Particularly effective for image data |
-| **Weight Decay** | Gradually reduces learning rate over time | Combines with L2 regularization |
+| **Weight Decay** | Adds a penalty to the loss function proportional to the sum of squared weights | Prevents overfitting by discouraging large weights |
+| **Learning Rate Schedule** | Adjusts the learning rate during training, often decreasing it over time | Improves convergence and training stability |
 
 #### Regularization in Practice
 
 ```mermaid
 graph TD
-    A[Training Data] --> B[Model Training]
-    B --> C{Overfitting<br/>Detected?}
-    C -->|Yes| D[Apply Regularization]
-    C -->|No| E[Continue Training]
-    D --> F[L1/L2 Regularization]
-    D --> G[Dropout]
-    D --> H[Early Stopping]
-    F --> I[Evaluate on Validation]
-    G --> I
-    H --> I
-    I --> J{Performance<br/>Improved?}
-    J -->|Yes| K[Deploy Model]
-    J -->|No| L[Tune Regularization<br/>Parameters]
+    A["Initialize Weights<br>Random Values"] --> B["Forward Pass<br>Compute Predictions"]
+    B --> C["Calculate Loss<br>Compare with Targets"]
+    C --> ES{Early Stopping?<br/>Val Loss not improved for N epochs}
+    ES -->|Yes| M["Training Complete<br>Evaluate Final Model"]
+    ES -->|No| D{"Convergence?<br>Loss Threshold Met?"}
+    D -->|No| E{"Overfitting Detected?<br>Val Loss > Train Loss + ε<br>or Increasing for N epochs"}
+    
+    E -->|Yes| F["Apply Regularization"]
+    F --> FA["L1/L2 Regularization"]
+    F --> FB["Dropout"]
+    F --> FD["Batch Normalization"]
+    F --> FE["Data Augmentation"]
+    F --> FF["Weight Decay"]
+    F --> FG["Learning Rate Scheduling"]
 
+    FA --> H["Evaluate on Validation<br>Check Performance"]
+    FB --> H
+    FD --> H
+    FE --> H
+    FF --> H
+    FG --> H
+    
+    H --> I{"Performance<br>Improved?"}
+    I -->|Yes| J["Continue Training<br>with Regularization"]
+    I -->|No| K["Tune Regularization<br>Parameters<br>(Grid/Random Search)"]
+    K --> F
+    
+    J --> G["Backward Pass<br>Compute Gradients"]
+    E -->|No| G
+    
+    G --> L["Update Weights<br>Gradient Descent"]
+    L --> N["Next Batch/Epoch<br>Continue Training Loop"]
+    N --> B
+
+    subgraph Model Evaluation and Deployment
+    M --> O{"Deploy<br>Model?"}
+    O -->|Yes| P["Deploy Model"]
+    O -->|No| Q["Further Tuning<br>or Retraining"]
+    end
+
+    %% Styling
     style A fill:#2563eb20,stroke:#2563eb,stroke-width:2px
-    style D fill:#d9770620,stroke:#d97706,stroke-width:2px
-    style K fill:#16a34a20,stroke:#16a34a,stroke-width:2px
+    style F fill:#d9770620,stroke:#d97706,stroke-width:2px
+    style P fill:#16a34a20,stroke:#16a34a,stroke-width:2px
 ```
 
 ### Balancing Bias and Variance
