@@ -42,7 +42,7 @@ def plot_activation_functions(output_dir):
     def linear(x):
         return x
 
-    def softmax_single(x):
+    def softmax(x):
         # For single input, softmax approaches sigmoid
         return sigmoid(x)
 
@@ -57,7 +57,7 @@ def plot_activation_functions(output_dir):
         ("ELU", elu, "#2563eb"),  # Blue
         ("Swish", swish, "#2563eb"),  # Blue
         ("Linear", linear, "#2563eb"),  # Blue
-        ("Softmax (single)", softmax_single, "#2563eb"),  # Blue
+        ("Softmax", softmax, "#2563eb"),  # Blue
     ]
 
     for name, func, color in activations:
@@ -75,7 +75,7 @@ def plot_activation_functions(output_dir):
         # Set y-limits for better visualization
         if name == "Linear":
             ax.set_ylim(-5, 5)
-        elif name in ["Sigmoid", "Tanh", "Softmax (single)"]:
+        elif name in ["Sigmoid", "Tanh", "Softmax"]:
             ax.set_ylim(-0.2, 1.2)
         else:
             ax.set_ylim(-2, 5)
@@ -245,4 +245,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

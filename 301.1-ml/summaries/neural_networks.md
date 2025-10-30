@@ -129,28 +129,36 @@ graph LR
 #### Activation Function Plots
 
 ##### Sigmoid
+
 ![Sigmoid Activation](../res/neural-networks/activation_sigmoid.png)
 
 ##### Tanh
+
 ![Tanh Activation](../res/neural-networks/activation_tanh.png)
 
 ##### ReLU
+
 ![ReLU Activation](../res/neural-networks/activation_relu.png)
 
 ##### Leaky ReLU
+
 ![Leaky ReLU Activation](../res/neural-networks/activation_leaky_relu.png)
 
 ##### ELU
+
 ![ELU Activation](../res/neural-networks/activation_elu.png)
 
 ##### Swish
+
 ![Swish Activation](../res/neural-networks/activation_swish.png)
 
 ##### Linear
+
 ![Linear Activation](../res/neural-networks/activation_linear.png)
 
 ##### Softmax (Single Input)
-![Softmax Activation](../res/neural-networks/activation_softmax_single.png)
+
+![Softmax Activation](../res/neural-networks/activation_softmax.png)
 
 *Visualization of activation functions used in neural networks. Each plot shows the function output over the input range [-5, 5].*
 
