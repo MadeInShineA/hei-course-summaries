@@ -126,6 +126,34 @@ graph LR
 | **Sigmoid** | $\sigma(x) = \frac{1}{1+e^{-x}}$ | Binary/multi-label classification, outputs probability in (0,1) |
 | **Softmax** | $\frac{\exp(x_i)}{\sum \exp(x_j)}$ | Multi-class classification, outputs probability distribution |
 
+#### Activation Function Plots
+
+##### Sigmoid
+![Sigmoid Activation](../res/neural-networks/activation_sigmoid.png)
+
+##### Tanh
+![Tanh Activation](../res/neural-networks/activation_tanh.png)
+
+##### ReLU
+![ReLU Activation](../res/neural-networks/activation_relu.png)
+
+##### Leaky ReLU
+![Leaky ReLU Activation](../res/neural-networks/activation_leaky_relu.png)
+
+##### ELU
+![ELU Activation](../res/neural-networks/activation_elu.png)
+
+##### Swish
+![Swish Activation](../res/neural-networks/activation_swish.png)
+
+##### Linear
+![Linear Activation](../res/neural-networks/activation_linear.png)
+
+##### Softmax (Single Input)
+![Softmax Activation](../res/neural-networks/activation_softmax_single.png)
+
+*Visualization of activation functions used in neural networks. Each plot shows the function output over the input range [-5, 5].*
+
 Activation functions introduce non-linearity to each neuron's output, enabling the network to learn complex, non-linear patterns in data. Without them, the network would only perform linear transformations, severely limiting its representational power.
 
 To help choose the appropriate activation function for different layers and tasks, consider this decision tree:
@@ -155,8 +183,6 @@ graph TD
     classDef hidden_act fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px;
 ```
 
-
-
 ### 5. Loss Functions
 
 Loss functions measure the difference between predicted and actual values, guiding the optimization process during training. They quantify how well the model performs and are minimized through gradient descent.
@@ -168,6 +194,26 @@ Loss functions measure the difference between predicted and actual values, guidi
 | **Binary Cross Entropy (BCE)** | $-\frac{1}{n} \sum [y_i \log(\hat{y}_i) + (1-y_i) \log(1-\hat{y}_i)]$ | Binary classification |
 | **Binary Cross Entropy with Logits** | BCE + Sigmoid in one function | Binary/multi-label classification (numerically stable) |
 | **Categorical Cross Entropy** | $-\frac{1}{n} \sum y_i \log(\hat{y}_i)$ | Multi-class classification |
+
+#### Loss Function Plots
+
+##### Regression Losses
+
+![Regression Losses](../res/neural-networks/regression_losses.png)
+
+*Comparison of MSE and MAE loss functions. MSE penalizes large errors more heavily due to squaring.*
+
+##### Binary Cross Entropy
+
+![Binary Cross Entropy](../res/neural-networks/binary_cross_entropy.png)
+
+*Binary cross entropy loss for true labels 0 and 1. Loss increases as predicted probability moves away from true label.*
+
+##### Categorical Cross Entropy
+
+![Categorical Cross Entropy](../res/neural-networks/categorical_cross_entropy.png)
+
+*Categorical cross entropy loss for 3-class classification. Each subplot shows loss when a different class is the true label.*
 
 ---
 
