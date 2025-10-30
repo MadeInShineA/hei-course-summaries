@@ -75,6 +75,30 @@ Now that we have a foundational understanding of what neural networks are and ho
 - **Hidden Layers**: Intermediate layers that learn representations
 - **Output Layer**: Final layer that produces predictions
 
+#### Neural Network Architecture Visualization
+
+```mermaid
+graph LR
+    I1[Input 1] --> H1[Hidden 1]
+    I2[Input 2] --> H1
+    I3[Input 3] --> H1
+    I1 --> H2[Hidden 2]
+    I2 --> H2
+    I3 --> H2
+    H1 --> O1[Output 1]
+    H2 --> O1
+    H1 --> O2[Output 2]
+    H2 --> O2
+
+    style I1 fill:#2563eb20,stroke:#2563eb,stroke-width:2px
+    style I2 fill:#2563eb20,stroke:#2563eb,stroke-width:2px
+    style I3 fill:#2563eb20,stroke:#2563eb,stroke-width:2px
+    style H1 fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
+    style H2 fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
+    style O1 fill:#16a34a20,stroke:#16a34a,stroke-width:2px
+    style O2 fill:#16a34a20,stroke:#16a34a,stroke-width:2px
+```
+
 ### 3. Connections and Weights
 
 - **Synapses**: Connections between neurons with associated weights
@@ -101,29 +125,34 @@ Now that we have a foundational understanding of what neural networks are and ho
 
 Activation functions introduce non-linearity to each neuron's output, enabling the network to learn complex, non-linear patterns in data. Without them, the network would only perform linear transformations, severely limiting its representational power.
 
-#### Neural Network Architecture Visualization
+To help choose the appropriate activation function for different layers and tasks, consider this decision tree:
 
 ```mermaid
-graph LR
-    I1[Input 1] --> H1[Hidden 1]
-    I2[Input 2] --> H1
-    I3[Input 3] --> H1
-    I1 --> H2[Hidden 2]
-    I2 --> H2
-    I3 --> H2
-    H1 --> O1[Output 1]
-    H2 --> O1
-    H1 --> O2[Output 2]
-    H2 --> O2
+graph TD
+    A["Choose Activation Function"]:::decision
+    A --> B{"Output Layer?"}
+    B -->|"No"| D["Hidden Layer"]
+    B -->|"Yes"| C{"Task Type?"}
 
-    style I1 fill:#2563eb20,stroke:#2563eb,stroke-width:2px
-    style I2 fill:#2563eb20,stroke:#2563eb,stroke-width:2px
-    style I3 fill:#2563eb20,stroke:#2563eb,stroke-width:2px
-    style H1 fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
-    style H2 fill:#7c3aed20,stroke:#7c3aed,stroke-width:2px
-    style O1 fill:#16a34a20,stroke:#16a34a,stroke-width:2px
-    style O2 fill:#16a34a20,stroke:#16a34a,stroke-width:2px
+    C -->|"Regression"| E["Linear Activation"]:::output_act
+    C -->|"Classification"| F{"Classification Type?"}
+
+    F -->|"Binary"| G["Sigmoid"]:::output_act
+    F -->|"Multiclass"| H["Softmax"]:::output_act
+    F -->|"Multi-label"| I["Sigmoid (per label)"]:::output_act
+
+    D --> J{"Prefer Simplicity & Speed?"}
+    J -->|"Yes"| K["ReLU"]:::hidden_act
+    J -->|"No"| L{"Need Smooth Gradients?"}
+    L -->|"Yes"| M["ELU / Swish"]:::hidden_act
+    L -->|"No"| N["Leaky ReLU"]:::hidden_act
+
+    classDef decision fill:#2563eb20,stroke:#2563eb,stroke-width:2px;
+    classDef output_act fill:#16a34a20,stroke:#16a34a,stroke-width:2px;
+    classDef hidden_act fill:#f59e0b20,stroke:#f59e0b,stroke-width:2px;
 ```
+
+
 
 ### 5. Loss Functions
 
