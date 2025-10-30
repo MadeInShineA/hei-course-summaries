@@ -114,6 +114,9 @@ graph LR
 | **Sigmoid** | $\sigma(x) = \frac{1}{1+e^{-x}}$ | Introduces non-linearity, outputs in (0,1) |
 | **Tanh** | $\tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}$ | Zero-centered outputs, (-1,1), avoids vanishing gradient better than sigmoid |
 | **ReLU** | $\max(0,x)$ | Most common, avoids vanishing gradient, computationally efficient |
+| **Leaky ReLU** | $\max(\alpha x, x)$ where $\alpha$ is small positive constant | Addresses dying ReLU problem, allows small gradients for negative inputs |
+| **ELU** | $x$ if $x > 0$ else $\alpha(e^x - 1)$ | Smooth version of ReLU, handles negative values, reduces vanishing gradient |
+| **Swish** | $x \cdot \sigma(x)$ | Self-gated activation, often outperforms ReLU, smooth and non-monotonic |
 
 #### Output Layer Activation Functions
 
