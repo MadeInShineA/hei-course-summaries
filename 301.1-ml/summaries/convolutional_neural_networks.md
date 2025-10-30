@@ -199,7 +199,7 @@ Examples:
 
 ### Activation Functions in Convolutional Layers
 
-CNNs use the same activation functions as regular neural networks. Refer to the [Neural Networks summary](../neural_networks.md#activation-functions) for detailed information on available activation functions and their use cases.
+CNNs use the same activation functions as regular neural networks. Refer to the [Neural Networks summary](./neural_networks.md#key-components) for detailed information on available activation functions and their use cases.
 
 ### Pooling Operations
 
