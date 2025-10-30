@@ -55,20 +55,13 @@ For image classification (e.g., CIFAR-10):
 - **Feature Maps**: Output of convolution operations capturing different aspects
 - **Stride and Padding**: Control output size and boundary handling
 
-### 2. Activation Functions
-
-- **ReLU**: Rectified Linear Unit, sets negative values to zero
-- **Leaky ReLU**: Allows small negative values to prevent dead neurons
-- **ELU**: Exponential Linear Unit for smoother gradients
-- **Purpose**: Introduce non-linearity to enable learning of complex patterns
-
-### 3. Pooling Layers
+### 2. Pooling Layers
 
 - **Max Pooling**: Select maximum value in each pooling window
 - **Average Pooling**: Compute average value in each pooling window
 - **Purpose**: Reduce spatial dimensions and provide translation invariance
 
-### 4. Fully Connected Layers
+### 3. Fully Connected Layers
 
 - **Dense Connections**: Traditional neural network layers at the end
 - **Classification Head**: Produce final predictions from learned features
@@ -206,22 +199,7 @@ Examples:
 
 ### Activation Functions in Convolutional Layers
 
-After the convolution operation, an activation function is applied element-wise to introduce non-linearity:
-
-| Function | Formula | Use Case | Advantages | Disadvantages |
-|----------|---------|----------|------------|---------------|
-| **ReLU** | $\max(0,x)$ | Most common, avoids vanishing gradient | Simple, computationally efficient, helps with vanishing gradients | Can cause "dying ReLU" where neurons become inactive |
-| **Leaky ReLU** | $\max(0.01x,x)$ | Addresses dying ReLU problem | Allows small negative values, prevents dead neurons | Slightly more computation |
-| **ELU** | $x$ if $x > 0$ else $\alpha(e^x - 1)$ | Smooth activation, faster convergence | Smooth gradients, can improve learning | More computationally expensive |
-| **Swish** | $x \cdot \sigma(x)$ | Modern alternative to ReLU | Self-gated, often outperforms ReLU | More complex computation |
-| **Sigmoid** | $\frac{1}{1 + e^{-x}}$ | Binary classification outputs | Bounded output [0,1] | Vanishing gradients, not zero-centered |
-| **Tanh** | $\frac{e^x - e^{-x}}{e^x + e^{-x}}$ | Hidden layers in shallow nets | Zero-centered, bounded [-1,1] | Still susceptible to vanishing gradients |
-
-**Key Considerations:**
-
-- ReLU and its variants are preferred in hidden layers of deep CNNs
-- Sigmoid and Softmax are typically reserved for output layers in classification tasks
-- The choice of activation can significantly impact training stability and convergence speed
+CNNs use the same activation functions as regular neural networks. Refer to the [Neural Networks summary](../neural_networks.md#activation-functions) for detailed information on available activation functions and their use cases.
 
 ### Pooling Operations
 
